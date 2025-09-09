@@ -20,6 +20,7 @@ The NeedForHeat P1-BASE enables reading [smart meters that adhere to the Dutch S
 - [Features](#features)
 - [Status](#status)
 - [License](#license)
+- [Citation](#citation)
 - [Credits](#credits)
 
 ## General info
@@ -156,13 +157,21 @@ Project is:  _in progress_
 ## License
 The hardware designs in this repository are available under the [CERN-OHL-P v2 license](./LICENSE), Copyright 2024 [Research group Energy Transition, Windesheim University of Applied Sciences](https://windesheim.nl/energietransitie)
 
+## Citation
+
+If you use this repository in your research or work, please cite the following pre-print, which describes the overall NeedForHeat DataGear system of which this repository is a part:
+
+> Ter Hofte, H., & van Ravenzwaaij, N. (2025). *NeedForHeat DataGear: An Open Monitoring System to Accelerate the Residential Heating Transition*. arXiv preprint arXiv:2509.06927. https://doi.org/10.48550/arXiv.2509.06927
+
+**Note:** This is a pre-print submitted on 8 Sep 2025 and has not yet been peer-reviewed. For the full paper, see [https://arxiv.org/abs/2509.06927](https://arxiv.org/abs/2509.06927).
+
 ## Credits
 This open hardware design is a collaborative effort of:
 * Rick de Graaf · [@277r](https://github.com/277r) 
 * Gerwin ten Have · [@GerwintenHave](https://github.com/GerwintenHave) 
 
 Product owners:
-* Henri ter Hofte · [@henriterhofte](https://github.com/henriterhofte) · Twitter [@HeNRGi](https://twitter.com/HeNRGi)
+* Henri ter Hofte · [@henriterhofte](https://github.com/henriterhofte)
 * Marco Winkelman · [@MarcoW71](https://github.com/MarcoW71)
 
 We use and gratefully acknowlegde the efforts of the makers of:
