@@ -11,7 +11,7 @@
 ## Usage
 <img src="../images/pcb.jpg" width="600"  />
 
-> This guide assumes that the PCB's are fully assembled, that the device has an enclosure and that the device has been programmed with the [needforheat-p1-reader-firmware](https://github.com/energietransitie/needforheat-p1-reader-firmware) 
+> This guide assumes that the PCB's are fully assembled, that the device has an enclosure and that the device has been programmed with the [needforheat-p1-reader-firmware](https://github.com/energiegedrag-nl/needforheat-p1-reader-firmware) 
 
 * The 2x8 male pin header (`J1`) soldered to the bottom side of the PCB should be connected to the M5Stack CoreInk. Of the two possible orientations, use the  one with the best alignment of the outline of the P1-BASE PCB with the outline M5Stack CoreInk. 
 * The upper female RJ12 connector (`J2`) should be connector via a (preferably short) 6P6C male-to make stright RJ12 cable to the P1 port of the smart meter. 
@@ -22,9 +22,9 @@ Once these connections have been made, the user can open the NeedForHeat applica
 ## Design choices
 
 <img src="../images/schematic.PNG" width=600> </img>
-The P1-BASE-hardware design was made as an improvement to the [twomes-p1-gateway-hardware](https://github.com/energietransitie/twomes-p1-gateway-hardware): 
+The P1-BASE-hardware design was made as an improvement to the [twomes-p1-gateway-hardware](https://github.com/energiegedrag-nl/twomes-p1-gateway-hardware): 
 * The hardware was developed to work on the M5Stack CoreInk instead of a bare ESP32.
-* The [twomes-p1-gateway-hardware](https://github.com/energietransitie/twomes-p1-gateway-hardware) did not read P1 signals reliably from Landis+Gyr E360 series smart meters, such as the Landis+Gyr CD2D (meter code E0051) and CM3D (meter codes E0052 and E0067). The hardware design was also changed to address this problem and work on more smart meters.
+* The [twomes-p1-gateway-hardware](https://github.com/energiegedrag-nl/twomes-p1-gateway-hardware) did not read P1 signals reliably from Landis+Gyr E360 series smart meters, such as the Landis+Gyr CD2D (meter code E0051) and CM3D (meter codes E0052 and E0067). The hardware design was also changed to address this problem and work on more smart meters.
 * To allow  users who already have a smart meter reader connected to their smart meter, we added an internal P1 splitter to the design, which allows the user connect their smart meter reader to the bottom connector .
 
 ### Smart meter connection
@@ -42,7 +42,7 @@ The smart meter should be connected to upper female RJ12 connector (`J2`). A tab
 ### Data Request Line Management
 When the `Data Request` voltage (pin 2 on the female RJ12 connecor of the P1 port of the smart meter) is at `Data GND`+5V, the smart meter sends data.
 
-The [twomes-p1-gateway-hardware/](https://github.com/energietransitie/twomes-p1-gateway-hardware/) design originally utilized a 10kΩ resistor and a 3.3V source, resulting in a high RC time constant and unreliable data reading. To address this, the design has been revised with a 1kΩ resistor and a 5V source, allowing for 5mA current flow and significantly improving signal integrity. The `meter_DATAOUT` signal is connected to a Schmitt-trigger (`IC1`) to enhance noise immunity. Transistors `Q1` and `Q2` are configured in a level-shifter circuit, converting the 3.3V logic signal (`m5_DATAREQ`) arriving from the M5Stack CoreInk via `G26` to a 5V logic signal (`DATA_REQ`), which is expected as `Data Request` input by the smart meter's P1-port.
+The [twomes-p1-gateway-hardware/](https://github.com/energiegedrag-nl/twomes-p1-gateway-hardware/) design originally utilized a 10kΩ resistor and a 3.3V source, resulting in a high RC time constant and unreliable data reading. To address this, the design has been revised with a 1kΩ resistor and a 5V source, allowing for 5mA current flow and significantly improving signal integrity. The `meter_DATAOUT` signal is connected to a Schmitt-trigger (`IC1`) to enhance noise immunity. Transistors `Q1` and `Q2` are configured in a level-shifter circuit, converting the 3.3V logic signal (`m5_DATAREQ`) arriving from the M5Stack CoreInk via `G26` to a 5V logic signal (`DATA_REQ`), which is expected as `Data Request` input by the smart meter's P1-port.
 
 
 ### Internal Splitter
