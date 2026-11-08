@@ -2,7 +2,9 @@
 
 This repository contains the open hardware design files for the NeedForHeat P1-BASE device, which can be used as a [CoreInk BASE extension module](https://docs.m5stack.com/en/coreink/proto_base), on the back of an [M5Stack CoreInk](https://docs.m5stack.com/en/core/coreink) device. 
 
-The NeedForHeat P1-BASE enables reading [smart meters that adhere to the Dutch Smart Meter Requirements](https://github.com/energietransitie/dsmr-info) via the [P1 port](https://nl.wikipedia.org/wiki/P1-poort).
+> **Own deployment.** This repository is maintained by [energiegedrag-nl](https://github.com/energiegedrag-nl) and deployed under `energiegedrag.nl`. To run your own instance, replace `energiegedrag-nl` by your GitHub organisation and `energiegedrag.nl` by your domain (hosts used: `api.<domain>`, `manuals.<domain>`), consistently in configuration and build settings.
+
+The NeedForHeat P1-BASE enables reading [smart meters that adhere to the Dutch Smart Meter Requirements](https://github.com/energiegedrag-nl/dsmr-info) via the [P1 port](https://nl.wikipedia.org/wiki/P1-poort).
 
 <img src="./images/pcb.jpg" width="600"  />
 
@@ -26,7 +28,7 @@ The NeedForHeat P1-BASE enables reading [smart meters that adhere to the Dutch S
 ## General info
 This repository contains the open hardware designs files for the NeedForHeat P1-BASE. It also includes a `docs` folder with recent printouts of the [schematics](./docs/needforheat-p1-base-hardware-sch.pdf) and [PCB layout](./docs/needforheat-p1-base-hardware-pcb.pdf). 
 
-For the associated firmware that you can run on this device, please see [this repository](https://github.com/energietransitie/needforheat-p1-reader-firmware).
+For the associated firmware that you can run on this device, please see [this repository](https://github.com/energiegedrag-nl/needforheat-p1-reader-firmware).
 
 ## Producing
 
@@ -79,7 +81,7 @@ Prices indicate price per module in June 2024, based on ordering enough hardware
 
 ### Connecting
 
-Assuming that the PCB is fully assembled, the device has an enclosure, and the device has been programmed with the [needforheat-p1-reader-firmware](https://github.com/energietransitie/needforheat-p1-reader-firmware), you can proceed and connect the device as follows:
+Assuming that the PCB is fully assembled, the device has an enclosure, and the device has been programmed with the [needforheat-p1-reader-firmware](https://github.com/energiegedrag-nl/needforheat-p1-reader-firmware), you can proceed and connect the device as follows:
 
 Before sending the device to a home:
 
@@ -107,7 +109,7 @@ The hardware version v2.7 (2024-06-07) features 3 DIP switches on the PCB to con
 | 2                 | Data request driven by M5Stack CoreInk             | Data request from M5Stack CoreInk ignored             |
 | 3                 | Data request driven by external smart meter reader | Data request from external smart meter reader ignored |
 
-If multiple DIP switches are ON simultaneously, data is requested if any corresponding source requires it. This may cause the external smart meter reader to receive partial messages, but according to the [DSMR P1 Port Companion Standard](https://github.com/energietransitie/dsmr-info?tab=readme-ov-file#dsmr-versions-standards) since version 3.0, smart meter readers should be able to handle partial messages.
+If multiple DIP switches are ON simultaneously, data is requested if any corresponding source requires it. This may cause the external smart meter reader to receive partial messages, but according to the [DSMR P1 Port Companion Standard](https://github.com/energiegedrag-nl/dsmr-info?tab=readme-ov-file#dsmr-versions-standards) since version 3.0, smart meter readers should be able to handle partial messages.
 
  
 ## Developing
@@ -148,7 +150,7 @@ To-do:
 - [ ] Experiment with alternative data request management methods (e.g., MOSFETs, BJTs), which would allow the [M5Stack CoreInk](https://docs.m5stack.com/en/core/coreink) to check and control data request management in software.
 - [ ] Implement low-power LEDs for indicating power status, data request status, and data flow.
 - [ ] Develop energy-efficient charging strategies for the [M5Stack CoreInk](https://docs.m5stack.com/en/core/coreink) 390 mAh LiPo battery from DSMR 4 and DSMR 5 smart meters, without triggering the fold-back current limiting feature of some smart meters.
-- [ ] Design a 3D-printable enclosure compatible with the [M5Stack CoreInk](https://docs.m5stack.com/en/core/coreink), potentially using [LEGO connector pens](https://www.blokjeskoning.nl/product/pen-stroef-pen-stroef-zwart/). A preliminary version can be found in the [needforheat-boiler-monitor-hardware repository](https://github.com/energietransitie/needforheat-boiler-monitor-hardware).
+- [ ] Design a 3D-printable enclosure compatible with the [M5Stack CoreInk](https://docs.m5stack.com/en/core/coreink), potentially using [LEGO connector pens](https://www.blokjeskoning.nl/product/pen-stroef-pen-stroef-zwart/). A preliminary version can be found in the [needforheat-boiler-monitor-hardware repository](https://github.com/energiegedrag-nl/needforheat-boiler-monitor-hardware).
 
 
 ## Status
@@ -175,5 +177,5 @@ Product owners:
 * Marco Winkelman · [@MarcoW71](https://github.com/MarcoW71)
 
 We use and gratefully acknowlegde the efforts of the makers of:
-* [Twomes P1 Gateway Hardware](https://github.com/energietransitie/twomes-p1-gateway-hardware), by Research group Energy Transition at Windesheim University of Applied Sciences, licenced under Apache 2.0
+* [Twomes P1 Gateway Hardware](https://github.com/energiegedrag-nl/twomes-p1-gateway-hardware), by Research group Energy Transition at Windesheim University of Applied Sciences, licenced under Apache 2.0
 * [KiCad Libraries](https://kicad.github.io/), by the KiCad Development Team, licensed under [an adapted version of the CC-BY-SA 4.0 License](https://www.kicad.org/libraries/license/)
