@@ -25,7 +25,7 @@ GAP = 3.5  # CoreInk back -> PCB bottom (room for THT leads)
 PCB_T = 1.6
 PEGS = [(4, 4), (36, 4), (4, 52)]  # Ø2.2 NPTH in the PCB; the 4th corner has no peg (keys the PCB)
 JACKS = [(15.5, "top"), (15.5, "bottom")]  # centre x of the RJ12 openings
-JACK_W, JACK_H = 13.0, 11.6  # opening width; jack height above the PCB, VERIFY (C77859)
+JACK_W, JACK_H = 15.0, 14.5  # opening width (body 14.6); jack height above the PCB (C77859, LCSC data)
 LEDS = []  # light holes in the lid, read from pcb_features.json (written by tools/gen_pcb.py)
 _feat = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pcb_features.json")
 if os.path.exists(_feat):

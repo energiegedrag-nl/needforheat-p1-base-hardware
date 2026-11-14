@@ -172,7 +172,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * **Board:** 40 x 56 mm, the CoreInk outline. The meter socket J2 sits at the top edge (opening up): the device hangs from a short cable under the P1 port with the screen upright. The socket for the existing reader J3 is at the bottom edge (opening down).
 * **CoreInk connection:** a 2x8 stackable female header (long pins) is inserted from the top and soldered by JLC like any THT part. Its pins pass through the board into the CoreInk socket; the female body on top keeps the MI-BUS available for measurements. Gap board–CoreInk: 3.5 mm, enough for the RJ12 leads and pegs.
 * **Enclosure (*kuip*):** see [`enclosure/`](../enclosure). The tray has a rim that holds the CoreInk with cut-outs that only fit the right way round (asymmetric side features). Tapered pegs in the LEGO holes centre it. Three board pegs (H1–H3) key the PCB in the tray. Optional pockets for 8 x 1 mm steel discs sit opposite the two magnets; they hold the CoreInk and only attract in the right orientation.
-* The two RJ12 sockets are about 11.5 mm tall *(verify)*: BASE + CoreInk stacked are ≈ 33 mm, so they ship separately in a letterbox parcel and are clicked together at home.
+* The two RJ12 sockets are 14.5 mm tall (LCSC data for C77859): BASE + CoreInk stacked are ≈ 36 mm, so they ship separately in a letterbox parcel and are clicked together at home.
 
 ## 8. Production
 
@@ -180,6 +180,9 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * All parts on the top side; SMD plus three THT parts (J1–J3) that JLC solders.
 * Basic parts: all resistors and capacitors, AO3401A, 2N7002, 1N5819WS, red LED. Extended parts (each adds a one-off loading fee per order): TP4056, 74LVC1G14, BAT54C, SMF5.0A, PESD5V0S1BB, green and yellow LED, RJ12 jacks, stacking header.
 * Assembly variants: R6 (pull-up on the splitter output) and R15 (always request) are not fitted by default.
+* JLCPCB *Economic* assembly needs a HASL finish (it is not offered with OSP); LeadFree HASL is fine.
+* JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23 and SOT-23-5 +180°, SOIC-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
+* JLCPCB quote (November 2026, 5 boards, Economic, LeadFree HASL, without shipping and VAT): PCB € 4.71, assembly € 38.97 (setup € 7.46, stencil € 1.40, parts € 8.68, extended-part fees € 14.00, SMT € 1.24, hand soldering € 3.27, manual assembly € 2.09, nitrogen reflow € 0.82); total € 43.68, about € 8.70 per board.
 
 ## 9. Design decisions
 
@@ -197,8 +200,8 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 
 ## 10. Open points to verify
 
-1. Stacking header C72555: pin length below the body (assumed ≥ 10.5 mm) and fit in the CoreInk socket. Its LCSC stock is low (≈ 400 in November 2026); find a second source before a larger order.
-2. Height of the RJ12 jack C77859 (CONNFLY DS1133-S60BPX) and whether its pinout matches the Wayconn MJEA-660X1 footprint used since v2.7.
+1. **Blocking: the CoreInk connector part.** C72555 is listed as "Extended Female Pin Header 3.8"; its LCSC/EasyEDA 3D model has only ≈ 3 mm of pin below the body, so it would stick out ≈ 1.4 mm under the board, far too short to reach into the CoreInk socket (assumed ≥ 10.5 mm). The CoreInk socket is 8 mm deep and flush with the case (measured). With the 3.5 mm gap that the RJ12 leads (3.2 mm) and posts (2.9 mm) need, a top-mounted stacking header needs a tail of 10–13 mm below its body (1.6 mm board + 3.5 mm gap + 5–8 mm engagement). A plain male header on the bottom (as in v2.7) gives only a 2.5 mm gap, so the RJ12 leads and posts would hit the CoreInk case. No suitable part with a known tail length is in the JLCPCB library (November 2026); C72555 has no datasheet.
+2. RJ12 jack C77859 (CONNFLY DS1133-S60BPX): its LCSC footprint matches the Wayconn MJEA-660X1 footprint (same pin and post positions after a 90° rotation, pin 1 at the same place); the body is 14.5 mm tall and 14.6 mm wide (Wayconn outline: 12.2 mm), which clears the neighbouring pads. In the JLCPCB 3D preview the jack front reaches about 1 mm past the board edge; check against the datasheet (fine for the cable, but the enclosure opening must allow it).
 3. TP4056 behaviour in parallel with the CoreInk's own charger (TP4057) on USB.
 4. CoreInk `5V_OUT`: is it present on battery power (boost converter on) and when the CoreInk is switched off?
 5. Positions of the magnets (± 2 mm).

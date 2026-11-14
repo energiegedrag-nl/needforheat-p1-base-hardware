@@ -57,4 +57,15 @@
 	(pad "5VIN" thru_hole oval (at 1.27 6.35) (size 1.7 1.7) (drill 1.0) (layers "*.Cu" "*.Mask"))
 	(pad "BAT" thru_hole oval (at -1.27 8.89) (size 1.7 1.7) (drill 1.0) (layers "*.Cu" "*.Mask"))
 	(pad "GND" thru_hole rect (at 1.27 8.89) (size 1.7 1.7) (drill 1.0) (layers "*.Cu" "*.Mask"))
+	(model "${KIPRJMOD}/p1base.3dshapes/StackingHeader_2x08_P2.54mm_approx.step"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
 )

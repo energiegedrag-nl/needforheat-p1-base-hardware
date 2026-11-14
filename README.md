@@ -26,7 +26,7 @@ This repository contains the open hardware design files for the NeedForHeat P1-B
 
 ## General info
 
-The P1-BASE plugs into the 2x8 MI-BUS socket on the back of the CoreInk. The upper RJ12 socket (`J2`, *METER*) connects to the P1 port of the smart meter; the lower RJ12 socket (`J3`, *P1 READER*) takes the cable of an existing P1 reader, as if it were connected to the meter itself.
+The P1-BASE plugs into the 2x8 MI-BUS socket on the back of the CoreInk. The upper RJ12 socket (`J2`, *smart meter*) connects to the P1 port of the smart meter; the lower RJ12 socket (`J3`, *other P1 reader*) takes the cable of an existing P1 reader, as if it were connected to the meter itself.
 
 In short (details in [docs/design-v3.md](docs/design-v3.md)):
 
@@ -59,7 +59,7 @@ The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery sc
 
 ### Cost
 
-Indicative, per module when ordering 10, November 2026, excluding VAT and shipping. *To be confirmed with a real order.*
+Indicative, per module, November 2026, excluding VAT and shipping. A JLCPCB quote for 5 assembled boards came to € 43.68 (€ 8.70 per board); shipping to the Netherlands adds about € 20–25 per order.
 
 | Item | Approx. price |
 |---|---:|
@@ -73,10 +73,10 @@ Indicative, per module when ordering 10, November 2026, excluding VAT and shippi
 
 The CoreInk and the P1-BASE are shipped separately (each fits a letterbox parcel) and clicked together at home.
 
-1. Hold the CoreInk with its screen facing you and the HAT connector (top edge) up. Push the P1-BASE onto its back so that the *METER* socket is at the top; it only fits this way round.
+1. Hold the CoreInk with its screen facing you and the HAT connector (top edge) up. Push the P1-BASE onto its back so that the *smart meter* socket is at the top; it only fits this way round.
 2. Unplug an existing P1 reader (if any) from the smart meter.
-3. Plug the supplied **straight (1:1)** RJ12 cable into the *METER* socket and into the P1 port of the smart meter. Do not use a telephone cable: those are crossed. A crossed cable does no damage, but nothing works; the screen will say so.
-4. Plug the existing P1 reader into the lower *P1 READER* socket.
+3. Plug the supplied **straight (1:1)** RJ12 cable into the *smart meter* socket and into the P1 port of the smart meter. Do not use a telephone cable: those are crossed. A crossed cable does no damage, but nothing works; the screen will say so.
+4. Plug the existing P1 reader into the lower *other P1 reader* socket.
 
 With a DSMR 2 or 3 meter (no power on the P1 port), also connect the USB power adapter to the CoreInk.
 
