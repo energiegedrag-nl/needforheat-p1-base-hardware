@@ -243,7 +243,7 @@ PARTS = [
     R("R30", "100k", "CHG_HI", "GND"),
     C("C9", "10u", "COREINK_BAT", "GND"),
     # 6. CoreInk bus
-    dict(ref="J1", lib="p1base:CoreInk_Bus", value="CoreInk bus", fp="p1base:CoreInk_Bus_2x08_P2.54mm", lcsc="C72555",
+    dict(ref="J1", lib="p1base:CoreInk_Bus", value="CoreInk bus", fp="p1base:CoreInk_Bus_2x08_P2.54mm", lcsc="C21241050",
          nets={"GND": "GND", "BAT": "COREINK_BAT", "5VIN": None, "5VOUT": "COREINK_5VOUT", "RST": None,
                "3V3": "COREINK_3V3", "G13": "G13_RX", "G14": "G14_CHGHI", "G21": None, "G22": None, "G18": None,
                "G36": "G36_VMETER", "G34": "G34_EXTREQ", "G26": "G26_REQ", "G23": None, "G25": "G25_CHG"}),

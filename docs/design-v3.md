@@ -215,8 +215,10 @@ board is redone):
 4. **No steel-disc pockets** in the tray: the friction of the pins and the tray hold the CoreInk.
 5. **Same back as the CoreInk, so one BatteryBASE fits both:** the P1-BASE's lid repeats the CoreInk's back. J1
    becomes a **raised socket** whose top is flush with the lid (≈ 16.5 mm above the board, 8 mm deep) with pins long
-   enough to go 6 mm into the CoreInk (≈ 8.5 mm below the board); the exact part is still to be found (Samtec ESQ
-   type, or a combination of common parts). Lower RJ12 jacks (10–11.5 mm) would make the P1-BASE thinner and the
+   enough to go 6 mm into the CoreInk (≈ 8.5 mm below the board); part: **Samtec ESQ-108-24-G-D**
+   (JLCPCB C21241050, pre-order): socket top 13.59 mm above the board ("C"), tail 9.65 mm below the board's top
+   ("B"), 8.51 mm deep socket (Samtec ESQ table 1). With the 2.5 mm gap the pins go 5.5 mm into the CoreInk; the lid
+   is set flush with the socket top. ESQ-108-49 is the same with low-insertion-force contacts. Lower RJ12 jacks (10–11.5 mm) would make the P1-BASE thinner and the
    raised socket 3–4.5 mm lower.
 6. **LEGO posts on every enclosure:** four posts underneath, at the CoreInk's LEGO holes (through holes; a LEGO
    Technic pin fits, measured), 7 mm long so they engage before the 6 mm pins and protect them in transport, with

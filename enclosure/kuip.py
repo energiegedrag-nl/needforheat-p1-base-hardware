@@ -53,8 +53,11 @@ RIB_D, RIB_W = 4.95, 0.45  # three crush ribs: light friction in the 4.85 mm hol
 PEG_D = 2.0
 TUBE_D = 7.6  # tubes under the lid that form its LEGO holes
 LID_T = 1.4
-TOP_CLR = 0.6
-Z_TOP = GAP + PCB_T + JACK_H + TOP_CLR
+SOCKET_H = 13.59  # J1 Samtec ESQ-108-24-G-D: socket top above the board ("C", Samtec table 1)
+# the lid's outer face is flush with the top of the raised socket, like the CoreInk's back
+Z_TOP = GAP + PCB_T + SOCKET_H - LID_T
+TOP_CLR = Z_TOP - (GAP + PCB_T + JACK_H)  # 0.74 mm above the RJ12 jacks
+assert TOP_CLR >= 0.5
 
 
 def slab(w, h, r, z0, z1, off=0.0):

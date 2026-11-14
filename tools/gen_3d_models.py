@@ -71,18 +71,18 @@ def rj12_5301():
 
 
 def stacking_header():
-    p, rows, cols, h = 2.54, 8, 2, 8.5
-    body = cq.Workplane("XY").box(cols * p, rows * p, h, centered=(True, True, False))
-    holes = (cq.Workplane("XY").pushPoints([((c - 0.5) * p, (r - 3.5) * p) for c in range(cols) for r in range(rows)])
-             .rect(1.0, 1.0).extrude(h).translate((0, 0, 0.0)))
-    body = body.cut(holes.translate((0, 0, 1.5)))
-    pins = (cq.Workplane("XY").pushPoints([((c - 0.5) * p, (r - 3.5) * p) for c in range(cols) for r in range(rows)])
-            .rect(0.64, 0.64).extrude(-(1.6 + 9.5)).translate((0, 0, 1.5)))
-    asm = cq.Assembly(name="StackingHeader_2x08")
+    """Samtec ESQ-108-24-G-D (raised 2x8 socket): socket body 8.51 mm with its top 13.59 mm above the board,
+    tail 9.65 mm below the board's top surface (Samtec table 1: C = .535, B = .38)."""
+    p, rows, cols, h, top, tail = 2.54, 8, 2, 8.51, 13.59, 9.65
+    body = cq.Workplane("XY").box(cols * p, rows * p, h, centered=(True, True, False)).translate((0, 0, top - h))
+    pts = [((c - 0.5) * p, (r - 3.5) * p) for c in range(cols) for r in range(rows)]
+    holes = cq.Workplane("XY").pushPoints(pts).rect(1.0, 1.0).extrude(6.0).translate((0, 0, top - 6.0))
+    body = body.cut(holes)
+    pins = cq.Workplane("XY").pushPoints(pts).rect(0.64, 0.64).extrude(-(tail + top - h)).translate((0, 0, top - h))
+    asm = cq.Assembly(name="ESQ_108_24_G_D")
     asm.add(body, name="body", color=BLACK)
     asm.add(pins, name="pins", color=GOLD)
     return asm
-
 
 def main():
     os.makedirs(OUT, exist_ok=True)
