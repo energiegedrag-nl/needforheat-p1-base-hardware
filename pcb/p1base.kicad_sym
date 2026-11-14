@@ -9,17 +9,17 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "U"
-			(at 0 7.62 0)
+			(at 0 6.35 0)
 			(effects
 				(font
 					(size 1.27 1.27))))
 		(property "Value" "TP4056"
-			(at 0 -7.62 0)
+			(at 0 -11.43 0)
 			(effects
 				(font
 					(size 1.27 1.27))))
 		(property "Footprint" "Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm"
-			(at 0 -10.16 0)
+			(at 0 -13.97 0)
 			(effects
 				(font
 					(size 1.27 1.27))
@@ -38,8 +38,8 @@
 				(hide yes)))
 		(symbol "TP4056_0_1"
 			(rectangle
-				(start -6.35 6.35)
-				(end 6.35 -6.35)
+				(start -7.62 5.08)
+				(end 7.62 -10.16)
 				(stroke
 					(width 0.254)
 					(type default))
@@ -47,7 +47,7 @@
 					(type background))))
 		(symbol "TP4056_1_1"
 			(pin power_in line
-				(at -8.89 3.81 0)
+				(at -10.16 2.54 0)
 				(length 2.54)
 				(name "VCC"
 					(effects
@@ -58,7 +58,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin input line
-				(at -8.89 1.27 0)
+				(at -10.16 0 0)
 				(length 2.54)
 				(name "CE"
 					(effects
@@ -69,7 +69,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -8.89 -1.27 0)
+				(at -10.16 -2.54 0)
 				(length 2.54)
 				(name "PROG"
 					(effects
@@ -80,7 +80,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin input line
-				(at -8.89 -3.81 0)
+				(at -10.16 -5.08 0)
 				(length 2.54)
 				(name "TEMP"
 					(effects
@@ -91,7 +91,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin power_out line
-				(at 8.89 3.81 180)
+				(at 10.16 2.54 180)
 				(length 2.54)
 				(name "BAT"
 					(effects
@@ -102,7 +102,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin open_collector line
-				(at 8.89 1.27 180)
+				(at 10.16 0 180)
 				(length 2.54)
 				(name "~{CHRG}"
 					(effects
@@ -113,7 +113,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin open_collector line
-				(at 8.89 -1.27 180)
+				(at 10.16 -2.54 180)
 				(length 2.54)
 				(name "~{STDBY}"
 					(effects
@@ -124,7 +124,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin power_in line
-				(at -1.27 -8.89 90)
+				(at -2.54 -12.7 90)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -135,7 +135,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 1.27 -8.89 90)
+				(at 0 -12.7 90)
 				(length 2.54)
 				(name "EP"
 					(effects
@@ -148,21 +148,23 @@
 	(symbol "CoreInk_Bus"
 		(pin_names
 			(offset 1.016))
+		(pin_numbers
+			(hide yes))
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "J"
-			(at 0 12.7 0)
+			(at 0 11.43 0)
 			(effects
 				(font
 					(size 1.27 1.27))))
 		(property "Value" "CoreInk bus"
-			(at 0 -12.7 0)
+			(at 0 -13.97 0)
 			(effects
 				(font
 					(size 1.27 1.27))))
 		(property "Footprint" "p1base:CoreInk_Bus_2x08_P2.54mm"
-			(at 0 -15.24 0)
+			(at 0 -16.51 0)
 			(effects
 				(font
 					(size 1.27 1.27))
@@ -181,8 +183,8 @@
 				(hide yes)))
 		(symbol "CoreInk_Bus_0_1"
 			(rectangle
-				(start -7.62 11.43)
-				(end 7.62 -11.43)
+				(start -10.16 10.16)
+				(end 10.16 -12.7)
 				(stroke
 					(width 0.254)
 					(type default))
@@ -190,7 +192,7 @@
 					(type background))))
 		(symbol "CoreInk_Bus_1_1"
 			(pin passive line
-				(at -10.16 8.89 0)
+				(at -12.7 7.62 0)
 				(length 2.54)
 				(name "GND"
 					(effects
@@ -201,7 +203,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 6.35 0)
+				(at -12.7 5.08 0)
 				(length 2.54)
 				(name "5V_IN"
 					(effects
@@ -212,7 +214,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 3.81 0)
+				(at -12.7 2.54 0)
 				(length 2.54)
 				(name "EXT_RST"
 					(effects
@@ -223,7 +225,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 1.27 0)
+				(at -12.7 0 0)
 				(length 2.54)
 				(name "G13"
 					(effects
@@ -234,7 +236,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 -1.27 0)
+				(at -12.7 -2.54 0)
 				(length 2.54)
 				(name "G21/SDA"
 					(effects
@@ -245,7 +247,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 -3.81 0)
+				(at -12.7 -5.08 0)
 				(length 2.54)
 				(name "G18/SCK"
 					(effects
@@ -256,9 +258,9 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 -6.35 0)
+				(at -12.7 -7.62 0)
 				(length 2.54)
-				(name "G34 (in)"
+				(name "G34"
 					(effects
 						(font
 							(size 1.27 1.27))))
@@ -267,7 +269,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at -10.16 -8.89 0)
+				(at -12.7 -10.16 0)
 				(length 2.54)
 				(name "G23/MOSI"
 					(effects
@@ -278,7 +280,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 8.89 180)
+				(at 12.7 7.62 180)
 				(length 2.54)
 				(name "BAT"
 					(effects
@@ -289,7 +291,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 6.35 180)
+				(at 12.7 5.08 180)
 				(length 2.54)
 				(name "5V_OUT"
 					(effects
@@ -300,7 +302,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 3.81 180)
+				(at 12.7 2.54 180)
 				(length 2.54)
 				(name "3V3"
 					(effects
@@ -311,7 +313,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 1.27 180)
+				(at 12.7 0 180)
 				(length 2.54)
 				(name "G14"
 					(effects
@@ -322,7 +324,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 -1.27 180)
+				(at 12.7 -2.54 180)
 				(length 2.54)
 				(name "G22/SCL"
 					(effects
@@ -333,9 +335,9 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 -3.81 180)
+				(at 12.7 -5.08 180)
 				(length 2.54)
-				(name "G36 (in)"
+				(name "G36"
 					(effects
 						(font
 							(size 1.27 1.27))))
@@ -344,7 +346,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 -6.35 180)
+				(at 12.7 -7.62 180)
 				(length 2.54)
 				(name "G26"
 					(effects
@@ -355,7 +357,7 @@
 						(font
 							(size 1.27 1.27)))))
 			(pin passive line
-				(at 10.16 -8.89 180)
+				(at 12.7 -10.16 180)
 				(length 2.54)
 				(name "G25"
 					(effects
@@ -364,4 +366,204 @@
 				(number "G25"
 					(effects
 						(font
-							(size 1.27 1.27))))))))
+							(size 1.27 1.27)))))))
+	(symbol "V5"
+		(power global)
+		(pin_numbers
+			(hide yes))
+		(pin_names
+			(offset 0)
+			(hide yes))
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "#PWR"
+			(at 0 -3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Value" "V5"
+			(at 0 3.556 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Description" "Power symbol creates a global label with name \"V5\""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_keywords" "global power"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(symbol "V5_0_1"
+			(polyline
+				(pts
+					(xy -0.762 1.27)
+					(xy 0 2.54))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0 2.54)
+					(xy 0.762 1.27))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0 0)
+					(xy 0 2.54))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none))))
+		(symbol "V5_1_1"
+			(pin power_in line
+				(at 0 0 90)
+				(length 0)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27))))))
+		(embedded_fonts no))
+	(symbol "VMETER"
+		(power global)
+		(pin_numbers
+			(hide yes))
+		(pin_names
+			(offset 0)
+			(hide yes))
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(duplicate_pin_numbers_are_jumpers no)
+		(property "Reference" "#PWR"
+			(at 0 -3.81 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Value" "VMETER"
+			(at 0 3.556 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Datasheet" ""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Description" "Power symbol creates a global label with name \"VMETER\""
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "ki_keywords" "global power"
+			(at 0 0 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(hide yes)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(symbol "VMETER_0_1"
+			(polyline
+				(pts
+					(xy -0.762 1.27)
+					(xy 0 2.54))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0 2.54)
+					(xy 0.762 1.27))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none)))
+			(polyline
+				(pts
+					(xy 0 0)
+					(xy 0 2.54))
+				(stroke
+					(width 0)
+					(type default))
+				(fill
+					(type none))))
+		(symbol "VMETER_1_1"
+			(pin power_in line
+				(at 0 0 90)
+				(length 0)
+				(name ""
+					(effects
+						(font
+							(size 1.27 1.27))))
+				(number "1"
+					(effects
+						(font
+							(size 1.27 1.27))))))
+		(embedded_fonts no)))

@@ -288,8 +288,8 @@ def build(route=True):
         feats["jacks"][ref] = [round((x1 + x2) / 2, 2), round(x2 - x1, 2)]
     with open(os.path.join(ROOT, "enclosure", "pcb_features.json"), "w", encoding="utf8", newline=chr(10)) as f:
         json.dump(feats, f, indent=1)
-    add_zone(b, netobj["/GND"], pcbnew.F_Cu)
-    add_zone(b, netobj["/GND"], pcbnew.B_Cu)
+    add_zone(b, netobj["GND"], pcbnew.F_Cu)
+    add_zone(b, netobj["GND"], pcbnew.B_Cu)
     add_edge_keepout(b)
     b.BuildConnectivity()
     pcbnew.SaveBoard(out, b)
@@ -307,7 +307,7 @@ def _seg_dist(px, py, ax, ay, bx, by):
 
 def stitch(b, pitch=1.5, via_d=0.6, drill=0.3, clr=0.25):
     """Add GND vias on a grid wherever they clear all other copper, tying the two GND pours together."""
-    gnd = b.FindNet("/GND")
+    gnd = b.FindNet("GND")
     obst = []  # (kind, geometry, half-width) in mm
     for t in b.GetTracks():
         if t.GetNetCode() == gnd.GetNetCode():
@@ -394,7 +394,7 @@ def autoroute(path):
 def fix_islands(path, step=0.25):
     """Give every GND pour fragment that has no via or through-hole pad at least one via."""
     b = pcbnew.LoadBoard(path)
-    gnd = b.FindNet("/GND")
+    gnd = b.FindNet("GND")
     filler = pcbnew.ZONE_FILLER(b)
     filler.Fill(b.Zones())
     anchors = [t.GetPosition() for t in b.GetTracks() if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == gnd.GetNetCode()]
@@ -438,7 +438,7 @@ def fix_islands(path, step=0.25):
 def restitch(path):
     """Remove the stitching vias (GND vias without tracks) and stitch again."""
     b = pcbnew.LoadBoard(path)
-    gnd = b.FindNet("/GND").GetNetCode()
+    gnd = b.FindNet("GND").GetNetCode()
     ends = set()
     for t in b.GetTracks():
         if not isinstance(t, pcbnew.PCB_VIA):
