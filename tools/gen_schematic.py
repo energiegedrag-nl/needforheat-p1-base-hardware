@@ -35,7 +35,7 @@ PROJECT = "needforheat-p1-base-hardware"
 CUSTOM_LIB = os.path.join(PCB, "p1base.kicad_sym")
 CLI = os.environ.get("KICAD_CLI", os.path.expandvars(r"%LOCALAPPDATA%\Programs\KiCad\10.0\bin\kicad-cli.exe"))
 NS = uuid.UUID("6f1c2b4e-6b0e-4c55-9d7a-1f2e3d4c5b6a")
-POWER_NETS = ("GND", "V5", "VMETER")  # drawn with power symbols (global nets)
+POWER_NETS = ("GND", "V5", "VMETER", "V3LED")  # drawn with power symbols (global nets)
 
 
 def uid(*k):
@@ -112,8 +112,16 @@ def write_custom_lib():
         right=[("BAT", "BAT", "passive"), ("5VOUT", "5V_OUT", "passive"), ("3V3", "3V3", "passive"),
                ("G14", "G14", "passive"), ("G22", "G22/SCL", "passive"), ("G36", "G36", "passive"),
                ("G26", "G26", "passive"), ("G25", "G25", "passive")], half_w=10.16, hide_numbers=True)
+    dim = _box_symbol(
+        "PCA9633_8pin", "U", "PCA9633", "Package_SO:TSSOP-8_3x3mm_P0.65mm",
+        "4-channel I2C LED driver (8-pin: fixed address 0x62), 97 kHz individual and 190 Hz group PWM",
+        left=[("8", "VDD", "power_in"), ("7", "SDA", "bidirectional"), ("6", "SCL", "input")],
+        right=[("1", "LED0", "open_collector"), ("2", "LED1", "open_collector"), ("3", "LED2", "open_collector"),
+               ("4", "LED3", "open_collector")],
+        bottom=[("5", "VSS", "power_in")], half_w=7.62)
     lib = [S("kicad_symbol_lib"), [S("version"), 20231120], [S("generator"), "gen_schematic.py"],
-           [S("generator_version"), "1.0"], tp, bus, _power_symbol("V5"), _power_symbol("VMETER")]
+           [S("generator_version"), "1.0"], tp, bus, dim, _power_symbol("V5"), _power_symbol("VMETER"),
+           _power_symbol("V3LED")]
     with open(CUSTOM_LIB, "w", encoding="utf8", newline="\n") as f:
         f.write(dump(lib) + "\n")
 
@@ -126,7 +134,7 @@ C0603 = "Capacitor_SMD:C_0603_1608Metric"
 C0805 = "Capacitor_SMD:C_0805_2012Metric"
 SOT23 = "Package_TO_SOT_SMD:SOT-23"
 SOT235 = "Package_TO_SOT_SMD:SOT-23-5"
-LED0603 = "LED_SMD:LED_0603_1608Metric"
+LED_SIDE = "p1base:LED_LiteOn_LTST-S220_SideView"  # side-looking, at the top board edge
 RJ = "p1base:RJ12_EVERCOM_5301-6P6C"  # 11.45 mm high
 TP_FP = "TestPoint:TestPoint_Pad_D1.0mm"
 
@@ -157,8 +165,9 @@ def ESD(ref, line):
 
 
 def LED(ref, color, a, k):
-    lc = {"green": "C12624", "yellow": "C2287", "red": "C2286"}[color]
-    return dict(ref=ref, lib="Device:LED", value=f"LED {color}", fp=LED0603, lcsc=lc, nets={"2": a, "1": k})
+    # Lite-On LTST-S220KGKT / KSKT / KRKT: one side-looking package for all three colours
+    lc = {"green": "C160469", "yellow": "C160468", "red": "C284935"}[color]
+    return dict(ref=ref, lib="Device:LED", value=f"LED {color}", fp=LED_SIDE, lcsc=lc, nets={"2": a, "1": k})
 
 
 def TP(ref, net):
@@ -188,7 +197,7 @@ PARTS = [
     dict(ref="U1", lib="74xGxx:74LVC1G14", value="74LVC1G14", fp=SOT235, lcsc="C7835",
          nets={"1": None, "2": "P1_DATA", "3": "GND", "4": "SPLIT_DRV", "5": "V5"}),
     C("C4", "100n", "V5", "GND"),
-    R("R7", "2k2", "V5", "LED1_A"),
+    R("R7", "2k2", "VLED", "LED1_A"),
     LED("LED1", "green", "LED1_A", "SPLIT_DRV"),
     # second Schmitt trigger at the CoreInk's 3.3 V: drives G13, and nothing flows into a switched-off CoreInk
     dict(ref="U4", lib="74xGxx:74LVC1G14", value="74LVC1G14", fp=SOT235, lcsc="C7835",
@@ -208,7 +217,7 @@ PARTS = [
     PMOS("Q3", "REQ_GATE", "METER_REQ", "V5"),
     R("R10", "100k", "REQ_GATE", "V5"),
     R("R15", "0R", "REQ_GATE", "GND", dnp=True),
-    R("R20", "3k3", "V5", "LED2_A"),
+    R("R20", "3k3", "VLED", "LED2_A"),
     LED("LED2", "yellow", "LED2_A", "REQ_GATE"),
     NMOS("Q4", "REQ_EN", "REQ_GATE", "GND"),
     R("R11", "1k", "G26_REQ", "REQ_EN"),
@@ -231,7 +240,7 @@ PARTS = [
     R("R25", "1k", "G25_CHG", "CHG_EN"),
     R("R26", "100k", "CHG_EN", "GND"),
     C("C8", "10u", "CHG_IN", "GND"),
-    R("R31", "2k2", "CHG_IN", "LED3_A"),
+    R("R31", "2k2", "VLED", "LED3_A"),
     LED("LED3", "red", "LED3_A", "CHRG_N"),
     dict(ref="U3", lib="p1base:TP4056", value="TP4056", fp="Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm",
          lcsc="C16581", nets={"4": "CHG_IN", "8": "CHG_IN", "2": "PROG", "1": "GND", "5": "COREINK_BAT",
@@ -242,12 +251,24 @@ PARTS = [
     R("R29", "1k", "G14_CHGHI", "CHG_HI"),
     R("R30", "100k", "CHG_HI", "GND"),
     C("C9", "10u", "COREINK_BAT", "GND"),
-    # 6. CoreInk bus
+    # 6. LED dimmer: U5 keeps its setting while the CoreInk is off, because U6 powers it from V5
+    dict(ref="U6", lib="Regulator_Linear:XC6206PxxxMR", value="XC6206P332MR", fp="Package_TO_SOT_SMD:SOT-23-3",
+         lcsc="C5446", nets={"1": "GND", "2": "V3LED", "3": "V5"}),
+    C("C11", "1u", "V5", "GND"),
+    C("C12", "1u", "V3LED", "GND"),
+    dict(ref="U5", lib="p1base:PCA9633_8pin", value="PCA9633DP1", fp="Package_SO:TSSOP-8_3x3mm_P0.65mm",
+         lcsc="C88381", nets={"8": "V3LED", "7": "G21_SDA", "6": "G22_SCL", "5": "GND", "1": "LED_DIM",
+                              "2": None, "3": None, "4": None}),
+    R("R34", "100k", "V3LED", "LED_DIM"),
+    NMOS("Q10", "LED_DIM", "VLED_G", "GND"),
+    PMOS("Q9", "VLED_G", "VLED", "V5"),
+    R("R33", "100k", "V5", "VLED_G"),
+    # 7. CoreInk bus
     dict(ref="J1", lib="p1base:CoreInk_Bus", value="CoreInk bus", fp="p1base:CoreInk_Bus_2x08_P2.54mm", lcsc="C21241050",
          nets={"GND": "GND", "BAT": "COREINK_BAT", "5VIN": None, "5VOUT": "COREINK_5VOUT", "RST": None,
-               "3V3": "COREINK_3V3", "G13": "G13_RX", "G14": "G14_CHGHI", "G21": None, "G22": None, "G18": None,
+               "3V3": "COREINK_3V3", "G13": "G13_RX", "G14": "G14_CHGHI", "G21": "G21_SDA", "G22": "G22_SCL", "G18": None,
                "G36": "G36_VMETER", "G34": "G34_EXTREQ", "G26": "G26_REQ", "G23": None, "G25": "G25_CHG"}),
-    # 7. test points, peg holes
+    # 8. test points, peg holes
     TP("TP1", "VMETER"), TP("TP2", "V5"), TP("TP3", "P1_DATA"), TP("TP4", "METER_REQ"),
     TP("TP5", "EXT_DATA_OUT"), TP("TP6", "CHG_IN"), TP("TP7", "GND"),
 ] + [dict(ref=f"H{i}", lib="Mechanical:MountingHole", value="Peg hole 2.2 mm", fp="MountingHole:MountingHole_2.2mm_M2",
@@ -377,6 +398,8 @@ class Sheet:
                 f = [((X + 1.27, Y + 3.81), L), ((X + 1.27, Y + 6.35), L)]
             elif rot == 270:   # gate up
                 f = [((X, Y + 6.35), "center"), ((X, Y + 8.89), "center")]
+            elif side == "below_l":
+                f = [((X + 1.27, Y + 7.62), Rj), ((X + 1.27, Y + 9.525), Rj)]
             elif side == "top_r":
                 f = [((X + 3.81, Y - 6.35), L), ((X + 3.81, Y - 4.445), L)]
             elif side == "top" and mirror == "y":
@@ -391,6 +414,10 @@ class Sheet:
             f = [((X, Y - 6.35), "center"), ((X, Y - 4.445), "center")]
         elif lid == "74xGxx:74LVC1G14":
             f = [((X + 2.54, Y + 5.715), "left"), ((X + 2.54, Y + 7.62), "left")]
+        elif lid == "p1base:PCA9633_8pin":
+            f = [((X, Y - 6.35), "center"), ((X + 1.27, Y + 12.065), "left")]
+        elif lid == "Regulator_Linear:XC6206PxxxMR":
+            f = [((X, Y - 7.62), "center"), ((X, Y - 5.715), "center")]
         elif lid == "p1base:TP4056":
             f = [((X, Y - 8.89), "center"), ((X, Y - 6.35), "center")]
         elif lid == "p1base:CoreInk_Bus":
@@ -547,6 +574,20 @@ def draw(s):
     s.power("V5", (81.28, 99.06))
     s.note("V5 = meter 5 V or CoreInk 5V_OUT, whichever is higher;", 83.82, 104.14)
     s.note("powers the input, the splitter and the data request.", 83.82, 106.68)
+    s.place("U6", 119.38, 86.36)
+    s.place("C11", 104.14, 90.17)
+    s.place("C12", 134.62, 90.17)
+    s.wire((99.06, 86.36), (104.14, 86.36), "U6.3")
+    s.power("V5", (99.06, 86.36))
+    s.wire((104.14, 86.36), "C11.1")
+    s.power("GND", "C11.2")
+    s.power("GND", "U6.1")
+    s.wire("U6.2", (134.62, 86.36), (142.24, 86.36))
+    s.wire((134.62, 86.36), "C12.1")
+    s.power("GND", "C12.2")
+    s.power("V3LED", (142.24, 86.36))
+    s.note("U6: 3.3 V for the LED dimmer (U5), from V5, so U5 keeps", 83.82, 111.76)
+    s.note("its setting while the CoreInk is switched off.", 83.82, 114.3)
 
     # 2 ---------------------------------------------------------------------
     s.block("2  P1 data input, Schmitt trigger, active splitter", 157.48, 15.24, 320.04, 119.38, dx=12.7)
@@ -583,7 +624,7 @@ def draw(s):
     s.wire("LED1.1", (228.6, 55.88))
     s.wire("LED1.2", (228.6, 41.91), "R7.2")
     s.label("LED1_A", (228.6, 41.91), "r", 1.0)
-    s.power("V5", "R7.1")
+    s.label("VLED", "R7.1", "u", 1.0)
     s.power("GND", "Q2.2")
     s.wire("Q2.3", (246.38, 45.72), "R5.1", first="v")
     s.label("EXT_DATA_FET", (246.38, 45.72), "r", 1.0)
@@ -607,7 +648,7 @@ def draw(s):
     s.note("CoreInk is off, so no current flows into the ESP32 (power-off isolation).", 160.02, 116.84)
 
     # 3 ---------------------------------------------------------------------
-    s.block("3  Existing P1 reader", 325.12, 15.24, 405.13, 119.38)
+    s.block("3  Existing P1 reader", 325.12, 15.24, 405.13, 71.12)
     s.place("J3", 388.62, 55.88, rot=180)
     s.wire("J3.1", (370.84, 50.8))
     s.power("VMETER", (370.84, 50.8))
@@ -616,10 +657,37 @@ def draw(s):
     s.wire("J3.6", (373.38, 63.5))
     s.power("GND", (373.38, 66.04))
     s.stub("J3.5", "EXT_DATA_OUT", 17.78, "l")
-    s.note("For a reader that was already on the meter", 330.2, 86.36)
-    s.note("(HomeWizard P1 meter, ...): it gets the meter's", 330.2, 88.9)
-    s.note("5 V and a buffered copy of the data, and its", 330.2, 91.44)
-    s.note("data request is passed on to the meter.", 330.2, 93.98)
+    s.note("For a reader that was already on the meter (HomeWizard", 330.2, 25.4)
+    s.note("P1 meter, ...): it gets the meter's 5 V and a buffered copy", 330.2, 27.94)
+    s.note("of the data; its data request is passed on to the meter.", 330.2, 30.48)
+
+    # 8 ---------------------------------------------------------------------
+    s.block("8  LED dimmer (I2C)", 325.12, 73.66, 405.13, 119.38)
+    s.place("U5", 350.52, 96.52)
+    s.place("R34", 365.76, 90.17)
+    s.place("Q10", 378.46, 93.98)
+    s.place("Q9", 396.24, 88.9, mirror="x", side="below_l")
+    s.place("R33", 386.08, 85.09, side="left")
+    s.wire("U5.8", (337.82, 93.98), (337.82, 88.9))
+    s.power("V3LED", (337.82, 88.9))
+    s.stub("U5.7", "G21_SDA", 5.08, "l")
+    s.stub("U5.6", "G22_SCL", 5.08, "l")
+    s.power("GND", "U5.5")
+    s.wire("U5.1", (365.76, 93.98), "Q10.1")
+    s.wire("R34.2", (365.76, 93.98))
+    s.label("LED_DIM", "U5.1", "u", 1.0)
+    s.power("V3LED", "R34.1")
+    s.power("GND", "Q10.2")
+    s.wire("Q10.3", (386.08, 88.9), (388.62, 88.9))
+    s.wire((388.62, 88.9), "Q9.1")
+    s.wire("R33.2", (386.08, 88.9))
+    s.label("VLED_G", (388.62, 88.9), "d", 1.0)
+    s.wire("R33.1", (398.78, 81.28), "Q9.2")
+    s.power("V5", (398.78, 81.28))
+    s.wire("Q9.3", (398.78, 101.6))
+    s.label("VLED", (398.78, 101.6), "d")
+    s.note("Q9 switches VLED, the supply of LED1-3; U5 (address 0x62) dims it at 190 Hz.", 327.66, 114.3)
+    s.note("U5 not set up (after power-up): LEDs at full brightness. See design-v3.md.", 327.66, 116.84)
 
     # 4 ---------------------------------------------------------------------
     s.block("4  Data request: CoreInk (G26) OR existing reader", 15.24, 124.46, 190.5, 241.3, dx=7.62)
@@ -660,7 +728,7 @@ def draw(s):
     s.wire("LED2.1", (99.06, 167.64))
     s.wire("LED2.2", "R20.2")
     s.label("LED2_A", "R20.2", "l", 1.0)
-    s.power("V5", "R20.1")
+    s.label("VLED", "R20.1", "u", 1.0)
     s.wire("Q4.3", (91.44, 167.64))
     s.power("GND", "Q4.2")
     s.wire((66.04, 185.42), "R11.1")
@@ -704,8 +772,8 @@ def draw(s):
     s.place("R26", 254.0, 168.91)
     s.place("R25", 261.62, 162.56, rot=270)
     s.place("C8", 220.98, 199.39)
-    s.place("R31", 236.22, 199.39)
-    s.place("LED3", 236.22, 207.01, rot=90)
+    s.place("R31", 236.22, 201.93)
+    s.place("LED3", 236.22, 209.55, rot=90)
     s.place("U3", 276.86, 198.12)
     s.place("R27", 256.54, 207.01)
     s.place("R28", 248.92, 207.01)
@@ -733,7 +801,7 @@ def draw(s):
     s.label("CHG_IN", (236.22, 195.58), "r", 1.0)
     s.wire((220.98, 195.58), "C8.1")
     s.power("GND", "C8.2")
-    s.wire((236.22, 195.58), "R31.1")
+    s.label("VLED", "R31.1", "r", 1.0)
     s.wire("R31.2", "LED3.2")
     s.label("LED3_A", "R31.2", "l", 1.0)
     s.stub("LED3.1", "CHRG_N", 5.08, "l")
@@ -774,6 +842,8 @@ def draw(s):
     s.power("GND", (x - 5.08, y))
     s.stub("J1.G13", "G13_RX", 7.62, "l")
     s.stub("J1.G34", "G34_EXTREQ", 7.62, "l")
+    s.stub("J1.G21", "G21_SDA", 7.62, "l")
+    s.stub("J1.G22", "G22_SCL", 7.62)
     for pin, net in (("BAT", "COREINK_BAT"), ("5VOUT", "COREINK_5VOUT"), ("3V3", "COREINK_3V3"), ("G14", "G14_CHGHI"), ("G36", "G36_VMETER"),
                      ("G26", "G26_REQ"), ("G25", "G25_CHG")):
         s.stub("J1." + pin, net, 7.62)
@@ -786,7 +856,8 @@ def draw(s):
                            "G14  charge current 120 mA (high) / 60 mA",
                            "BAT  CoreInk battery (charged by U3)",
                            "5V_OUT  CoreInk 5 V, feeds V5 via D2",
-                           "3V3  CoreInk 3.3 V, powers U4"]):
+                           "3V3  CoreInk 3.3 V, powers U4",
+                           "G21/G22  I2C (shared with the RTC): LED dimmer U5"]):
         s.note(t, 330.2, 193.04 + 2.54 * i)
 
     # 7 ---------------------------------------------------------------------
@@ -822,6 +893,7 @@ def draw(s):
     s.note("2.7  2024-06  Windesheim: optocoupler splitter, DIP switches for the data request.", 193.04, 255.27)
     s.note("3.0  2026-11  Active splitter, firmware-managed data request, P1 charging, all parts top side.", 193.04, 257.81)
     s.note("Design rationale, calculations and simulations: docs/design-v3.md.", 193.04, 262.89)
+    s.note("     2026-11  LED dimmer (I2C), side-looking LEDs at the top edge.", 193.04, 260.35)
     s.note("DNP = not fitted (R6, R15).", 193.04, 265.43)
 
 

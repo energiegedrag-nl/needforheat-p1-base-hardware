@@ -34,7 +34,9 @@ PCB_T = 1.6
 PEGS = [(4, 4), (36, 4), (4, 52)]  # Ø2.2 NPTH in the PCB; the 4th corner has no peg (keys the PCB)
 JACKS = [(20.0, "top"), (20.0, "bottom")]  # centre x of the RJ12 openings (centred)
 JACK_W, JACK_H = 13.8, 11.45  # opening width (body 13.3); jack height above the PCB (EVERCOM 5301, C3097716)
-LEDS = []  # light holes in the lid, read from pcb_features.json (written by tools/gen_pcb.py)
+LEDS = []  # side-looking LEDs at the top board edge, read from pcb_features.json (written by tools/gen_pcb.py)
+LED_LENS_Z = 0.5  # lens centre above the PCB (LTST-S220, VERIFY against the Lite-On drawing)
+LED_HOLE_W, LED_HOLE_H = 2.0, 1.4  # light window in the top wall, generous for the unverified lens height
 _feat = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pcb_features.json")
 if os.path.exists(_feat):
     import json
@@ -52,6 +54,12 @@ POST_D, POST_L = 4.6, 7.0  # LEGO posts: core diameter, length (pins of the bus 
 RIB_D, RIB_W = 4.95, 0.45  # three crush ribs: light friction in the 4.85 mm hole, independent of print accuracy
 PEG_D = 2.0
 TUBE_D = 7.6  # tubes under the lid that form its LEGO holes
+# snap fit: bumps on the lid's lip click into grooves in the long walls
+LIP_H, LIP_T = 1.8, 1.0  # lip height below the lid, thickness (thin enough to flex)
+SNAP_R, SNAP_P = 0.6, 0.35  # bump radius and how far it sticks out past the lip
+SNAP_L = 7.0  # bump length
+SNAP_Y = [14.0, 42.0]  # bump centres along the long walls
+GROOVE_D = 0.55  # groove depth in the wall: the bump sits in it with 0.2 mm to spare
 LID_T = 1.4
 SOCKET_H = 13.59  # J1 Samtec ESQ-108-24-G-D: socket top above the board ("C", Samtec table 1)
 # the lid's outer face is flush with the top of the raised socket, like the CoreInk's back
@@ -116,6 +124,22 @@ def kuip():
     for (x0, y0, w, h) in [(8, -5, 24, 6), (5, CI_H - 1, 26, 6), (-5, 12, 6, 15), (-5, 38, 6, 9)]:
         cut = cq.Workplane("XY").workplane(offset=-SKIRT - 1).center(*P(x0 + w / 2, y0 + h / 2)).rect(w, h).extrude(SKIRT + 1)
         body = body.cut(cut)
+    # light windows for the side-looking LEDs in the top wall
+    for (x, y) in LEDS:
+        z = GAP + PCB_T + LED_LENS_Z
+        cut = (cq.Workplane("XY").workplane(offset=z - LED_HOLE_H / 2).center(*P(x, -CLR - WALL / 2))
+               .rect(LED_HOLE_W, WALL + 1.0).extrude(LED_HOLE_H))
+        body = body.cut(cut)
+    # snap-fit grooves for the lid's bumps (inner face of the two long walls)
+    zb = Z_TOP - LIP_H / 2
+    for x in (-CLR - GROOVE_D / 2, CI_W + CLR + GROOVE_D / 2):
+        for y in SNAP_Y:
+            g = (cq.Workplane("XY").workplane(offset=zb - SNAP_R - 0.15).center(*P(x, y))
+                 .rect(GROOVE_D + 0.02, SNAP_L + 1.0).extrude(2 * SNAP_R + 0.3))
+            body = body.cut(g)
+    # pry notch in the top of the bottom wall, to lift the lid off
+    body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 0.8).center(*P(32.0, CI_H + CLR + WALL / 2))
+                    .rect(6.0, WALL + 1.0).extrude(1.0))
     # orientation mark on the outside: arrow pointing to the meter (HAT edge)
     mark = (cq.Workplane("XY").workplane(offset=Z_TOP).center(*P(CI_W / 2, -CLR - WALL / 2))
             .polygon(3, 2.4).extrude(-0.4))
@@ -125,8 +149,16 @@ def kuip():
 
 def lid():
     plate = slab(CI_W, CI_H, CI_R, Z_TOP, Z_TOP + LID_T, CLR + WALL)
-    lip = slab(CI_W, CI_H, CI_R, Z_TOP - 1.5, Z_TOP, CLR - 0.15).cut(
-        slab(CI_W, CI_H, CI_R, Z_TOP - 2, Z_TOP + 1, CLR - 1.35))
+    lip = slab(CI_W, CI_H, CI_R, Z_TOP - LIP_H, Z_TOP, CLR - 0.15).cut(
+        slab(CI_W, CI_H, CI_R, Z_TOP - LIP_H - 0.5, Z_TOP + 1, CLR - 0.15 - LIP_T))
+    # snap bumps on the outside of the lip along the long sides (half cylinders, so they ride over the wall's edge)
+    zb = Z_TOP - LIP_H / 2
+    for x, sgn in ((-(CLR - 0.15), -1), (CI_W + CLR - 0.15, 1)):
+        for y in SNAP_Y:
+            cx = x + sgn * (SNAP_P - SNAP_R)
+            bump = cq.Workplane("XY").add(cq.Solid.makeCylinder(
+                SNAP_R, SNAP_L, cq.Vector(cx, -y - SNAP_L / 2, zb), cq.Vector(0, 1, 0)))
+            lip = lip.union(bump)
     # notch the lip above the RJ12 jacks, which reach the board edge
     for (x, side) in JACKS:
         y = 0.0 if side == "top" else CI_H
@@ -137,8 +169,6 @@ def lid():
         y = -CLR - WALL / 2 if side == "top" else CI_H + CLR + WALL / 2
         t = cq.Workplane("XY").workplane(offset=Z_TOP).center(*P(x, y)).rect(JACK_W - 0.4, WALL).extrude(-(TOP_CLR - 0.2))  # stops 0.2 mm above the jack
         body = body.union(t)
-    for (x, y) in LEDS:
-        body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(x, y)).circle(1.0).extrude(LID_T + 3))
     # LEGO holes like on the CoreInk's back: tubes under the lid, as deep as a post is long (+0.5)
     depth = POST_L + 0.5
     for (x, y) in LEGO_HOLES:

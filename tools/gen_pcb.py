@@ -49,17 +49,25 @@ FIXED = {
     "J3": (20.0, 56.0 - 15.62 + 0.5, 90),
     # CoreInk MI-BUS: centre 6.03 mm from the right edge, 36.87 mm from the top edge
     "J1": (40.0 - 6.03, 36.87, 0),
+    # side-looking LEDs at the top edge, left of the meter jack: they shine through the kuip's top wall.
+    # Pads 0.3 mm from the board edge (copper-to-edge minimum); clear of the corner arc and the peg hole
+    "LED3": (5.6, 0.85, 0),
+    "LED2": (8.8, 0.85, 0),
+    "LED1": (12.0, 0.85, 0),
 }
 # kuip pegs (NPTH) at three of the four LEGO-hole axes: also keys the PCB in the enclosure
 PEGS = [(4.0, 4.0), (36.0, 4.0), (4.0, 52.0)]
 # Blocks for the SMD parts: rectangle (x1, y1, x2, y2) and the parts, packed in rows
 BLOCKS = [
-    ((27.4, 8.5, 39.2, 25.5), ["Q1", "R1", "D1", "C1", "C2", "D2", "C3", "R21", "R22", "C6", "TP1", "TP2"]),
+    ((27.4, 8.5, 39.2, 25.5), ["Q1", "R1", "D1", "C1", "C2", "D2", "C3", "R21", "R22", "C6", "TP1", "TP2", "C12", "Q9", "R33"]),
     ((0.8, 8.5, 13.1, 31.0), ["D5", "R8", "R9", "Q3", "R10", "Q4", "R11", "R12", "Q5", "R13", "R14", "R15", "D7",
-                              "R20", "LED2", "TP4", "D6", "R16", "R18", "R19"]),
-    ((13.6, 20.6, 26.6, 35.4), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "R7", "LED1", "U4", "C10"]),
+                              "R20", "TP4", "D6", "R16", "R18", "R19"]),
+    ((13.6, 20.6, 26.6, 35.4), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "R7", "U4", "C10",
+                                "U5", "R34", "Q10"]),
+    # LED dimmer supply and switch: the free strip right of the meter jack
+    ((25.9, 0.7, 32.2, 8.4), ["U6", "C11"]),
     ((0.8, 31.0, 13.1, 55.2), ["Q6", "R23", "C7", "R24", "Q7", "R25", "R26", "C8", "U3", "R27", "R28", "Q8",
-                               "R29", "R30", "C9", "R31", "LED3"]),
+                               "R29", "R30", "C9", "R31"]),
     ((27.4, 26.0, 30.4, 51.0), ["TP3", "TP5", "TP6", "TP7"]),
 ]
 

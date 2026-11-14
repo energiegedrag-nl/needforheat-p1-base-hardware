@@ -20,7 +20,8 @@ NETV = {
  "G34_EXTREQ": (0, th(VM, 47e3, 68e3)), "LED2_A": (0, V5),
  "CHG_GATE": (0, VM), "CHG_GATE_DRV": (0, VM), "CHG_EN": (0, 3.3), "G25_CHG": (0, 3.3), "CHG_IN": (0, VM),
  "PROG": (0, 1.0), "PROG_HI": (0, 1.0), "CHG_HI": (0, 3.3), "G14_CHGHI": (0, 3.3), "COREINK_BAT": (0, 4.25),
- "CHRG_N": (0, VM), "LED3_A": (0, VM),
+ "CHRG_N": (0, V5), "LED3_A": (0, V5),
+ "V3LED": (0, 3.3), "G21_SDA": (0, 3.3), "G22_SCL": (0, 3.3), "LED_DIM": (0, 3.3), "VLED_G": (0, V5), "VLED": (0, V5),
 }
 # ---- pin limits: (part prefix or value, pad) -> (min, max, note) ----
 ESP = (-0.3, 3.6, "ESP32 GPIO, VDD+0.3 at VDD=3.3 (abs max 3.6)")
@@ -34,13 +35,16 @@ def limits(fp, pad, net):
     if v == "74LVC1G14": return {"2": (-0.5, 6.5, "input"), "4": (-0.5, 6.5, "output"), "5": (-0.5, 6.5, "VCC"), "3": (0, 0, "GND"), "1": (-9, 9, "NC")}[pad]
     if v == "TP4056": return {"4": (-0.3, 8, "VCC"), "8": (-0.3, 8, "CE"), "1": (-0.3, 10, "TEMP"), "2": (-0.3, 10, "PROG"),
                               "5": (-0.3, 7, "BAT"), "7": (-0.3, 10, "CHRG#"), "6": (-0.3, 10, "STDBY#"), "3": (0, 0, "GND"), "9": (0, 0, "EP")}[pad]
+    if v == "PCA9633DP1": return {"8": (-0.5, 6.0, "VDD"), "7": (-0.5, 6.0, "SDA"), "6": (-0.5, 6.0, "SCL"),
+                                  "1": (-0.5, 6.0, "LED0 (5.5 V tolerant output)"), "5": (0, 0, "VSS")}.get(pad, (-0.5, 6.0, "LEDn"))
+    if v == "XC6206P332MR": return {"3": (-0.3, 6.5, "VIN"), "2": (-0.3, 3.6, "VOUT (VIN+0.3, here 3.3 V rail)"), "1": (0, 0, "GND")}[pad]
     if v == "BAT54C": return (-30, 30, "Vr 30 V")
     if v == "1N5819WS": return (-40, 40, "Vr 40 V")
     if v in ("SMF5.0A", "SMF6.0A"): return (-0.5, float(v[3:6]), f"TVS stand-off {v[3:6]} V (leakage rises above)")
     if v == "PESD5V0S1BB": return (-5.0, 5.0, "TVS stand-off +/-5 V")
     if v.startswith("LED"): return (-99, 99, "LED: never reverse biased here (series R from the supply side)")
     if ref == "J1":
-        return {"G13": ESP, "G14": ESP, "G25": ESP, "G26": ESP, "G34": ESP, "G36": ESP,
+        return {"G13": ESP, "G14": ESP, "G25": ESP, "G26": ESP, "G34": ESP, "G36": ESP, "G21": ESP, "G22": ESP,
                 "BAT": (0, 4.35, "CoreInk battery pin (Li-ion)"), "5VOUT": (0, 5.5, "CoreInk 5V out"), "GND": (0, 0, "GND"),
                 "3V3": (0, 3.6, "CoreInk 3.3 V rail")}.get(pad, (-9, 9, "NC"))
     if ref in ("J2", "J3"): return (-30, 30, "RJ12 contact")

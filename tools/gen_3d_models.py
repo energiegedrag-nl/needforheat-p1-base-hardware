@@ -5,6 +5,7 @@
   DS1133-S60BPX (C77859) from LCSC data: 14.6 x 13 x 14.5 mm.
 - 2x8 2.54 mm stacking female header (C72555): 8.5 mm body above the board, long
   pins through the board into the CoreInk socket.
+- Lite-On LTST-S220 side-looking LED (the three indicator LEDs at the top edge).
 
 Models are approximations meant for renders and enclosure fit checks, not for
 mechanical sign-off. Origin = footprint origin, z = 0 at the top of the board. Shapes are drawn in
@@ -84,10 +85,23 @@ def stacking_header():
     asm.add(pins, name="pins", color=GOLD)
     return asm
 
+def side_led():
+    """Lite-On LTST-S220 side-looking LED: about 2.2 x 1.0 x 0.9 mm, lens on the -y face (VERIFY)."""
+    body = cq.Workplane("XY").box(2.2, 1.0, 0.9, centered=(True, True, False))
+    lens = cq.Workplane("XY").box(1.2, 0.1, 0.6, centered=(True, True, False)).translate((0, -0.5, 0.15))
+    ends = cq.Workplane("XY").pushPoints([(-1.0, 0), (1.0, 0)]).box(0.25, 1.02, 0.92, centered=(True, True, False))
+    asm = cq.Assembly(name="LTST_S220")
+    asm.add(body.cut(lens).mirror("XZ"), name="body", color=cq.Color(0.95, 0.95, 0.92))
+    asm.add(lens.mirror("XZ"), name="lens", color=cq.Color(0.85, 0.9, 1.0))
+    asm.add(ends.mirror("XZ"), name="terminals", color=METAL)
+    return asm
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, asm in (("RJ12_6P6C_Horizontal_approx", rj12()), ("RJ12_EVERCOM_5301_approx", rj12_5301()),
-                      ("StackingHeader_2x08_P2.54mm_approx", stacking_header())):
+                      ("StackingHeader_2x08_P2.54mm_approx", stacking_header()),
+                      ("LED_LiteOn_LTST-S220_approx", side_led())):
         path = os.path.join(OUT, name + ".step")
         asm.save(path, exportType="STEP")
         print("wrote", os.path.normpath(path))

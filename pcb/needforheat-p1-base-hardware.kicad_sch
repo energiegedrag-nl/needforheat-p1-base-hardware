@@ -1330,6 +1330,214 @@
 							(font
 								(size 1.27 1.27))))))
 			(embedded_fonts no))
+		(symbol "Regulator_Linear:XC6206PxxxMR"
+			(pin_names
+				(offset 0.254))
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at -3.81 3.175 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Value" "XC6206PxxxMR"
+				(at 0 3.175 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(justify left)))
+			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-3"
+				(at 0 5.715 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+						(italic yes))))
+			(property "Datasheet" "https://www.torexsemi.com/file/xc6206/XC6206.pdf"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Description" "Positive 60-250mA Low Dropout Regulator, Fixed Output, SOT-23"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "ki_keywords" "Torex LDO Voltage Regulator Fixed Positive"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "ki_fp_filters" "SOT?23?3*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(symbol "XC6206PxxxMR_0_1"
+				(rectangle
+					(start -5.08 1.905)
+					(end 5.08 -5.08)
+					(stroke
+						(width 0.254)
+						(type default))
+					(fill
+						(type background))))
+			(symbol "XC6206PxxxMR_1_1"
+				(pin power_in line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin power_out line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "VO"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin power_in line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "VI"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27))))))
+			(embedded_fonts no))
+		(symbol "p1base:V3LED"
+			(power global)
+			(pin_numbers
+				(hide yes))
+			(pin_names
+				(offset 0)
+				(hide yes))
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Value" "V3LED"
+				(at 0 3.556 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Footprint" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Description" "Power symbol creates a global label with name \"V3LED\""
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(symbol "V3LED_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27)
+						(xy 0 2.54))
+					(stroke
+						(width 0)
+						(type default))
+					(fill
+						(type none)))
+				(polyline
+					(pts
+						(xy 0 2.54)
+						(xy 0.762 1.27))
+					(stroke
+						(width 0)
+						(type default))
+					(fill
+						(type none)))
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 2.54))
+					(stroke
+						(width 0)
+						(type default))
+					(fill
+						(type none))))
+			(symbol "V3LED_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27))))))
+			(embedded_fonts no))
 		(symbol "Device:D_TVS"
 			(pin_numbers
 				(hide yes))
@@ -1990,6 +2198,138 @@
 							(font
 								(size 1.27 1.27))))))
 			(embedded_fonts no))
+		(symbol "p1base:PCA9633_8pin"
+			(pin_names
+				(offset 1.016))
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Value" "PCA9633"
+				(at 0 -11.43 0)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Footprint" "Package_SO:TSSOP-8_3x3mm_P0.65mm"
+				(at 0 -13.97 0)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(hide yes)))
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(hide yes)))
+			(property "Description" "4-channel I2C LED driver (8-pin: fixed address 0x62), 97 kHz individual and 190 Hz group PWM"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(hide yes)))
+			(symbol "PCA9633_8pin_0_1"
+				(rectangle
+					(start -7.62 5.08)
+					(end 7.62 -10.16)
+					(stroke
+						(width 0.254)
+						(type default))
+					(fill
+						(type background))))
+			(symbol "PCA9633_8pin_1_1"
+				(pin power_in line
+					(at -10.16 2.54 0)
+					(length 2.54)
+					(name "VDD"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin bidirectional line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "SDA"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin input line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "SCL"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin open_collector line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "LED0"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin open_collector line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "LED1"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin open_collector line
+					(at 10.16 -2.54 180)
+					(length 2.54)
+					(name "LED2"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin open_collector line
+					(at 10.16 -5.08 180)
+					(length 2.54)
+					(name "LED3"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin power_in line
+					(at 0 -12.7 90)
+					(length 2.54)
+					(name "VSS"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)))))))
 		(symbol "Diode:1N5819WS"
 			(pin_numbers
 				(hide yes))
@@ -4057,6 +4397,396 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "960d31a0-c239-5379-b24a-9212c223f542"))
+	(symbol
+		(lib_id "Regulator_Linear:XC6206PxxxMR")
+		(at 119.38 86.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8747bb3e-107f-57b8-b0d8-f1d101f6c6ac")
+		(property "Reference" "U6"
+			(at 119.38 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Value" "XC6206P332MR"
+			(at 119.38 80.64 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-3"
+			(at 119.38 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 119.38 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C5446"
+			(at 119.38 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "7ec3ab03-734a-5208-a2c5-d72844e0fe54"))
+		(pin "2"
+			(uuid "6a477a56-429c-573e-b6f7-501b7e23be78"))
+		(pin "3"
+			(uuid "ab5c4524-644c-5fda-928c-e4605fb59775"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "U6")
+					(unit 1)))))
+	(symbol
+		(lib_id "Device:C")
+		(at 104.14 90.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ee2659cb-1404-508e-84b8-3fa2e49dcb16")
+		(property "Reference" "C11"
+			(at 106.68 89.53 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Value" "1u"
+			(at 106.68 92.08 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 104.14 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 104.14 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C15849"
+			(at 104.14 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "59d6a345-615f-51e9-98c9-b75a0176409c"))
+		(pin "2"
+			(uuid "09f6b3ff-edb0-5756-b0c8-eba458cb01e5"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "C11")
+					(unit 1)))))
+	(symbol
+		(lib_id "Device:C")
+		(at 134.62 90.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d27c0438-f8e6-5da3-a0a6-a4a0080f0cd0")
+		(property "Reference" "C12"
+			(at 137.16 89.53 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Value" "1u"
+			(at 137.16 92.08 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 134.62 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 134.62 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C15849"
+			(at 134.62 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "ffb77d57-a033-5688-89b8-e4ce92d4d8fd"))
+		(pin "2"
+			(uuid "a3b5bfd0-88dd-512c-a004-9b5bc52f8fa8"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "C12")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 99.06 86.36)
+			(xy 104.14 86.36))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "504d8488-fad2-5428-8ee1-2645028beb5f"))
+	(wire
+		(pts
+			(xy 104.14 86.36)
+			(xy 111.76 86.36))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "099ad144-0fc8-5ff9-a8dd-a1aba55d2fb8"))
+	(symbol
+		(lib_id "p1base:V5")
+		(at 99.06 86.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "5af21608-c5ac-5a13-8c98-64ddc4d767a7")
+		(property "Reference" "#PWR012"
+			(at 99.06 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "V5"
+			(at 99.06 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 99.06 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 99.06 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "6d7a8134-a471-505c-b88b-30621d103384"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR012")
+					(unit 1)))))
+	(symbol
+		(lib_id "power:GND")
+		(at 104.14 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "928088dc-796e-5c32-8ddc-33fd1254a224")
+		(property "Reference" "#PWR013"
+			(at 104.14 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "GND"
+			(at 104.14 98.425 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Footprint" ""
+			(at 104.14 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 104.14 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "d1cd038b-ff88-5f35-884e-899a57928882"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR013")
+					(unit 1)))))
+	(symbol
+		(lib_id "power:GND")
+		(at 119.38 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "56dd5a3f-8e94-5767-9951-83d1eff65b7d")
+		(property "Reference" "#PWR014"
+			(at 119.38 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "GND"
+			(at 119.38 98.425 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Footprint" ""
+			(at 119.38 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 119.38 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "95d4ce09-3cf6-585b-91a8-52e63ef62e26"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR014")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 127 86.36)
+			(xy 134.62 86.36))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "24427e81-9024-564b-988e-3a937700cc1c"))
+	(wire
+		(pts
+			(xy 134.62 86.36)
+			(xy 142.24 86.36))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "63138fd6-1970-5e9b-802a-0ba3853d6ece"))
+	(symbol
+		(lib_id "power:GND")
+		(at 134.62 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "cb8bf199-ba96-5d2d-985c-83a398c46d34")
+		(property "Reference" "#PWR015"
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "GND"
+			(at 134.62 98.425 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Footprint" ""
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 134.62 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "539e6447-36ff-5d80-9a19-336dab53c42f"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR015")
+					(unit 1)))))
+	(symbol
+		(lib_id "p1base:V3LED")
+		(at 142.24 86.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "2fd12b47-d950-5e8b-8e88-96f99f105948")
+		(property "Reference" "#PWR016"
+			(at 142.24 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "V3LED"
+			(at 142.24 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 142.24 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 142.24 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "f4707bd7-8ec4-565b-82cd-054996bd640b"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR016")
+					(unit 1)))))
+	(text "U6: 3.3 V for the LED dimmer (U5), from V5, so U5 keeps"
+		(exclude_from_sim no)
+		(at 83.82 111.76 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "9c2b32a5-9a68-56d4-a043-f7608173f072"))
+	(text "its setting while the CoreInk is switched off."
+		(exclude_from_sim no)
+		(at 83.82 114.3 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "b0242b56-2306-52be-8e5f-86c83e352f42"))
 	(rectangle
 		(start 157.48 15.24)
 		(end 320.04 119.38)
@@ -4392,7 +5122,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify right)))
-		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
+		(property "Footprint" "p1base:LED_LiteOn_LTST-S220_SideView"
 			(at 241.3 46.99 0)
 			(effects
 				(font
@@ -4404,7 +5134,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C12624"
+		(property "LCSC" "C160469"
 			(at 241.3 46.99 0)
 			(effects
 				(font
@@ -4755,8 +5485,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "5af21608-c5ac-5a13-8c98-64ddc4d767a7")
-		(property "Reference" "#PWR012"
+		(uuid "7a9912a2-321f-5a35-8ad5-2e5c0f55b162")
+		(property "Reference" "#PWR017"
 			(at 182.88 64.77 0)
 			(effects
 				(font
@@ -4781,11 +5511,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "6d7a8134-a471-505c-b88b-30621d103384"))
+			(uuid "0d28f622-2326-52de-b38d-e53b25eac7be"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR012")
+					(reference "#PWR017")
 					(unit 1)))))
 	(wire
 		(pts
@@ -4850,8 +5580,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "928088dc-796e-5c32-8ddc-33fd1254a224")
-		(property "Reference" "#PWR013"
+		(uuid "17551478-cf0e-55cb-8f2d-fe3ab9075658")
+		(property "Reference" "#PWR018"
 			(at 203.2 43.18 0)
 			(effects
 				(font
@@ -4875,11 +5605,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "d1cd038b-ff88-5f35-884e-899a57928882"))
+			(uuid "7e7ccad2-8b6a-5d50-b0e6-fbaea834e786"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR013")
+					(reference "#PWR018")
 					(unit 1)))))
 	(wire
 		(pts
@@ -4913,8 +5643,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "56dd5a3f-8e94-5767-9951-83d1eff65b7d")
-		(property "Reference" "#PWR014"
+		(uuid "757eecbe-d7f7-5377-84df-ab6e0ac0e6b5")
+		(property "Reference" "#PWR019"
 			(at 218.44 38.1 0)
 			(effects
 				(font
@@ -4938,11 +5668,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "95d4ce09-3cf6-585b-91a8-52e63ef62e26"))
+			(uuid "f6329323-2dd0-586e-8c53-ad2bf6ad3f3e"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR014")
+					(reference "#PWR019")
 					(unit 1)))))
 	(symbol
 		(lib_id "power:GND")
@@ -4952,8 +5682,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "cb8bf199-ba96-5d2d-985c-83a398c46d34")
-		(property "Reference" "#PWR015"
+		(uuid "d814f9bb-f354-588f-bb81-2076d869f153")
+		(property "Reference" "#PWR020"
 			(at 228.6 48.26 0)
 			(effects
 				(font
@@ -4978,11 +5708,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "539e6447-36ff-5d80-9a19-336dab53c42f"))
+			(uuid "cc99e0d9-696e-5fd9-b501-ef51652da520"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR015")
+					(reference "#PWR020")
 					(unit 1)))))
 	(symbol
 		(lib_id "power:GND")
@@ -4992,8 +5722,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "2fd12b47-d950-5e8b-8e88-96f99f105948")
-		(property "Reference" "#PWR016"
+		(uuid "dafad827-f378-5f99-a0be-180a026822b8")
+		(property "Reference" "#PWR021"
 			(at 218.44 66.04 0)
 			(effects
 				(font
@@ -5018,11 +5748,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "f4707bd7-8ec4-565b-82cd-054996bd640b"))
+			(uuid "c6ec347e-5d76-54cc-82a8-124c3eabf00e"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR016")
+					(reference "#PWR021")
 					(unit 1)))))
 	(wire
 		(pts
@@ -5094,45 +5824,13 @@
 				(size 1 1))
 			(justify left bottom))
 		(uuid "03d382b6-d395-5800-b094-4d7f17a040a5"))
-	(symbol
-		(lib_id "p1base:V5")
-		(at 241.3 31.75 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "7a9912a2-321f-5a35-8ad5-2e5c0f55b162")
-		(property "Reference" "#PWR017"
-			(at 241.3 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "Value" "V5"
-			(at 241.3 27.305 0)
-			(effects
-				(font
-					(size 1.27 1.27))))
-		(property "Footprint" ""
-			(at 241.3 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "Datasheet" ""
-			(at 241.3 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(pin "1"
-			(uuid "0d28f622-2326-52de-b38d-e53b25eac7be"))
-		(instances
-			(project "needforheat-p1-base-hardware"
-				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR017")
-					(unit 1)))))
+	(label "VLED"
+		(at 241.3 31.75 90)
+		(effects
+			(font
+				(size 1 1))
+			(justify left bottom))
+		(uuid "1c15f553-db97-54c6-bd4c-684ea7cb8f8b"))
 	(symbol
 		(lib_id "power:GND")
 		(at 259.08 60.96 0)
@@ -5141,8 +5839,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "17551478-cf0e-55cb-8f2d-fe3ab9075658")
-		(property "Reference" "#PWR018"
+		(uuid "c5f813e7-3117-5351-a47a-b74400d1be16")
+		(property "Reference" "#PWR022"
 			(at 259.08 60.96 0)
 			(effects
 				(font
@@ -5167,11 +5865,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "7e7ccad2-8b6a-5d50-b0e6-fbaea834e786"))
+			(uuid "68de6298-2540-54c0-8555-221bb121eb04"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR018")
+					(reference "#PWR022")
 					(unit 1)))))
 	(wire
 		(pts
@@ -5236,8 +5934,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "757eecbe-d7f7-5377-84df-ab6e0ac0e6b5")
-		(property "Reference" "#PWR019"
+		(uuid "a3c3d0a5-7eee-5c14-953c-1dd6073eb542")
+		(property "Reference" "#PWR023"
 			(at 284.48 34.29 0)
 			(effects
 				(font
@@ -5261,11 +5959,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "f6329323-2dd0-586e-8c53-ad2bf6ad3f3e"))
+			(uuid "2e0db73c-854a-5ee9-a9e1-1daf5ffabd80"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR019")
+					(reference "#PWR023")
 					(unit 1)))))
 	(wire
 		(pts
@@ -5283,8 +5981,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "d814f9bb-f354-588f-bb81-2076d869f153")
-		(property "Reference" "#PWR020"
+		(uuid "fa5a4adb-e0ca-5a51-9970-8e1fd89e0146")
+		(property "Reference" "#PWR024"
 			(at 292.1 54.61 0)
 			(effects
 				(font
@@ -5309,11 +6007,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "cc99e0d9-696e-5fd9-b501-ef51652da520"))
+			(uuid "5c4a4ca2-956b-59f5-b859-5997828dcf81"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR020")
+					(reference "#PWR024")
 					(unit 1)))))
 	(label "EXT_DATA_OUT"
 		(at 302.26 45.72 0)
@@ -5354,8 +6052,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "dafad827-f378-5f99-a0be-180a026822b8")
-		(property "Reference" "#PWR021"
+		(uuid "bd37edb6-29b2-56f2-b4d1-eec9af849b1e")
+		(property "Reference" "#PWR025"
 			(at 228.6 83.82 0)
 			(effects
 				(font
@@ -5380,11 +6078,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "c6ec347e-5d76-54cc-82a8-124c3eabf00e"))
+			(uuid "89d809bc-cc12-59be-907d-015c2b2e7b67"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR021")
+					(reference "#PWR025")
 					(unit 1)))))
 	(label "COREINK_3V3"
 		(at 236.22 76.2 0)
@@ -5401,8 +6099,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "c5f813e7-3117-5351-a47a-b74400d1be16")
-		(property "Reference" "#PWR022"
+		(uuid "efab5c22-f986-5c02-8d3b-a112ede1fe6e")
+		(property "Reference" "#PWR026"
 			(at 218.44 99.06 0)
 			(effects
 				(font
@@ -5427,11 +6125,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "68de6298-2540-54c0-8555-221bb121eb04"))
+			(uuid "92908f70-cbda-5260-abb1-639bd87bf09c"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR022")
+					(reference "#PWR026")
 					(unit 1)))))
 	(wire
 		(pts
@@ -5490,7 +6188,7 @@
 		(uuid "61975ac9-b4c8-5fb3-8975-6e13e81e7888"))
 	(rectangle
 		(start 325.12 15.24)
-		(end 405.13 119.38)
+		(end 405.13 71.12)
 		(stroke
 			(width 0.2)
 			(type dash)
@@ -5580,8 +6278,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "a3c3d0a5-7eee-5c14-953c-1dd6073eb542")
-		(property "Reference" "#PWR023"
+		(uuid "4148be09-ff8e-5202-ad97-9be8c9cfa776")
+		(property "Reference" "#PWR027"
 			(at 370.84 50.8 0)
 			(effects
 				(font
@@ -5605,11 +6303,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "2e0db73c-854a-5ee9-a9e1-1daf5ffabd80"))
+			(uuid "3b612a87-d9ee-5e9a-a7eb-0c9c08ca3ac7"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR023")
+					(reference "#PWR027")
 					(unit 1)))))
 	(wire
 		(pts
@@ -5666,8 +6364,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "fa5a4adb-e0ca-5a51-9970-8e1fd89e0146")
-		(property "Reference" "#PWR024"
+		(uuid "81579f7b-5be5-52ce-9e9d-055eb1ee543f")
+		(property "Reference" "#PWR028"
 			(at 373.38 66.04 0)
 			(effects
 				(font
@@ -5692,11 +6390,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "5c4a4ca2-956b-59f5-b859-5997828dcf81"))
+			(uuid "31bf78ab-fbfe-5dae-957e-733cfb11f3a3"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR024")
+					(reference "#PWR028")
 					(unit 1)))))
 	(wire
 		(pts
@@ -5713,38 +6411,658 @@
 				(size 1.27 1.27))
 			(justify right bottom))
 		(uuid "337a4f0d-1ce7-5289-96d7-97862caca681"))
-	(text "For a reader that was already on the meter"
+	(text "For a reader that was already on the meter (HomeWizard"
 		(exclude_from_sim no)
-		(at 330.2 86.36 0)
+		(at 330.2 25.4 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "9d85d5bc-df9f-5978-bcac-70bc3934aff4"))
-	(text "(HomeWizard P1 meter, ...): it gets the meter's"
+		(uuid "39b61fcc-927d-51d8-8026-db7aad8c3f7c"))
+	(text "P1 meter, ...): it gets the meter's 5 V and a buffered copy"
 		(exclude_from_sim no)
-		(at 330.2 88.9 0)
+		(at 330.2 27.94 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "375af90f-0e7c-5d6e-82d9-732c3784b02a"))
-	(text "5 V and a buffered copy of the data, and its"
+		(uuid "6265929f-a8f3-5a2f-bce1-15956089677f"))
+	(text "of the data; its data request is passed on to the meter."
 		(exclude_from_sim no)
-		(at 330.2 91.44 0)
+		(at 330.2 30.48 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "379c7f3d-73c9-5c61-8b20-bda6189e4cf4"))
-	(text "data request is passed on to the meter."
+		(uuid "8c7f14fe-27e7-510c-9b73-103937278b1b"))
+	(rectangle
+		(start 325.12 73.66)
+		(end 405.13 119.38)
+		(stroke
+			(width 0.2)
+			(type dash)
+			(color 0 0 132 1))
+		(fill
+			(type none))
+		(uuid "e240b937-03ba-5e64-85b2-3110c55d85b8"))
+	(text "8  LED dimmer (I2C)"
 		(exclude_from_sim no)
-		(at 330.2 93.98 0)
+		(at 327.66 78.74 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(bold yes))
+			(justify left bottom))
+		(uuid "83352bd4-68ed-5b6e-83f0-ecbe877ba0d0"))
+	(no_connect
+		(at 360.68 96.52)
+		(uuid "164befeb-1151-5e1e-b764-88721a4048dd"))
+	(no_connect
+		(at 360.68 99.06)
+		(uuid "fefda056-fb73-59ab-ae1b-2e45beefc366"))
+	(no_connect
+		(at 360.68 101.6)
+		(uuid "5c96d16a-0cde-583e-8b33-05f67494e470"))
+	(symbol
+		(lib_id "p1base:PCA9633_8pin")
+		(at 350.52 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b73dcef7-0bf8-5c7e-98c0-af4da0084bbb")
+		(property "Reference" "U5"
+			(at 350.52 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Value" "PCA9633DP1"
+			(at 351.79 108.58 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Package_SO:TSSOP-8_3x3mm_P0.65mm"
+			(at 350.52 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 350.52 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C88381"
+			(at 350.52 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "8"
+			(uuid "59727bec-944b-5ed8-aae1-50492ae09883"))
+		(pin "7"
+			(uuid "9cb731ba-3f71-509d-b807-bbb1cc909886"))
+		(pin "6"
+			(uuid "29d7a5ca-212d-5b8b-8fa3-33535e6d85f2"))
+		(pin "1"
+			(uuid "f7af10a5-3bf4-5784-87aa-e55fdf4ea5d6"))
+		(pin "2"
+			(uuid "513845e4-b5ef-5800-99fa-5c07a6b31365"))
+		(pin "3"
+			(uuid "68cb1834-71a1-502a-acc6-65b86b61e750"))
+		(pin "4"
+			(uuid "978cd1b0-4600-5857-a2a0-9037b9729475"))
+		(pin "5"
+			(uuid "d6712b68-7bec-598e-a707-182c8d23a8df"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "U5")
+					(unit 1)))))
+	(symbol
+		(lib_id "Device:R")
+		(at 365.76 90.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7ad99d39-bba4-503f-9f2b-86b3eee2a679")
+		(property "Reference" "R34"
+			(at 368.3 89.53 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Value" "100k"
+			(at 368.3 92.08 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 365.76 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 365.76 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C25803"
+			(at 365.76 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "92cd6842-765c-59a2-bde5-906d48cf6bdc"))
+		(pin "2"
+			(uuid "4ec756dc-1e86-57f8-8c7b-879e218303c8"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "R34")
+					(unit 1)))))
+	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 378.46 93.98 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ea24816e-d386-5cbc-a630-1531125a60d9")
+		(property "Reference" "Q10"
+			(at 383.54 93.34 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Value" "2N7002"
+			(at 383.54 95.89 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify left)))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 378.46 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 378.46 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C8545"
+			(at 378.46 93.98 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "6809dc5b-0ad5-55e6-bc0b-ace05b20b8a6"))
+		(pin "2"
+			(uuid "9e07a7ea-ea40-54b7-99ff-538c803a5541"))
+		(pin "3"
+			(uuid "7ae8b7ec-47e5-537e-b47a-807d0171b153"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "Q10")
+					(unit 1)))))
+	(symbol
+		(lib_id "Transistor_FET:AO3401A")
+		(at 396.24 88.9 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b03e8acb-1bd9-5f76-ae17-a470b4e83d7d")
+		(property "Reference" "Q9"
+			(at 397.51 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify right)))
+		(property "Value" "AO3401A"
+			(at 397.51 98.43 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify right)))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 396.24 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 396.24 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C15127"
+			(at 396.24 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "1b44b297-11fa-5fb0-9f14-f4e435733307"))
+		(pin "2"
+			(uuid "a1140732-cc30-5215-aaa2-d0887b8322b4"))
+		(pin "3"
+			(uuid "3720c108-eb14-57a3-967d-08d96af953d2"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "Q9")
+					(unit 1)))))
+	(symbol
+		(lib_id "Device:R")
+		(at 386.08 85.09 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a7346baf-19ca-5fdd-9238-fc2f5c7986d7")
+		(property "Reference" "R33"
+			(at 383.54 84.45 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify right)))
+		(property "Value" "100k"
+			(at 383.54 87 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify right)))
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 386.08 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 386.08 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C25803"
+			(at 386.08 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "e9234bc0-55cc-5e7d-9b6d-238c74267f91"))
+		(pin "2"
+			(uuid "d573d5c3-11aa-5bec-8424-adc22b8735a1"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "R33")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 340.36 93.98)
+			(xy 337.82 93.98))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "84e4b00e-a6a4-5d42-ba66-08dd91408c31"))
+	(wire
+		(pts
+			(xy 337.82 93.98)
+			(xy 337.82 88.9))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "d301f3cb-0d89-500e-936d-8702db44c739"))
+	(symbol
+		(lib_id "p1base:V3LED")
+		(at 337.82 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "a8af7e13-7e00-5e35-96b7-4ebb9be0f2e1")
+		(property "Reference" "#PWR029"
+			(at 337.82 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "V3LED"
+			(at 337.82 84.455 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 337.82 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 337.82 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "7ebacc2e-f95c-5bd7-8f16-d5ee91d8a871"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR029")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 340.36 96.52)
+			(xy 335.28 96.52))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "0ab601ba-1873-54a4-bc2d-8cf41cf9482b"))
+	(label "G21_SDA"
+		(at 335.28 96.52 180)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify right bottom))
+		(uuid "332eff3f-bb0f-5ca3-9041-e09b1eb7f4fa"))
+	(wire
+		(pts
+			(xy 340.36 99.06)
+			(xy 335.28 99.06))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "ff3ff53b-bd8e-537f-957f-9670316cbe98"))
+	(label "G22_SCL"
+		(at 335.28 99.06 180)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify right bottom))
+		(uuid "7b28a584-8820-5ca3-b497-0b53f7aa544c"))
+	(symbol
+		(lib_id "power:GND")
+		(at 350.52 109.22 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "287b7c42-0c32-5c16-a506-23a5ede55fb9")
+		(property "Reference" "#PWR030"
+			(at 350.52 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "GND"
+			(at 350.52 113.665 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Footprint" ""
+			(at 350.52 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 350.52 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "04c0e08f-7860-5d08-8686-194eefd4341e"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR030")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 360.68 93.98)
+			(xy 365.76 93.98))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "3e088377-dedb-5b8e-a298-558158e2566f"))
+	(wire
+		(pts
+			(xy 365.76 93.98)
+			(xy 373.38 93.98))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "c4793a86-5e02-524f-81ec-4eb004b0d727"))
+	(label "LED_DIM"
+		(at 360.68 93.98 90)
+		(effects
+			(font
+				(size 1 1))
+			(justify left bottom))
+		(uuid "01a08416-c98b-54ee-9cf5-22f5cfe056e8"))
+	(symbol
+		(lib_id "p1base:V3LED")
+		(at 365.76 86.36 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "87183db7-7a7f-5932-b39f-44ae6c3937fc")
+		(property "Reference" "#PWR031"
+			(at 365.76 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "V3LED"
+			(at 365.76 81.915 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 365.76 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 365.76 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "261ab5f2-54cb-5323-aa56-99af8656cba3"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR031")
+					(unit 1)))))
+	(symbol
+		(lib_id "power:GND")
+		(at 381 99.06 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "0852239e-add9-59c9-bf26-32f7eb2e4989")
+		(property "Reference" "#PWR032"
+			(at 381 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "GND"
+			(at 381 103.505 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Footprint" ""
+			(at 381 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 381 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "357c23d4-579c-53ce-9f94-310ae5df5bec"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR032")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 381 88.9)
+			(xy 386.08 88.9))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "7789ee98-8b3e-54a6-b284-a19429c1a2d1"))
+	(wire
+		(pts
+			(xy 386.08 88.9)
+			(xy 388.62 88.9))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "f2b6dfd6-4dcb-530f-aa50-5b5b07b27dfc"))
+	(wire
+		(pts
+			(xy 388.62 88.9)
+			(xy 391.16 88.9))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "4287c357-5110-58e7-88a7-bf23dbcb638e"))
+	(label "VLED_G"
+		(at 388.62 88.9 270)
+		(effects
+			(font
+				(size 1 1))
+			(justify right bottom))
+		(uuid "c05ae810-e7a0-5e97-98be-406ad4f214fd"))
+	(wire
+		(pts
+			(xy 386.08 81.28)
+			(xy 398.78 81.28))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "e6b156bc-f4d8-5732-8dfd-e3c43e127ba6"))
+	(wire
+		(pts
+			(xy 398.78 81.28)
+			(xy 398.78 83.82))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "18979da8-ec20-59e9-ac0e-0982315e4555"))
+	(symbol
+		(lib_id "p1base:V5")
+		(at 398.78 81.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "5a0946c8-c6e8-52c7-ab9b-a99ef996f3bf")
+		(property "Reference" "#PWR033"
+			(at 398.78 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Value" "V5"
+			(at 398.78 76.835 0)
+			(effects
+				(font
+					(size 1.27 1.27))))
+		(property "Footprint" ""
+			(at 398.78 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 398.78 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "e7b0c988-e201-5641-8183-e2967db69e98"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "#PWR033")
+					(unit 1)))))
+	(wire
+		(pts
+			(xy 398.78 93.98)
+			(xy 398.78 101.6))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "66a7d5be-18f1-5d9a-bed0-95a768efa161"))
+	(label "VLED"
+		(at 398.78 101.6 270)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify right bottom))
+		(uuid "72196807-fb0f-57ea-ae20-29d94041b3ee"))
+	(text "Q9 switches VLED, the supply of LED1-3; U5 (address 0x62) dims it at 190 Hz."
+		(exclude_from_sim no)
+		(at 327.66 114.3 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "3b340a41-97ff-5799-8acf-a55eceb8260f"))
+		(uuid "435cf69a-e4f8-52f4-abe6-92b5d2d650c4"))
+	(text "U5 not set up (after power-up): LEDs at full brightness. See design-v3.md."
+		(exclude_from_sim no)
+		(at 327.66 116.84 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "58a19acb-5b03-5d46-8f99-852f76eedbdc"))
 	(rectangle
 		(start 15.24 124.46)
 		(end 190.5 241.3)
@@ -6121,7 +7439,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify right)))
-		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
+		(property "Footprint" "p1base:LED_LiteOn_LTST-S220_SideView"
 			(at 106.68 160.02 0)
 			(effects
 				(font
@@ -6133,7 +7451,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C2287"
+		(property "LCSC" "C160468"
 			(at 106.68 160.02 0)
 			(effects
 				(font
@@ -6714,8 +8032,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "bd37edb6-29b2-56f2-b4d1-eec9af849b1e")
-		(property "Reference" "#PWR025"
+		(uuid "2554aea9-60bd-55d6-846c-5a7d553bdce1")
+		(property "Reference" "#PWR034"
 			(at 38.1 186.69 0)
 			(effects
 				(font
@@ -6740,11 +8058,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "89d809bc-cc12-59be-907d-015c2b2e7b67"))
+			(uuid "a91e4799-a77c-529d-a5d5-8a7c43874ace"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR025")
+					(reference "#PWR034")
 					(unit 1)))))
 	(wire
 		(pts
@@ -6793,8 +8111,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "efab5c22-f986-5c02-8d3b-a112ede1fe6e")
-		(property "Reference" "#PWR026"
+		(uuid "424863ca-e77a-5c7e-b99e-5edc00718ca3")
+		(property "Reference" "#PWR035"
 			(at 55.88 187.96 0)
 			(effects
 				(font
@@ -6819,11 +8137,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "92908f70-cbda-5260-abb1-639bd87bf09c"))
+			(uuid "da027b7d-5f98-53a2-b202-0e6bf928efdb"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR026")
+					(reference "#PWR035")
 					(unit 1)))))
 	(symbol
 		(lib_id "p1base:V5")
@@ -6833,8 +8151,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "4148be09-ff8e-5202-ad97-9be8c9cfa776")
-		(property "Reference" "#PWR027"
+		(uuid "f089e661-0630-5a10-992e-4ead86243cd2")
+		(property "Reference" "#PWR036"
 			(at 68.58 162.56 0)
 			(effects
 				(font
@@ -6858,11 +8176,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "3b612a87-d9ee-5e9a-a7eb-0c9c08ca3ac7"))
+			(uuid "5e898856-509b-52bc-8c56-4a9736b04f72"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR027")
+					(reference "#PWR036")
 					(unit 1)))))
 	(wire
 		(pts
@@ -6927,8 +8245,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "81579f7b-5be5-52ce-9e9d-055eb1ee543f")
-		(property "Reference" "#PWR028"
+		(uuid "578556d1-77c4-52f4-b632-89bbc4a79e93")
+		(property "Reference" "#PWR037"
 			(at 81.28 156.21 0)
 			(effects
 				(font
@@ -6952,11 +8270,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "31bf78ab-fbfe-5dae-957e-733cfb11f3a3"))
+			(uuid "3e2108e7-d6ef-5c4f-80c0-10825a8c39a4"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR028")
+					(reference "#PWR037")
 					(unit 1)))))
 	(wire
 		(pts
@@ -6974,8 +8292,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "a8af7e13-7e00-5e35-96b7-4ebb9be0f2e1")
-		(property "Reference" "#PWR029"
+		(uuid "9f400a94-47a8-5896-a5db-26ad4c57cd7b")
+		(property "Reference" "#PWR038"
 			(at 88.9 177.8 0)
 			(effects
 				(font
@@ -7000,11 +8318,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "7ebacc2e-f95c-5bd7-8f16-d5ee91d8a871"))
+			(uuid "78f0ba88-8278-5359-a915-4b2831f15f9f"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR029")
+					(reference "#PWR038")
 					(unit 1)))))
 	(wire
 		(pts
@@ -7029,45 +8347,13 @@
 				(size 1 1))
 			(justify right bottom))
 		(uuid "327d2eec-b197-5313-ac29-5d847fefc171"))
-	(symbol
-		(lib_id "p1base:V5")
-		(at 106.68 146.05 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "287b7c42-0c32-5c16-a506-23a5ede55fb9")
-		(property "Reference" "#PWR030"
-			(at 106.68 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "Value" "V5"
-			(at 106.68 141.605 0)
-			(effects
-				(font
-					(size 1.27 1.27))))
-		(property "Footprint" ""
-			(at 106.68 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "Datasheet" ""
-			(at 106.68 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(pin "1"
-			(uuid "04c0e08f-7860-5d08-8686-194eefd4341e"))
-		(instances
-			(project "needforheat-p1-base-hardware"
-				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR030")
-					(unit 1)))))
+	(label "VLED"
+		(at 106.68 146.05 90)
+		(effects
+			(font
+				(size 1 1))
+			(justify left bottom))
+		(uuid "813acb91-6310-58f9-a11e-fe955050b933"))
 	(wire
 		(pts
 			(xy 99.06 180.34)
@@ -7084,8 +8370,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "87183db7-7a7f-5932-b39f-44ae6c3937fc")
-		(property "Reference" "#PWR031"
+		(uuid "6b021931-c3f9-5bc4-b96a-a7c2adb52e95")
+		(property "Reference" "#PWR039"
 			(at 99.06 190.5 0)
 			(effects
 				(font
@@ -7110,11 +8396,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "261ab5f2-54cb-5323-aa56-99af8656cba3"))
+			(uuid "c614df42-3905-5485-bc08-8b249ae63948"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR031")
+					(reference "#PWR039")
 					(unit 1)))))
 	(wire
 		(pts
@@ -7170,8 +8456,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "0852239e-add9-59c9-bf26-32f7eb2e4989")
-		(property "Reference" "#PWR032"
+		(uuid "07f42222-8691-59a0-9d86-8d372ffcb6a8")
+		(property "Reference" "#PWR040"
 			(at 86.36 195.58 0)
 			(effects
 				(font
@@ -7196,11 +8482,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "357c23d4-579c-53ce-9f94-310ae5df5bec"))
+			(uuid "51547ac2-35e3-57ec-bd3b-b7bc7c58d15f"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR032")
+					(reference "#PWR040")
 					(unit 1)))))
 	(wire
 		(pts
@@ -7218,8 +8504,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "5a0946c8-c6e8-52c7-ab9b-a99ef996f3bf")
-		(property "Reference" "#PWR033"
+		(uuid "452f520d-a639-5d0e-a365-8f6cc901a6f3")
+		(property "Reference" "#PWR041"
 			(at 116.84 190.5 0)
 			(effects
 				(font
@@ -7244,11 +8530,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "e7b0c988-e201-5641-8183-e2967db69e98"))
+			(uuid "c346c7be-4b5a-594a-be4e-582cb723ee25"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR033")
+					(reference "#PWR041")
 					(unit 1)))))
 	(wire
 		(pts
@@ -7289,8 +8575,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "2554aea9-60bd-55d6-846c-5a7d553bdce1")
-		(property "Reference" "#PWR034"
+		(uuid "ced8ed9a-f432-57c9-b3c6-ef63988b3db8")
+		(property "Reference" "#PWR042"
 			(at 129.54 195.58 0)
 			(effects
 				(font
@@ -7315,11 +8601,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "a91e4799-a77c-529d-a5d5-8a7c43874ace"))
+			(uuid "59d94315-f5ac-5d53-8a86-e2b69ec702ec"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR034")
+					(reference "#PWR042")
 					(unit 1)))))
 	(wire
 		(pts
@@ -7430,8 +8716,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "424863ca-e77a-5c7e-b99e-5edc00718ca3")
-		(property "Reference" "#PWR035"
+		(uuid "40508b8d-1b61-5330-a7ea-66f445a172f6")
+		(property "Reference" "#PWR043"
 			(at 144.78 207.01 0)
 			(effects
 				(font
@@ -7456,11 +8742,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "da027b7d-5f98-53a2-b202-0e6bf928efdb"))
+			(uuid "0d260832-dfa0-538a-8810-b42d88b224a3"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR035")
+					(reference "#PWR043")
 					(unit 1)))))
 	(wire
 		(pts
@@ -7494,8 +8780,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "f089e661-0630-5a10-992e-4ead86243cd2")
-		(property "Reference" "#PWR036"
+		(uuid "3cab8a29-6344-50a7-bd0c-5e308b419a57")
+		(property "Reference" "#PWR044"
 			(at 170.18 194.31 0)
 			(effects
 				(font
@@ -7520,11 +8806,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "5e898856-509b-52bc-8c56-4a9736b04f72"))
+			(uuid "81d4fde9-3f3c-55f1-8bb4-24db8237f1b4"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR036")
+					(reference "#PWR044")
 					(unit 1)))))
 	(label "EXT_REQ_RAW"
 		(at 175.26 185.42 0)
@@ -7967,7 +9253,7 @@
 					(unit 1)))))
 	(symbol
 		(lib_id "Device:R")
-		(at 236.22 199.39 0)
+		(at 236.22 201.93 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7975,31 +9261,31 @@
 		(dnp no)
 		(uuid "e8c87e59-fe3f-5444-ba2c-392484f3d267")
 		(property "Reference" "R31"
-			(at 238.76 198.75 0)
+			(at 238.76 201.3 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify left)))
 		(property "Value" "2k2"
-			(at 238.76 201.29 0)
+			(at 238.76 203.84 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify left)))
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 236.22 199.39 0)
+			(at 236.22 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
 		(property "Datasheet" ""
-			(at 236.22 199.39 0)
+			(at 236.22 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
 		(property "LCSC" "C4190"
-			(at 236.22 199.39 0)
+			(at 236.22 201.93 0)
 			(effects
 				(font
 					(size 1.27 1.27))
@@ -8015,7 +9301,7 @@
 					(unit 1)))))
 	(symbol
 		(lib_id "Device:LED")
-		(at 236.22 207.01 90)
+		(at 236.22 209.55 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -8023,31 +9309,31 @@
 		(dnp no)
 		(uuid "21d858e6-95cc-56ac-81a5-df970702a548")
 		(property "Reference" "LED3"
-			(at 238.76 206.38 90)
+			(at 238.76 208.92 90)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify right)))
 		(property "Value" "LED red"
-			(at 238.76 208.91 90)
+			(at 238.76 211.46 90)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify right)))
-		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
-			(at 236.22 207.01 0)
+		(property "Footprint" "p1base:LED_LiteOn_LTST-S220_SideView"
+			(at 236.22 209.55 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
 		(property "Datasheet" ""
-			(at 236.22 207.01 0)
+			(at 236.22 209.55 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C2286"
-			(at 236.22 207.01 0)
+		(property "LCSC" "C284935"
+			(at 236.22 209.55 0)
 			(effects
 				(font
 					(size 1.27 1.27))
@@ -8436,8 +9722,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "578556d1-77c4-52f4-b632-89bbc4a79e93")
-		(property "Reference" "#PWR037"
+		(uuid "3a44887c-e465-5226-9c90-632bd59ab448")
+		(property "Reference" "#PWR045"
 			(at 200.66 157.48 0)
 			(effects
 				(font
@@ -8461,11 +9747,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "3e2108e7-d6ef-5c4f-80c0-10825a8c39a4"))
+			(uuid "af195204-ac88-5952-8099-ab1715a02ec2"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR037")
+					(reference "#PWR045")
 					(unit 1)))))
 	(wire
 		(pts
@@ -8529,8 +9815,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "9f400a94-47a8-5896-a5db-26ad4c57cd7b")
-		(property "Reference" "#PWR038"
+		(uuid "2aaee964-5f98-5086-b4a1-404c68e53d2b")
+		(property "Reference" "#PWR046"
 			(at 241.3 167.64 0)
 			(effects
 				(font
@@ -8555,11 +9841,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "78f0ba88-8278-5359-a915-4b2831f15f9f"))
+			(uuid "884b5cfa-f9b1-5eb3-b013-df90f4f7c61b"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR038")
+					(reference "#PWR046")
 					(unit 1)))))
 	(wire
 		(pts
@@ -8600,8 +9886,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "6b021931-c3f9-5bc4-b96a-a7c2adb52e95")
-		(property "Reference" "#PWR039"
+		(uuid "43ead3f9-c958-5309-a4cf-2d45a5d00958")
+		(property "Reference" "#PWR047"
 			(at 254 172.72 0)
 			(effects
 				(font
@@ -8626,11 +9912,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "c614df42-3905-5485-bc08-8b249ae63948"))
+			(uuid "d3708c3d-96dd-54ab-aa84-5c966162644e"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR039")
+					(reference "#PWR047")
 					(unit 1)))))
 	(wire
 		(pts
@@ -8718,8 +10004,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "07f42222-8691-59a0-9d86-8d372ffcb6a8")
-		(property "Reference" "#PWR040"
+		(uuid "39e13ca8-3dc8-58ff-9cc3-42f62f0d5028")
+		(property "Reference" "#PWR048"
 			(at 220.98 203.2 0)
 			(effects
 				(font
@@ -8744,34 +10030,41 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "51547ac2-35e3-57ec-bd3b-b7bc7c58d15f"))
+			(uuid "9cb1447c-84cd-5834-9efa-5ec231604cca"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR040")
+					(reference "#PWR048")
 					(unit 1)))))
+	(label "VLED"
+		(at 236.22 198.12 0)
+		(effects
+			(font
+				(size 1 1))
+			(justify left bottom))
+		(uuid "5431c164-dbb8-5d0d-9b8a-4681087e49b6"))
 	(label "LED3_A"
-		(at 236.22 203.2 180)
+		(at 236.22 205.74 180)
 		(effects
 			(font
 				(size 1 1))
 			(justify right bottom))
-		(uuid "2101ee47-ac49-53d2-9e04-96283d651b58"))
+		(uuid "0a17dcbf-7802-555b-94cd-8ba0f6c80d29"))
 	(wire
 		(pts
-			(xy 236.22 210.82)
-			(xy 231.14 210.82))
+			(xy 236.22 213.36)
+			(xy 231.14 213.36))
 		(stroke
 			(width 0)
 			(type default))
-		(uuid "ccfc55da-1b2f-5c81-8925-ee09e7998f22"))
+		(uuid "f9c13283-2eeb-503e-a09f-58956be6bcde"))
 	(label "CHRG_N"
-		(at 231.14 210.82 180)
+		(at 231.14 213.36 180)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify right bottom))
-		(uuid "c3ddd6fd-2592-5403-bdd0-e2bc3b46d226"))
+		(uuid "71ce8a74-d42a-5641-b052-225dcd63fd09"))
 	(wire
 		(pts
 			(xy 266.7 198.12)
@@ -8812,8 +10105,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "452f520d-a639-5d0e-a365-8f6cc901a6f3")
-		(property "Reference" "#PWR041"
+		(uuid "864ecf2a-eca6-5291-aaa2-fd1b0057c426")
+		(property "Reference" "#PWR049"
 			(at 264.16 210.82 0)
 			(effects
 				(font
@@ -8838,11 +10131,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "c346c7be-4b5a-594a-be4e-582cb723ee25"))
+			(uuid "18fb8488-be55-54c1-be04-8537b808a4bd"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR041")
+					(reference "#PWR049")
 					(unit 1)))))
 	(wire
 		(pts
@@ -8883,8 +10176,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "ced8ed9a-f432-57c9-b3c6-ef63988b3db8")
-		(property "Reference" "#PWR042"
+		(uuid "c3e38107-e4f0-5635-a709-b7799eb916a0")
+		(property "Reference" "#PWR050"
 			(at 256.54 210.82 0)
 			(effects
 				(font
@@ -8909,11 +10202,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "59d94315-f5ac-5d53-8a86-e2b69ec702ec"))
+			(uuid "6bdc7c03-b35b-56c6-8058-e7d8e138b500"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR042")
+					(reference "#PWR050")
 					(unit 1)))))
 	(wire
 		(pts
@@ -8946,8 +10239,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "40508b8d-1b61-5330-a7ea-66f445a172f6")
-		(property "Reference" "#PWR043"
+		(uuid "96b7321c-9680-5a8b-81a9-e9d7b93f5382")
+		(property "Reference" "#PWR051"
 			(at 248.92 223.52 0)
 			(effects
 				(font
@@ -8972,11 +10265,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "0d260832-dfa0-538a-8810-b42d88b224a3"))
+			(uuid "5ac99fea-4066-50c0-9674-0d00485c9eb3"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR043")
+					(reference "#PWR051")
 					(unit 1)))))
 	(wire
 		(pts
@@ -9017,8 +10310,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "3cab8a29-6344-50a7-bd0c-5e308b419a57")
-		(property "Reference" "#PWR044"
+		(uuid "fd423aa8-c934-5110-9d9a-abd3b46242f5")
+		(property "Reference" "#PWR052"
 			(at 238.76 228.6 0)
 			(effects
 				(font
@@ -9043,11 +10336,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "81d4fde9-3f3c-55f1-8bb4-24db8237f1b4"))
+			(uuid "9ee2ed7a-2177-5839-811d-43de14fb9bc6"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR044")
+					(reference "#PWR052")
 					(unit 1)))))
 	(wire
 		(pts
@@ -9096,8 +10389,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "3a44887c-e465-5226-9c90-632bd59ab448")
-		(property "Reference" "#PWR045"
+		(uuid "99273a66-5efe-54ad-bfcc-a7970028379a")
+		(property "Reference" "#PWR053"
 			(at 274.32 213.36 0)
 			(effects
 				(font
@@ -9122,11 +10415,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "af195204-ac88-5952-8099-ab1715a02ec2"))
+			(uuid "72fd5b28-a60a-513b-b30c-f6bd92fc05a6"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR045")
+					(reference "#PWR053")
 					(unit 1)))))
 	(label "CHRG_N"
 		(at 287.02 198.12 0)
@@ -9159,8 +10452,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "2aaee964-5f98-5086-b4a1-404c68e53d2b")
-		(property "Reference" "#PWR046"
+		(uuid "124d5998-b1ff-5885-9c58-120ab5c133c6")
+		(property "Reference" "#PWR054"
 			(at 297.18 203.2 0)
 			(effects
 				(font
@@ -9185,11 +10478,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "884b5cfa-f9b1-5eb3-b013-df90f4f7c61b"))
+			(uuid "a74342f9-9e1e-59d4-b6ae-bd24ce716629"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR046")
+					(reference "#PWR054")
 					(unit 1)))))
 	(label "COREINK_BAT"
 		(at 302.26 195.58 0)
@@ -9247,12 +10540,6 @@
 	(no_connect
 		(at 353.06 160.02)
 		(uuid "e2b35dcd-451f-563b-b1aa-485b2bc94b10"))
-	(no_connect
-		(at 353.06 165.1)
-		(uuid "04871f4b-e259-5d94-a2eb-fa6621c7f59f"))
-	(no_connect
-		(at 378.46 165.1)
-		(uuid "c6f6e74e-b98f-5ad9-ab08-7fb04befdfe1"))
 	(no_connect
 		(at 353.06 167.64)
 		(uuid "1eb7e739-0c59-5052-8694-1a3d5c6d8026"))
@@ -9349,8 +10636,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "43ead3f9-c958-5309-a4cf-2d45a5d00958")
-		(property "Reference" "#PWR047"
+		(uuid "7db6f24e-bb52-5c73-a938-636ed77b32d9")
+		(property "Reference" "#PWR055"
 			(at 347.98 154.94 0)
 			(effects
 				(font
@@ -9375,11 +10662,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "d3708c3d-96dd-54ab-aa84-5c966162644e"))
+			(uuid "6360a12c-23ec-57f0-952f-ad4900e92f4b"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR047")
+					(reference "#PWR055")
 					(unit 1)))))
 	(wire
 		(pts
@@ -9411,6 +10698,36 @@
 				(size 1.27 1.27))
 			(justify right bottom))
 		(uuid "ae0153b7-e3bc-5ec4-9348-1d79e12f4e54"))
+	(wire
+		(pts
+			(xy 353.06 165.1)
+			(xy 345.44 165.1))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "3d5457db-a250-5a5d-ad1f-9e8625f6f902"))
+	(label "G21_SDA"
+		(at 345.44 165.1 180)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify right bottom))
+		(uuid "966e9735-a0fa-57ba-81f8-3264788e3fa4"))
+	(wire
+		(pts
+			(xy 378.46 165.1)
+			(xy 386.08 165.1))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "6f7bab2e-3217-5d45-bd24-18f067b0ca81"))
+	(label "G22_SCL"
+		(at 386.08 165.1 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "f41fa805-ec53-512f-8198-e5471375d0fc"))
 	(wire
 		(pts
 			(xy 378.46 154.94)
@@ -9596,6 +10913,14 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "f588baf8-ef47-56ac-8909-e8fa3949b8d5"))
+	(text "G21/G22  I2C (shared with the RTC): LED dimmer U5"
+		(exclude_from_sim no)
+		(at 330.2 218.44 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "dcd2b5a8-d0fe-5bc3-9b7e-d10c0cfe951a"))
 	(rectangle
 		(start 15.24 246.38)
 		(end 190.5 284.48)
@@ -9678,8 +11003,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "39e13ca8-3dc8-58ff-9cc3-42f62f0d5028")
-		(property "Reference" "#PWR048"
+		(uuid "79c5dd23-9b10-537f-b1eb-d72dc81fb264")
+		(property "Reference" "#PWR056"
 			(at 27.94 264.16 0)
 			(effects
 				(font
@@ -9703,11 +11028,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "9cb1447c-84cd-5834-9efa-5ec231604cca"))
+			(uuid "8e6169ff-674e-5815-b397-2926f195b5d1"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR048")
+					(reference "#PWR056")
 					(unit 1)))))
 	(symbol
 		(lib_id "Connector:TestPoint")
@@ -9772,8 +11097,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "864ecf2a-eca6-5291-aaa2-fd1b0057c426")
-		(property "Reference" "#PWR049"
+		(uuid "18e4e9d2-3016-55e2-9084-a55150c25087")
+		(property "Reference" "#PWR057"
 			(at 48.26 264.16 0)
 			(effects
 				(font
@@ -9797,11 +11122,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "18fb8488-be55-54c1-be04-8537b808a4bd"))
+			(uuid "270928c8-2cca-562f-8938-922eabc83e6f"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR049")
+					(reference "#PWR057")
 					(unit 1)))))
 	(symbol
 		(lib_id "Connector:TestPoint")
@@ -10074,8 +11399,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "c3e38107-e4f0-5635-a709-b7799eb916a0")
-		(property "Reference" "#PWR050"
+		(uuid "4a2fb42e-7bba-589b-a33e-8bd1fe942501")
+		(property "Reference" "#PWR058"
 			(at 144.78 264.16 0)
 			(effects
 				(font
@@ -10100,11 +11425,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "6bdc7c03-b35b-56c6-8058-e7d8e138b500"))
+			(uuid "27ff7e48-31a9-556b-aeb3-bdde5a8e4580"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR050")
+					(reference "#PWR058")
 					(unit 1)))))
 	(symbol
 		(lib_id "Mechanical:MountingHole")
@@ -10236,8 +11561,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "264f1ec6-5a81-5d00-a43d-91f16fc37029")
-		(property "Reference" "#FLG051"
+		(uuid "3947b39c-0940-58fb-a0a0-214e1bef5fe9")
+		(property "Reference" "#FLG059"
 			(at 96.52 276.86 0)
 			(effects
 				(font
@@ -10261,11 +11586,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "46917da8-6077-59c8-976b-4b1be94034d7"))
+			(uuid "ebe1c2fe-f97a-53d0-800a-4153da6e26c2"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#FLG051")
+					(reference "#FLG059")
 					(unit 1)))))
 	(wire
 		(pts
@@ -10283,8 +11608,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "fd423aa8-c934-5110-9d9a-abd3b46242f5")
-		(property "Reference" "#PWR052"
+		(uuid "7cb29b26-fc7d-5b68-90bf-239b0f2c29ae")
+		(property "Reference" "#PWR060"
 			(at 105.41 276.86 0)
 			(effects
 				(font
@@ -10309,11 +11634,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "9ee2ed7a-2177-5839-811d-43de14fb9bc6"))
+			(uuid "7988a7fb-5fbf-510e-823f-99996d8b9660"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR052")
+					(reference "#PWR060")
 					(unit 1)))))
 	(symbol
 		(lib_id "power:PWR_FLAG")
@@ -10323,8 +11648,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "acbc1b9d-4ff0-5637-bd0e-3912d379630c")
-		(property "Reference" "#FLG053"
+		(uuid "375904c8-8ea1-5b09-bd9d-b55c77c6929f")
+		(property "Reference" "#FLG061"
 			(at 114.3 276.86 0)
 			(effects
 				(font
@@ -10348,11 +11673,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "729d72c3-e8cd-5f39-983a-17a2312ded3f"))
+			(uuid "6875030b-396c-58bc-85ee-32dcdb9c771b"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#FLG053")
+					(reference "#FLG061")
 					(unit 1)))))
 	(wire
 		(pts
@@ -10370,8 +11695,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "124d5998-b1ff-5885-9c58-120ab5c133c6")
-		(property "Reference" "#PWR054"
+		(uuid "4816af1a-9990-5a16-921b-42183fe360ef")
+		(property "Reference" "#PWR062"
 			(at 123.19 276.86 0)
 			(effects
 				(font
@@ -10395,11 +11720,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "a74342f9-9e1e-59d4-b6ae-bd24ce716629"))
+			(uuid "bae68f8d-7428-5a64-9c24-441c58978d58"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR054")
+					(reference "#PWR062")
 					(unit 1)))))
 	(symbol
 		(lib_id "power:PWR_FLAG")
@@ -10409,8 +11734,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "fa30c037-807c-5fda-a5ef-5909b65ce234")
-		(property "Reference" "#FLG055"
+		(uuid "ca92bfc6-c80a-544f-a736-cf5a023742b2")
+		(property "Reference" "#FLG063"
 			(at 132.08 276.86 0)
 			(effects
 				(font
@@ -10434,11 +11759,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "513c783e-cc3f-5106-93c6-117de4e23b4b"))
+			(uuid "1069a2cb-4b3f-5492-ba55-f48f14baffe3"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#FLG055")
+					(reference "#FLG063")
 					(unit 1)))))
 	(wire
 		(pts
@@ -10456,8 +11781,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "79c5dd23-9b10-537f-b1eb-d72dc81fb264")
-		(property "Reference" "#PWR056"
+		(uuid "ddf9069c-0690-57e0-a7e0-c028e7def796")
+		(property "Reference" "#PWR064"
 			(at 140.97 276.86 0)
 			(effects
 				(font
@@ -10481,11 +11806,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "8e6169ff-674e-5815-b397-2926f195b5d1"))
+			(uuid "4fc7e88f-502b-5ba9-b4db-5b73cf0ada2d"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#PWR056")
+					(reference "#PWR064")
 					(unit 1)))))
 	(symbol
 		(lib_id "power:PWR_FLAG")
@@ -10495,8 +11820,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "e72ff9b8-7fb5-55f6-88e8-54827bdffe02")
-		(property "Reference" "#FLG057"
+		(uuid "b84ff625-9814-5f0b-80bb-afe6e20367d4")
+		(property "Reference" "#FLG065"
 			(at 149.86 276.86 0)
 			(effects
 				(font
@@ -10520,11 +11845,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "4b9e9ce2-b761-566f-a9cb-388327d29d44"))
+			(uuid "000273a7-e842-51f6-b5b7-008d61e99462"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#FLG057")
+					(reference "#FLG065")
 					(unit 1)))))
 	(wire
 		(pts
@@ -10549,8 +11874,8 @@
 		(in_bom no)
 		(on_board yes)
 		(dnp no)
-		(uuid "3e1e81ca-e58b-59c6-b1f9-74ae1fb9d257")
-		(property "Reference" "#FLG058"
+		(uuid "32515d22-9cf8-5472-8377-85c3c18b6fb7")
+		(property "Reference" "#FLG066"
 			(at 167.64 276.86 0)
 			(effects
 				(font
@@ -10574,11 +11899,11 @@
 					(size 1.27 1.27))
 				(hide yes)))
 		(pin "1"
-			(uuid "36d976c2-7cf3-57f8-a283-b29ed0f835cc"))
+			(uuid "19d55c87-7f75-5275-94d1-960cf568f3e4"))
 		(instances
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "#FLG058")
+					(reference "#FLG066")
 					(unit 1)))))
 	(wire
 		(pts
@@ -10627,6 +11952,14 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "a14e567a-2b97-5646-9a9b-d578310378af"))
+	(text "     2026-11  LED dimmer (I2C), side-looking LEDs at the top edge."
+		(exclude_from_sim no)
+		(at 193.04 260.35 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "5f3c4ad6-3887-5b94-b62d-3908182b7ba8"))
 	(text "DNP = not fitted (R6, R15)."
 		(exclude_from_sim no)
 		(at 193.04 265.43 0)
@@ -10676,10 +12009,25 @@
 		(color 0 0 0 0)
 		(uuid "b29f59eb-e893-5461-9711-9194eaa055b1"))
 	(junction
+		(at 104.14 86.36)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "183a1e65-e598-52ea-af08-fa882cfde367"))
+	(junction
 		(at 116.84 48.26)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4c9c8074-260b-55dd-b82f-bd3716361b6d"))
+	(junction
+		(at 365.76 93.98)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "405c14ab-f838-5972-a5cc-64d84641edeb"))
+	(junction
+		(at 386.08 88.9)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6e865bda-b1c7-53b9-898b-f11748d1f6a7"))
 	(junction
 		(at 220.98 157.48)
 		(diameter 0)
@@ -10700,6 +12048,11 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b5aaffff-b3d3-5c29-a9ea-b9d7518205f7"))
+	(junction
+		(at 398.78 81.28)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "782d25f3-a1ab-5259-812d-aa79aa68c3e3"))
 	(junction
 		(at 55.88 177.8)
 		(diameter 0)
@@ -10796,11 +12149,6 @@
 		(color 0 0 0 0)
 		(uuid "d470a3ee-814d-52ff-9d7a-50397b01b1dd"))
 	(junction
-		(at 236.22 195.58)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "23e51cfd-64b4-5dc1-ae5f-dfea82a46054"))
-	(junction
 		(at 149.86 185.42)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -10835,6 +12183,11 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a17dec34-e7ad-5874-baea-e0037aef33c9"))
+	(junction
+		(at 134.62 86.36)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "9dad8870-eefe-5349-b58e-b39c83941618"))
 	(junction
 		(at 220.98 195.58)
 		(diameter 0)
