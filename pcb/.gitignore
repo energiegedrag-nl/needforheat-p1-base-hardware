@@ -28,3 +28,7 @@ fp-info-cache
 *.xml
 /*.csv
 
+
+# Reports and lock files
+*.rpt
+*.lck

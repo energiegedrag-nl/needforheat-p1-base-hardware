@@ -1,4 +1,6 @@
-# P1-BASE-hardware Documentation <!-- omit in toc -->
+# P1-BASE-hardware Documentation (v2.7) <!-- omit in toc -->
+
+> This document describes **version 2.7** (June 2024, with DIP switches), available under the git tag `v2.7`. For version 3.0, see [design-v3.md](design-v3.md).
 
 ## Table of contents <!-- omit in toc -->
 - [Usage](#usage)

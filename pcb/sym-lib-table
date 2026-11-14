@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "p1base")(type "KiCad")(uri "${KIPRJMOD}/p1base.kicad_sym")(options "")(descr "NeedForHeat P1-BASE symbols"))
+)
