@@ -173,8 +173,8 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 | Recess behind the HAT header | x 9–31, y 0–8.5 |
 
 * **Board:** 40 x 56 mm, the CoreInk outline. The meter socket J2 sits at the top edge (opening up): the device hangs from a short cable under the P1 port with the screen upright. The socket for the existing reader J3 is at the bottom edge (opening down).
-* **CoreInk connection:** a 2x8 stackable female header (long pins) is inserted from the top and soldered by JLC like any THT part. Its pins pass through the board into the CoreInk socket; the female body on top keeps the MI-BUS available for measurements. Gap board–CoreInk: 3.5 mm, enough for the RJ12 leads and pegs.
-* **Enclosure (*kuip*):** see [`enclosure/`](../enclosure). The tray has a rim that holds the CoreInk with cut-outs that only fit the right way round (asymmetric side features). Tapered pegs in the LEGO holes centre it. Three board pegs (H1–H3) key the PCB in the tray. Optional pockets for 8 x 1 mm steel discs sit opposite the two magnets; they hold the CoreInk and only attract in the right orientation.
+* **CoreInk connection** (*being redesigned, see § 9a*): a 2x8 stackable female header (long pins) is inserted from the top and soldered by JLC like any THT part. Its pins pass through the board into the CoreInk socket; the female body on top keeps the MI-BUS available for measurements. Gap board–CoreInk: 3.5 mm, enough for the RJ12 leads and pegs.
+* **Enclosure (*kuip*)** (*steel discs and nocks replaced by LEGO posts, see § 9a*): see [`enclosure/`](../enclosure). The tray has a rim that holds the CoreInk with cut-outs that only fit the right way round (asymmetric side features). Tapered pegs in the LEGO holes centre it. Three board pegs (H1–H3) key the PCB in the tray. Optional pockets for 8 x 1 mm steel discs sit opposite the two magnets; they hold the CoreInk and only attract in the right orientation.
 * The two RJ12 sockets are 14.5 mm tall (LCSC data for C77859): BASE + CoreInk stacked are ≈ 36 mm, so they ship separately in a letterbox parcel and are clicked together at home.
 
 ## 8. Production
@@ -199,7 +199,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 | D6 | RJ12 jacks on the board, cable supplied | Captive cable soldered to the board | No soldering in production; the electronics survive a crossed cable or swapped sockets, and firmware explains |
 | D7 | Stacking header from the top | Standard header on the bottom (v2.7) | JLC can assemble it without a second side; the bus stays reachable |
 | D8 | Keying by the enclosure rim, not by the header | LEGO pins on adjacent corners; screws | Robust; no loose parts; the header is not designed to take force |
-| D9 | Steel-disc pockets optional | Magnets in the BASE; nothing | The CoreInk's magnets are only in the top half, so steel discs add holding force and a second key; empty by default |
+| D9 | ~~Steel-disc pockets optional~~ dropped (§ 9a) | Magnets in the BASE; nothing | The CoreInk's magnets are only in the top half, so steel discs add holding force and a second key; empty by default |
 
 ## 9a. Redesign in progress
 
@@ -210,12 +210,19 @@ board is redone):
 1. **U4 instead of R4/R32** (finding A): a second 74LVC1G14 (C7835) powered from the CoreInk's 3V3 drives G13, with
    C10 100 nF. Nothing flows into a switched-off CoreInk; G13 high is exactly 3.3 V.
 2. **D1 = SMF6.0A** (C178260, finding B): stand-off 6.0 V, above any meter voltage.
-3. **Stacking header for J1**, mounted on top: socket 8.5 mm, pins 11 mm; the gap CoreInk–PCB goes from 3.5 to
-   2.5 mm (RJ12 leads at most 1.9 mm below the board, 0.6 mm clearance), giving 6.9 mm of pin in the CoreInk socket.
-   The socket on top repeats the CoreInk bus, so a BatteryBASE can stack behind (its long male pins reach through an
-   opening in the lid). Exact part still to be selected.
+3. **Gap CoreInk–PCB from 3.5 to 2.5 mm**: the RJ12 leads are at most 1.9 mm below the board (datasheet), leaving
+   0.6 mm clearance. Done in `enclosure/kuip.py`.
 4. **No steel-disc pockets** in the tray: the friction of the pins and the tray hold the CoreInk.
-5. **RJ12 jacks centred** on the board's long axis (both on the centre line), so the device hangs straight when the
+5. **Same back as the CoreInk, so one BatteryBASE fits both:** the P1-BASE's lid repeats the CoreInk's back. J1
+   becomes a **raised socket** whose top is flush with the lid (≈ 16.5 mm above the board, 8 mm deep) with pins long
+   enough to go 6 mm into the CoreInk (≈ 8.5 mm below the board); the exact part is still to be found (Samtec ESQ
+   type, or a combination of common parts). Lower RJ12 jacks (10–11.5 mm) would make the P1-BASE thinner and the
+   raised socket 3–4.5 mm lower.
+6. **LEGO posts on every enclosure:** four posts underneath, at the CoreInk's LEGO holes (through holes; a LEGO
+   Technic pin fits, measured), 7 mm long so they engage before the 6 mm pins and protect them in transport, with
+   three crush ribs for light friction and a flared root against breaking off. The P1-BASE lid has four matching
+   LEGO holes (tubes under the lid) and a cut-out for the raised socket. Done in `enclosure/kuip.py`.
+7. **RJ12 jacks centred** on the board's long axis (both on the centre line), so the device hangs straight when the
    cables pull. This moves most parts, so the board is placed and routed again.
 
 How to redo the board (on a machine with ≈ 5 GB free memory): `tools/gen_pcb.py` (placement, Freerouting,
@@ -226,7 +233,7 @@ then `tools/pcb_cleanup.py`, then `kicad-cli pcb drc --schematic-parity --refill
 ## 10. Open points to verify
 
 1. **Blocking: the CoreInk connector part.** C72555 is listed as "Extended Female Pin Header 3.8"; its LCSC/EasyEDA 3D model has only ≈ 3 mm of pin below the body, so it ends ≈ 1.4 mm under the board, 2.1 mm short of the CoreInk back (confirmed by check 5, § 12). The CoreInk socket is 8 mm deep and flush with the case (measured). A top-mounted stacking header therefore needs a tail of 10–13 mm below its body (1.6 mm board + 3.5 mm gap + 5–8 mm engagement); no part with a known tail length is in the JLCPCB library (November 2026) and C72555 has no datasheet.
-   **Decision (November 2026): a long stacking header.** It keeps the bus available on the back, so a NeedForHeat BatteryBASE (separate repository) can be stacked behind the P1-BASE. The exact part (tail ≥ 10.5 mm, e.g. via JLCPCB global sourcing) is still to be selected. The RJ12 datasheet (CONNFLY DS1133-S60BPX) confirms leads of 3.2 ± 0.3 mm below the seating plane, i.e. 1.6–1.9 mm below the board.
+   **Decision (November 2026), refined in § 9a: the P1-BASE repeats the CoreInk's back with a raised socket.** First decision: It keeps the bus available on the back, so a NeedForHeat BatteryBASE (separate repository) can be stacked behind the P1-BASE. The exact part (tail ≥ 10.5 mm, e.g. via JLCPCB global sourcing) is still to be selected. The RJ12 datasheet (CONNFLY DS1133-S60BPX) confirms leads of 3.2 ± 0.3 mm below the seating plane, i.e. 1.6–1.9 mm below the board.
    *Considered and rejected:* the LCSC model of the RJ12 jack puts its leads 3.2 mm below the **seating plane** (PCB top), i.e. only ≈ 1.6 mm below the board, and the posts ≈ 1.3 mm. If the datasheet or a sample confirms this, a plain 2x8 male header on the bottom (as in v2.7, 2.5 mm plastic) leaves ≈ 0.9 mm under the jack leads; the tray's disc pads (1.6 mm) would then have to move clear of the jacks, and JLCPCB would have to solder a THT part on the bottom side.
 2. RJ12 jack C77859 (CONNFLY DS1133-S60BPX): its LCSC footprint matches the Wayconn MJEA-660X1 footprint (same pin and post positions after a 90° rotation, pin 1 at the same place); the body is 14.5 mm tall and 14.6 mm wide (Wayconn outline: 12.2 mm), which clears the neighbouring pads. In the JLCPCB 3D preview the jack front reaches about 1 mm past the board edge; check against the datasheet (fine for the cable, but the enclosure opening must allow it).
 3. TP4056 behaviour in parallel with the CoreInk's own charger on USB. From the CoreInk schematic (M5Stack, `coreink_sch.pdf`): the bus pin `BAT` is net `SYS_BAT`, wired straight to battery connector J4 and to the `BAT` pin of the CoreInk's TP4057 (U6); there is no protection IC on the CoreInk board (the cell pack's own protection is assumed). The TP4057 is set to ≈ 200 mA (R45 = 5.1 kΩ) and is fed from net `CHG` = USB 5 V (through D8) or the bus pin `5V_IN`, behind a 1 A PTC. So both chargers do drive the same cell node; both stop at 4.2 V. With USB and P1 charging at 120 mA the cell can get ≈ 320 mA (≈ 0.8 C for 390 mAh): keep 60 mA as the default. To measure: charge termination with both chargers active.

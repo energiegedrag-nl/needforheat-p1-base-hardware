@@ -11,12 +11,12 @@ Two printed parts:
 
 How it works (frame: back of the CoreInk, HAT edge up):
 
-* The CoreInk's back rests on four corner posts; tapered **nocks** under the posts go into its four LEGO-compatible holes and centre it.
-* The PCB rests on the same posts, 3.5 mm above the CoreInk, and is keyed by **three pegs** (the fourth corner has none).
+* The CoreInk's back rests on four corner blocks; four **LEGO posts** (7 mm, with crush ribs) go into its four LEGO-compatible through holes. They are longer than the 6 mm bus pins, so they guide the module before the pins engage and protect the pins in transport.
+* The **lid repeats the CoreInk's back**: four LEGO-compatible holes at the same positions and a cut-out for the raised bus socket, so a BatteryBASE fits behind the P1-BASE as it would on a CoreInk.
+* The PCB rests on the same posts, 2.5 mm above the CoreInk, and is keyed by **three pegs** (the fourth corner has none).
 * A short **skirt** continues the wall 3 mm down over the CoreInk's sides, with openings for the HAT connector, USB-C, the Grove port, the dial and the power switch.
-* Two pads with **pockets for 8 x 1 mm steel discs** sit opposite the CoreInk's built-in magnets (top half only). They are optional: the header and the skirt already hold the CoreInk; the discs add holding force and only line up with the magnets in the right orientation.
 * A triangle on top of the meter-side wall points to the meter socket.
 
-Values to verify on the first print (see `kuip.py`): RJ12 jack height (`JACK_H`), magnet positions (`MAGNETS`), the length of the stacking-header pins against `GAP`, and the skirt openings against a real CoreInk.
+Values to verify on the first print (see `kuip.py`): RJ12 jack height (`JACK_H`), the length of the stacking-header pins against `GAP`, and the skirt openings against a real CoreInk.
 
-Print: PETG, 0.2 mm layers. Kuip with its top rim on the bed (nocks pointing up) and supports under the corner posts; lid with its flat side on the bed. A printing service (SLA resin or MJF nylon) needs no special orientation.
+Print: PETG, 0.2 mm layers. Kuip with its top rim on the bed (LEGO posts pointing up) and supports under the corner blocks; lid with its flat side on the bed. A printing service (SLA resin or MJF nylon) needs no special orientation.

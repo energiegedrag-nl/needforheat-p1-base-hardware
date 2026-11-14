@@ -16,7 +16,7 @@ from OCP.BRepBndLib import BRepBndLib
 sys.path.insert(0, os.path.dirname(__file__))
 import stepnames
 REPO = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "..")
-GAP, PCB_T = 3.5, 1.6
+GAP, PCB_T = 2.5, 1.6
 sys.path.insert(0, os.path.join(REPO, "enclosure"))
 import kuip as K   # same parameters as the printed parts
 assert K.GAP == GAP
