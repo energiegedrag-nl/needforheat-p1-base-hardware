@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "p1base")(type "KiCad")(uri "${KIPRJMOD}/p1base.pretty")(options "")(descr "NeedForHeat P1-BASE footprints"))
+)
