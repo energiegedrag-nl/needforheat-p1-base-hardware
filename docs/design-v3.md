@@ -20,6 +20,7 @@ This document records the requirements, architecture, calculations and design de
 - [7. Mechanics](#7-mechanics)
 - [8. Production](#8-production)
 - [9. Design decisions](#9-design-decisions)
+- [9a. Redesign in progress](#9a-redesign-in-progress)
 - [10. Open points to verify](#10-open-points-to-verify)
 - [11. Out of scope](#11-out-of-scope)
 - [12. Independent checks](#12-independent-checks)
@@ -200,13 +201,36 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 | D8 | Keying by the enclosure rim, not by the header | LEGO pins on adjacent corners; screws | Robust; no loose parts; the header is not designed to take force |
 | D9 | Steel-disc pockets optional | Magnets in the BASE; nothing | The CoreInk's magnets are only in the top half, so steel discs add holding force and a second key; empty by default |
 
+## 9a. Redesign in progress
+
+Decided in November 2026, after the independent checks (§ 12) and the BatteryBASE plans; **the schematic already
+has the circuit changes, the PCB and enclosure do not yet** (DRC with schematic parity fails on purpose until the
+board is redone):
+
+1. **U4 instead of R4/R32** (finding A): a second 74LVC1G14 (C7835) powered from the CoreInk's 3V3 drives G13, with
+   C10 100 nF. Nothing flows into a switched-off CoreInk; G13 high is exactly 3.3 V.
+2. **D1 = SMF6.0A** (C178260, finding B): stand-off 6.0 V, above any meter voltage.
+3. **Stacking header for J1**, mounted on top: socket 8.5 mm, pins 11 mm; the gap CoreInk–PCB goes from 3.5 to
+   2.5 mm (RJ12 leads at most 1.9 mm below the board, 0.6 mm clearance), giving 6.9 mm of pin in the CoreInk socket.
+   The socket on top repeats the CoreInk bus, so a BatteryBASE can stack behind (its long male pins reach through an
+   opening in the lid). Exact part still to be selected.
+4. **No steel-disc pockets** in the tray: the friction of the pins and the tray hold the CoreInk.
+5. **RJ12 jacks centred** on the board's long axis (both on the centre line), so the device hangs straight when the
+   cables pull. This moves most parts, so the board is placed and routed again.
+
+How to redo the board (on a machine with ≈ 5 GB free memory): `tools/gen_pcb.py` (placement, Freerouting,
+stitching, island vias; `P1BASE_VARIANT=<n>` rotates the packing order of block 3 if a GND pad ends up boxed in),
+then `tools/pcb_cleanup.py`, then `kicad-cli pcb drc --schematic-parity --refill-zones --save-board`, then
+`tools/export_fab.py`, `enclosure/kuip.py` and `tools/checks/run_checks.py`.
+
 ## 10. Open points to verify
 
 1. **Blocking: the CoreInk connector part.** C72555 is listed as "Extended Female Pin Header 3.8"; its LCSC/EasyEDA 3D model has only ≈ 3 mm of pin below the body, so it ends ≈ 1.4 mm under the board, 2.1 mm short of the CoreInk back (confirmed by check 5, § 12). The CoreInk socket is 8 mm deep and flush with the case (measured). A top-mounted stacking header therefore needs a tail of 10–13 mm below its body (1.6 mm board + 3.5 mm gap + 5–8 mm engagement); no part with a known tail length is in the JLCPCB library (November 2026) and C72555 has no datasheet.
-   *Reopened option:* the LCSC model of the RJ12 jack puts its leads 3.2 mm below the **seating plane** (PCB top), i.e. only ≈ 1.6 mm below the board, and the posts ≈ 1.3 mm. If the datasheet or a sample confirms this, a plain 2x8 male header on the bottom (as in v2.7, 2.5 mm plastic) leaves ≈ 0.9 mm under the jack leads; the tray's disc pads (1.6 mm) would then have to move clear of the jacks, and JLCPCB would have to solder a THT part on the bottom side.
+   **Decision (November 2026): a long stacking header.** It keeps the bus available on the back, so a NeedForHeat BatteryBASE (separate repository) can be stacked behind the P1-BASE. The exact part (tail ≥ 10.5 mm, e.g. via JLCPCB global sourcing) is still to be selected. The RJ12 datasheet (CONNFLY DS1133-S60BPX) confirms leads of 3.2 ± 0.3 mm below the seating plane, i.e. 1.6–1.9 mm below the board.
+   *Considered and rejected:* the LCSC model of the RJ12 jack puts its leads 3.2 mm below the **seating plane** (PCB top), i.e. only ≈ 1.6 mm below the board, and the posts ≈ 1.3 mm. If the datasheet or a sample confirms this, a plain 2x8 male header on the bottom (as in v2.7, 2.5 mm plastic) leaves ≈ 0.9 mm under the jack leads; the tray's disc pads (1.6 mm) would then have to move clear of the jacks, and JLCPCB would have to solder a THT part on the bottom side.
 2. RJ12 jack C77859 (CONNFLY DS1133-S60BPX): its LCSC footprint matches the Wayconn MJEA-660X1 footprint (same pin and post positions after a 90° rotation, pin 1 at the same place); the body is 14.5 mm tall and 14.6 mm wide (Wayconn outline: 12.2 mm), which clears the neighbouring pads. In the JLCPCB 3D preview the jack front reaches about 1 mm past the board edge; check against the datasheet (fine for the cable, but the enclosure opening must allow it).
-3. TP4056 behaviour in parallel with the CoreInk's own charger (TP4057) on USB.
-4. CoreInk `5V_OUT`: is it present on battery power (boost converter on) and when the CoreInk is switched off?
+3. TP4056 behaviour in parallel with the CoreInk's own charger on USB. From the CoreInk schematic (M5Stack, `coreink_sch.pdf`): the bus pin `BAT` is net `SYS_BAT`, wired straight to battery connector J4 and to the `BAT` pin of the CoreInk's TP4057 (U6); there is no protection IC on the CoreInk board (the cell pack's own protection is assumed). The TP4057 is set to ≈ 200 mA (R45 = 5.1 kΩ) and is fed from net `CHG` = USB 5 V (through D8) or the bus pin `5V_IN`, behind a 1 A PTC. So both chargers do drive the same cell node; both stop at 4.2 V. With USB and P1 charging at 120 mA the cell can get ≈ 320 mA (≈ 0.8 C for 390 mAh): keep 60 mA as the default. To measure: charge termination with both chargers active.
+4. ~~CoreInk `5V_OUT`~~ answered by the schematic: `5V_OUT` (net `EXT_5VO`) comes from the SY7088 boost converter (U5) through D11; the boost is enabled by the power switch (`PS_EN`), so `5V_OUT` is present whenever the CoreInk is on (battery or USB) and absent when it is off. The bus `3V3` is the SY8089 buck output (`MCU_VDD`), fed from the boost output, so it is also off when the CoreInk is off: U4 is then unpowered, as intended. The schematic also confirms the choice not to feed `5V_IN`: `5V_IN` (net `EXT_5VI`) feeds the TP4057 and, through D9, the boost converter (so the meter would carry the whole system load), and USB 5 V reaches `5V_IN` through D8 (so USB power would flow out to the meter).
 5. Positions of the magnets (± 2 mm).
 6. Reading Landis+Gyr E350/E360 and DSMR 2/3 meters with the v3 front end.
 7. Existing readers on J3: HomeWizard P1 meter, IUNGO, others; with and without their own request.

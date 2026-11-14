@@ -171,7 +171,7 @@ PARTS = [
          nets={"1": "P1_5V", "2": "METER_REQ_RAW", "3": "GND", "4": None, "5": "P1_DATA_RAW", "6": "GND"}),
     PMOS("Q1", "Q1_G", "P1_5V", "VMETER"),
     R("R1", "10k", "Q1_G", "GND"),
-    dict(ref="D1", lib="Device:D_Zener", value="SMF5.0A", fp="Diode_SMD:D_SMF", lcsc="C193402",
+    dict(ref="D1", lib="Device:D_Zener", value="SMF6.0A", fp="Diode_SMD:D_SMF", lcsc="C178260",
          nets={"1": "VMETER", "2": "GND"}),
     C("C1", "1u", "VMETER", "GND"),
     C("C2", "100n", "VMETER", "GND"),
@@ -190,8 +190,10 @@ PARTS = [
     C("C4", "100n", "V5", "GND"),
     R("R7", "2k2", "V5", "LED1_A"),
     LED("LED1", "green", "LED1_A", "SPLIT_DRV"),
-    R("R4", "4k7", "SPLIT_DRV", "G13_RX"),
-    R("R32", "10k", "G13_RX", "GND"),
+    # second Schmitt trigger at the CoreInk's 3.3 V: drives G13, and nothing flows into a switched-off CoreInk
+    dict(ref="U4", lib="74xGxx:74LVC1G14", value="74LVC1G14", fp=SOT235, lcsc="C7835",
+         nets={"1": None, "2": "P1_DATA", "3": "GND", "4": "G13_RX", "5": "COREINK_3V3"}),
+    C("C10", "100n", "COREINK_3V3", "GND"),
     NMOS("Q2", "SPLIT_DRV", "EXT_DATA_FET", "GND"),
     R("R5", "47R", "EXT_DATA_FET", "EXT_DATA_OUT"),
     R("R6", "10k", "EXT_DATA_OUT", "V5", dnp=True),
@@ -243,7 +245,7 @@ PARTS = [
     # 6. CoreInk bus
     dict(ref="J1", lib="p1base:CoreInk_Bus", value="CoreInk bus", fp="p1base:CoreInk_Bus_2x08_P2.54mm", lcsc="C72555",
          nets={"GND": "GND", "BAT": "COREINK_BAT", "5VIN": None, "5VOUT": "COREINK_5VOUT", "RST": None,
-               "3V3": None, "G13": "G13_RX", "G14": "G14_CHGHI", "G21": None, "G22": None, "G18": None,
+               "3V3": "COREINK_3V3", "G13": "G13_RX", "G14": "G14_CHGHI", "G21": None, "G22": None, "G18": None,
                "G36": "G36_VMETER", "G34": "G34_EXTREQ", "G26": "G26_REQ", "G23": None, "G25": "G25_CHG"}),
     # 7. test points, peg holes
     TP("TP1", "VMETER"), TP("TP2", "V5"), TP("TP3", "P1_DATA"), TP("TP4", "METER_REQ"),
@@ -559,13 +561,14 @@ def draw(s):
     s.place("R5", 261.62, 45.72, rot=90)
     s.place("R6", 271.78, 38.1, rot=180)
     s.place("D4", 279.4, 50.8, rot=270)
-    s.place("R4", 233.68, 71.12, rot=90)
-    s.place("R32", 241.3, 76.2)
+    s.place("U4", 210.82, 88.9)
+    s.place("C10", 215.9, 80.01)
     s.wire((162.56, 55.88), (170.18, 55.88), "R2.1")
     s.label("P1_DATA_RAW", (162.56, 55.88), "l")
     s.wire((170.18, 55.88), "D3.1")
     s.power("GND", "D3.2")
-    s.wire("R2.2", (190.5, 55.88), "U1.2")
+    s.wire("R2.2", (190.5, 55.88), (193.04, 55.88), "U1.2")
+    s.wire((193.04, 55.88), "U4.2", first="v")
     s.label("P1_DATA", (190.5, 55.88), "r", 1.0)
     s.wire("R3.1", (190.5, 55.88))
     s.power("V5", "R3.2")
@@ -574,7 +577,9 @@ def draw(s):
     s.power("V5", (205.74, 38.1))
     s.power("GND", "C4.2")
     s.power("GND", "U1.3")
-    s.wire("U1.4", (228.6, 55.88), "Q2.1")
+    s.wire("U1.4", (228.6, 55.88), (231.14, 55.88), "Q2.1")
+    s.wire((231.14, 55.88), (231.14, 60.96))
+    s.label("SPLIT_DRV", (231.14, 60.96), "r", 1.0)
     s.wire("LED1.1", (228.6, 55.88))
     s.wire("LED1.2", (228.6, 41.91), "R7.2")
     s.label("LED1_A", (228.6, 41.91), "r", 1.0)
@@ -588,17 +593,18 @@ def draw(s):
     s.wire((279.4, 45.72), "D4.1")
     s.power("GND", "D4.2")
     s.label("EXT_DATA_OUT", (289.56, 45.72))
-    s.wire((228.6, 55.88), (228.6, 63.5), (228.6, 71.12), "R4.1")
-    s.label("SPLIT_DRV", (228.6, 63.5), "r", 1.0)
-    s.wire("R4.2", (241.3, 71.12), (251.46, 71.12))
-    s.wire((241.3, 71.12), "R32.1")
-    s.power("GND", "R32.2")
-    s.label("G13_RX", (251.46, 71.12))
-    s.note("Schmitt trigger at V5 with the 1 k pull-up of v2.7 (reads weak meter outputs).", 160.02, 96.52)
-    s.note("Q2 drives the existing reader from V5, so it keeps working when the CoreInk is off.", 160.02, 99.06)
-    s.note("R6 (not fitted): pull-up for readers without their own.", 160.02, 101.6)
-    s.note("R4/R32: 5 V to 3.2 V for the ESP32 (G13 = P1 RX, not inverted).", 160.02, 104.14)
-    s.note("LED1 (green): blinks with the meter data.", 160.02, 106.68)
+    s.wire("U4.5", (205.74, 76.2), (215.9, 76.2), (223.52, 76.2))
+    s.wire((215.9, 76.2), "C10.1")
+    s.power("GND", "C10.2")
+    s.label("COREINK_3V3", (223.52, 76.2))
+    s.power("GND", "U4.3")
+    s.wire("U4.4", (236.22, 88.9))
+    s.label("G13_RX", (236.22, 88.9))
+    s.note("U1: Schmitt trigger at V5 with the 1 k pull-up of v2.7 (reads weak meter outputs).", 160.02, 106.68)
+    s.note("Q2 drives the existing reader from V5, so it keeps working when the CoreInk is off. R6 (not fitted):", 160.02, 109.22)
+    s.note("pull-up for readers without their own. LED1 (green): blinks with the meter data.", 160.02, 111.76)
+    s.note("U4: same Schmitt trigger at the CoreInk's 3.3 V; G13 = P1 RX (not inverted). Unpowered when the", 160.02, 114.3)
+    s.note("CoreInk is off, so no current flows into the ESP32 (power-off isolation).", 160.02, 116.84)
 
     # 3 ---------------------------------------------------------------------
     s.block("3  Existing P1 reader", 325.12, 15.24, 405.13, 119.38)
@@ -768,7 +774,7 @@ def draw(s):
     s.power("GND", (x - 5.08, y))
     s.stub("J1.G13", "G13_RX", 7.62, "l")
     s.stub("J1.G34", "G34_EXTREQ", 7.62, "l")
-    for pin, net in (("BAT", "COREINK_BAT"), ("5VOUT", "COREINK_5VOUT"), ("G14", "G14_CHGHI"), ("G36", "G36_VMETER"),
+    for pin, net in (("BAT", "COREINK_BAT"), ("5VOUT", "COREINK_5VOUT"), ("3V3", "COREINK_3V3"), ("G14", "G14_CHGHI"), ("G36", "G36_VMETER"),
                      ("G26", "G26_REQ"), ("G25", "G25_CHG")):
         s.stub("J1." + pin, net, 7.62)
     for i, t in enumerate(["Firmware interface (CoreInk ESP32):",
@@ -779,11 +785,12 @@ def draw(s):
                            "G25  P1 charging on (high)",
                            "G14  charge current 120 mA (high) / 60 mA",
                            "BAT  CoreInk battery (charged by U3)",
-                           "5V_OUT  CoreInk 5 V, feeds V5 via D2"]):
+                           "5V_OUT  CoreInk 5 V, feeds V5 via D2",
+                           "3V3  CoreInk 3.3 V, powers U4"]):
         s.note(t, 330.2, 193.04 + 2.54 * i)
 
     # 7 ---------------------------------------------------------------------
-    s.block("7  Test points, peg holes, ERC flags", 15.24, 246.38, 187.96, 284.48)
+    s.block("7  Test points, peg holes, ERC flags", 15.24, 246.38, 190.5, 284.48)
     for i, (tp, net) in enumerate([("TP1", "VMETER"), ("TP2", "V5"), ("TP3", "P1_DATA"), ("TP4", "METER_REQ"),
                                    ("TP5", "EXT_DATA_OUT"), ("TP6", "CHG_IN"), ("TP7", "GND")]):
         x = 22.86 + 20.32 * i
@@ -800,14 +807,14 @@ def draw(s):
     for i in (1, 2, 3):
         s.place(f"H{i}", 22.86 + 22.86 * (i - 1), 276.86)
     s.note("PWR_FLAG: tells ERC that these nets are supplied", 96.52, 269.24)
-    for i, net in enumerate(["GND", "VMETER", "V5", "CHG_IN"]):
-        x = 96.52 + 22.86 * i
+    for i, net in enumerate(["GND", "VMETER", "V5", "CHG_IN", "COREINK_3V3"]):
+        x = 96.52 + 17.78 * i
         s.power("PWR_FLAG", (x, 276.86))
-        s.wire((x, 276.86), (x + 10.16, 276.86))
-        if net == "CHG_IN":
-            s.label(net, (x + 10.16, 276.86))
+        s.wire((x, 276.86), (x + 8.89, 276.86))
+        if net in POWER_NETS:
+            s.power(net, (x + 8.89, 276.86))
         else:
-            s.power(net, (x + 10.16, 276.86))
+            s.label(net, (x + 8.89, 276.86), "r", 1.0)
 
     # notes, revision history -------------------------------------------------
     s.dx = s.dy = 0.0

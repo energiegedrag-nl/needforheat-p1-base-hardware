@@ -13,7 +13,7 @@ th = lambda v, r1, r2: v * r2 / (r1 + r2)
 NETV = {
  "GND": (0, 0), "P1_5V": (0, VM), "VMETER": (0, VM), "V5": (0, V5), "COREINK_5VOUT": (0, 5.25),
  "Q1_G": (0, 0), "G36_VMETER": (0, th(VM, 100e3, 68e3)),
- "P1_DATA_RAW": (0, V5), "P1_DATA": (0, V5), "SPLIT_DRV": (0, V5), "G13_RX": (0, th(V5, 4.7e3, 10e3)),
+ "P1_DATA_RAW": (0, V5), "P1_DATA": (0, V5), "SPLIT_DRV": (0, V5), "G13_RX": (0, 3.3), "COREINK_3V3": (0, 3.3),
  "EXT_DATA_FET": (0, VM), "EXT_DATA_OUT": (0, VM), "LED1_A": (0, V5),
  "METER_REQ_RAW": (0, VM), "METER_REQ": (0, VM), "REQ_GATE": (0, V5), "REQ_EN": (0, 3.3), "G26_REQ": (0, 3.3),
  "EXT_REQ_RAW": (0, VM), "EXT_REQ": (0, VM), "EXT_REQ_G": (0, th(VM, 10e3, 100e3)),
@@ -36,12 +36,13 @@ def limits(fp, pad, net):
                               "5": (-0.3, 7, "BAT"), "7": (-0.3, 10, "CHRG#"), "6": (-0.3, 10, "STDBY#"), "3": (0, 0, "GND"), "9": (0, 0, "EP")}[pad]
     if v == "BAT54C": return (-30, 30, "Vr 30 V")
     if v == "1N5819WS": return (-40, 40, "Vr 40 V")
-    if v == "SMF5.0A": return (-0.5, 5.0, "TVS stand-off 5.0 V (leakage rises above)")
+    if v in ("SMF5.0A", "SMF6.0A"): return (-0.5, float(v[3:6]), f"TVS stand-off {v[3:6]} V (leakage rises above)")
     if v == "PESD5V0S1BB": return (-5.0, 5.0, "TVS stand-off +/-5 V")
     if v.startswith("LED"): return (-99, 99, "LED: never reverse biased here (series R from the supply side)")
     if ref == "J1":
         return {"G13": ESP, "G14": ESP, "G25": ESP, "G26": ESP, "G34": ESP, "G36": ESP,
-                "BAT": (0, 4.35, "CoreInk battery pin (Li-ion)"), "5VOUT": (0, 5.5, "CoreInk 5V out"), "GND": (0, 0, "GND")}.get(pad, (-9, 9, "NC"))
+                "BAT": (0, 4.35, "CoreInk battery pin (Li-ion)"), "5VOUT": (0, 5.5, "CoreInk 5V out"), "GND": (0, 0, "GND"),
+                "3V3": (0, 3.6, "CoreInk 3.3 V rail")}.get(pad, (-9, 9, "NC"))
     if ref in ("J2", "J3"): return (-30, 30, "RJ12 contact")
     if ref.startswith("TP") or ref.startswith("H"): return (-99, 99, "")
     return None
@@ -68,7 +69,6 @@ print("\n".join(bad) or "no pin above its limit")
 # An ESP32 pin then conducts through its ESD diode into the dead 3V3 rail (~0.5 V drop). Thevenin source per pin:
 print("\nCoreInk off, meter on: current into each ESP32 input (pin clamp ~0.5 V to a 0 V rail)")
 BACKFEED = {  # net: (open-circuit voltage, source resistance, when)
-    "G13_RX": (th(V5, 4.7e3, 10e3), 4.7e3 * 10e3 / 14.7e3, "whenever the P1 line idles (UART idle = high): continuous"),
     "G36_VMETER": (th(VM, 100e3, 68e3), 100e3 * 68e3 / 168e3, "whenever the meter supplies 5 V: continuous"),
     "G34_EXTREQ": (th(VM, 47e3, 68e3), 47e3 * 68e3 / 115e3, "only while the existing reader requests data"),
 }
