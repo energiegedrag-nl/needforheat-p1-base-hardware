@@ -294,6 +294,7 @@ def build(route=True):
     add_zone(b, netobj["GND"], pcbnew.F_Cu)
     add_zone(b, netobj["GND"], pcbnew.B_Cu)
     add_edge_keepout(b)
+    fanout_gnd(b)
     b.BuildConnectivity()
     pcbnew.SaveBoard(out, b)
     print("placed board saved:", out)
@@ -308,61 +309,116 @@ def _seg_dist(px, py, ax, ay, bx, by):
     return ((px - ax - t * dx) ** 2 + (py - ay - t * dy) ** 2) ** 0.5
 
 
-def fanout_gnd(b, via_d=0.5, drill=0.25, width=0.3, clr=0.3):
+def fanout_gnd(b, via_d=0.56, drill=0.3, width=0.3, clr=0.3, ep_area=2.0):
     """Before autorouting: give every SMD GND pad its own via next to it (a GND fanout), so the
-    router routes around it and no GND pad can end up in a pour fragment without a connection."""
+    router routes around it and no GND pad can end up in a pour fragment without a connection.
+    Clearances use the real pad shapes. Exposed pads get thermal vias inside the pad; a pad with no
+    room for a via gets a short track to a fanned-out GND pad of the same footprint.
+    All of it is locked, so Freerouting keeps it."""
     T = pcbnew.ToMM
     gnd = b.FindNet("GND")
-    obst = []   # (centre, radius) of copper of other nets, plus keep-out areas
-    for fp in b.GetFootprints():
-        for pad in fp.Pads():
-            c = pad.GetPosition(); bb = pad.GetBoundingBox()
-            obst.append(((T(c.x), T(c.y)), max(T(bb.GetWidth()), T(bb.GetHeight())) / 2,
-                         pad.GetNetCode() == gnd.GetNetCode()))
+    g = gnd.GetNetCode()
+
+    def shape(pad):
+        return pad.GetEffectiveShape(pcbnew.F_Cu if pad.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu)
+
+    other = [(pad, shape(pad)) for fp in b.GetFootprints() for pad in fp.Pads() if pad.GetNetCode() != g]
+    gpads = [(pad, shape(pad)) for fp in b.GetFootprints() for pad in fp.Pads() if pad.GetNetCode() == g]
     keep = []
     for fp in b.GetFootprints():
         if fp.GetReference().startswith("J"):
             bb = fp.GetBoundingBox(False)
             keep.append((T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom())))
-    vias = []
+    vias = []      # (x, y) mm
+    fanned = {}    # pad -> True for GND pads that got a via (or are linked)
+
+    def V(q):
+        return pcbnew.VECTOR2I(MM(q[0]), MM(q[1]))
+
+    def add_via(q):
+        v = pcbnew.PCB_VIA(b)
+        v.SetPosition(V(q)); v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd); v.SetLocked(True)
+        b.Add(v)
+        vias.append(q)
+
+    def add_track(a, e):
+        t = pcbnew.PCB_TRACK(b)
+        t.SetStart(V(a)); t.SetEnd(V(e))
+        t.SetWidth(MM(width)); t.SetLayer(pcbnew.F_Cu); t.SetNet(gnd); t.SetLocked(True)
+        b.Add(t)
+
+    def seg_clear(a, e):
+        sg = pcbnew.SHAPE_SEGMENT(V(a), V(e), MM(width))
+        return not any(s.Collide(sg, MM(clr)) for _, s in other)
+
+    def via_ok(q, own):
+        if not (X0 + 1.0 <= q[0] <= X0 + W - 1.0 and Y0 + 1.0 <= q[1] <= Y0 + H - 1.0):
+            return False
+        if any(k[0] - 0.5 <= q[0] <= k[2] + 0.5 and k[1] - 0.5 <= q[1] <= k[3] + 0.5 for k in keep):
+            return False
+        if any(math.hypot(q[0] - X0 - x, q[1] - Y0 - y) < 3.2 for x, y in PEGS):
+            return False
+        if any(math.hypot(q[0] - v[0], q[1] - v[1]) < via_d + 0.5 for v in vias):
+            return False
+        c = pcbnew.SHAPE_CIRCLE(V(q), MM(via_d / 2))
+        if any(s.Collide(c, MM(clr)) for _, s in other):
+            return False
+        # keep the via off GND pads too (no via-in-pad on small pads)
+        return not any(s.Collide(c, MM(0.15)) for _, s in gpads)
+
     n = 0
-    for fp in sorted(b.GetFootprints(), key=lambda f: f.GetReference()):
-        for pad in fp.Pads():
-            if pad.GetNetCode() != gnd.GetNetCode() or pad.GetAttribute() != pcbnew.PAD_ATTRIB_SMD:
+    smd = [(fp, pad, s) for fp in sorted(b.GetFootprints(), key=lambda f: f.GetReference())
+           for pad, s in [(p, shape(p)) for p in fp.Pads()]
+           if pad.GetNetCode() == g and pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD]
+    # exposed pads: thermal vias inside the pad, along its long axis
+    for fp, pad, s in smd:
+        sz = pad.GetSize(pcbnew.F_Cu)
+        if T(sz.x) * T(sz.y) < ep_area:
+            continue
+        pc = (T(pad.GetPosition().x), T(pad.GetPosition().y))
+        bb = pad.GetBoundingBox()
+        vert = bb.GetHeight() >= bb.GetWidth()
+        for k in (-1, 1):
+            q = (pc[0], pc[1] + k * 0.75) if vert else (pc[0] + k * 0.75, pc[1])
+            add_via(q)
+            n += 1
+        fanned[pad.m_Uuid.AsString()] = pc
+    trapped = []
+    for fp, pad, s in smd:
+        if pad.m_Uuid.AsString() in fanned:
+            continue
+        pc = (T(pad.GetPosition().x), T(pad.GetPosition().y))
+        cands = sorted(((math.hypot(dx * 0.25, dy * 0.25), (pc[0] + dx * 0.25, pc[1] + dy * 0.25))
+                        for dx in range(-10, 11) for dy in range(-10, 11)), key=lambda t: t[0])
+        for d, q in cands:
+            if d < 0.5 or not via_ok(q, pad) or not seg_clear(pc, q):
                 continue
-            pc = (T(pad.GetPosition().x), T(pad.GetPosition().y))
-            cands = sorted(((math.hypot(dx * 0.25, dy * 0.25), (pc[0] + dx * 0.25, pc[1] + dy * 0.25))
-                            for dx in range(-8, 9) for dy in range(-8, 9)), key=lambda t: t[0])
-            for d, q in cands:
-                if d < 0.9:
-                    continue
-                if not (X0 + 1.0 <= q[0] <= X0 + W - 1.0 and Y0 + 1.0 <= q[1] <= Y0 + H - 1.0):
-                    continue
-                if any(k[0] - 0.5 <= q[0] <= k[2] + 0.5 and k[1] - 0.5 <= q[1] <= k[3] + 0.5 for k in keep):
-                    continue
-                if any(math.hypot(q[0] - X0 - x, q[1] - Y0 - y) < 3.2 for x, y in PEGS):
-                    continue
-                if any(math.hypot(q[0] - c[0], q[1] - c[1]) < r + via_d / 2 + clr for c, r, isg in obst if not isg):
-                    continue
-                if any(math.hypot(q[0] - c[0], q[1] - c[1]) < r + via_d / 2 + 0.15 for c, r, isg in obst if isg):
-                    continue
-                if any(math.hypot(q[0] - v[0], q[1] - v[1]) < via_d + 0.4 for v in vias):
-                    continue
-                # the stub from the pad must stay clear of other nets' pads
-                if any(_pt_seg(c, pc, q) < r + width / 2 + clr for c, r, isg in obst if not isg):
-                    continue
-                v = pcbnew.PCB_VIA(b)
-                v.SetPosition(pcbnew.VECTOR2I(MM(q[0]), MM(q[1]))); v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd)
-                b.Add(v)
-                t = pcbnew.PCB_TRACK(b)
-                t.SetStart(pad.GetPosition()); t.SetEnd(pcbnew.VECTOR2I(MM(q[0]), MM(q[1])))
-                t.SetWidth(MM(width)); t.SetLayer(pcbnew.F_Cu); t.SetNet(gnd)
-                b.Add(t)
-                vias.append(q)
-                n += 1
+            add_via(q)
+            add_track(pc, q)
+            fanned[pad.m_Uuid.AsString()] = pc
+            n += 1
+            break
+        else:
+            trapped.append((fp, pad, pc))
+    for fp, pad, pc in trapped:
+        done = False
+        for tp in fp.Pads():
+            tc = fanned.get(tp.m_Uuid.AsString())
+            if tc is None or tp is pad:
+                continue
+            for path in ([pc, tc], [pc, (tc[0], pc[1]), tc], [pc, (pc[0], tc[1]), tc]):
+                if all(seg_clear(a, e) for a, e in zip(path, path[1:])):
+                    for a, e in zip(path, path[1:]):
+                        if a != e:
+                            add_track(a, e)
+                    print("fanout: linked", fp.GetReference(), pad.GetNumber(), "to pad", tp.GetNumber())
+                    fanned[pad.m_Uuid.AsString()] = pc
+                    done = True
+                    break
+            if done:
                 break
-            else:
-                print("fanout: no room next to", fp.GetReference(), pad.GetNumber())
+        if not done:
+            print("fanout: no room next to", fp.GetReference(), pad.GetNumber())
     print("GND fanout vias:", n)
 
 
@@ -597,7 +653,7 @@ def restitch(path):
         if not isinstance(t, pcbnew.PCB_VIA):
             ends.add((t.GetStart().x, t.GetStart().y)); ends.add((t.GetEnd().x, t.GetEnd().y))
     for t in list(b.GetTracks()):
-        if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == gnd and (t.GetPosition().x, t.GetPosition().y) not in ends:
+        if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == gnd and (t.GetPosition().x, t.GetPosition().y) not in ends and not t.IsLocked():
             b.Remove(t)
     filler = pcbnew.ZONE_FILLER(b)
     filler.Fill(b.Zones())
