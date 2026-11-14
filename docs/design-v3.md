@@ -222,6 +222,10 @@ board is redone):
    Technic pin fits, measured), 7 mm long so they engage before the 6 mm pins and protect them in transport, with
    three crush ribs for light friction and a flared root against breaking off. The P1-BASE lid has four matching
    LEGO holes (tubes under the lid) and a cut-out for the raised socket. Done in `enclosure/kuip.py`.
+8. **Lower RJ12 jacks: EVERCOM 5301-6P6C** (C3097716, JLCPCB stock): 11.45 mm high instead of 14.5 mm (13.30 x 18.05 mm,
+   leads 3.0 mm below the seating plane, snap-in posts Ø3.2 mm, latch down; EVERCOM drawing 5301-660XXX). The footprint
+   `p1base:RJ12_EVERCOM_5301-6P6C` is the LCSC footprint, so JLCPCB places it without correction. The P1-BASE gets
+   3 mm thinner (lid at ≈ 17.6 mm above the CoreInk) and the raised socket for J1 needs ≈ 13.5 mm instead of 16.5 mm.
 7. **RJ12 jacks centred** on the board's long axis (both on the centre line), so the device hangs straight when the
    cables pull. This moves most parts, so the board is placed and routed again.
 

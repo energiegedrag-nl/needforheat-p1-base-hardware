@@ -32,8 +32,8 @@ BUS_W, BUS_H = 5.08, 20.32  # 2 x 8 at 2.54 mm
 GAP = 2.5  # CoreInk back -> PCB bottom (RJ12 leads are 3.2 ± 0.3 mm below the seating plane: ≤ 1.9 mm below the PCB)
 PCB_T = 1.6
 PEGS = [(4, 4), (36, 4), (4, 52)]  # Ø2.2 NPTH in the PCB; the 4th corner has no peg (keys the PCB)
-JACKS = [(15.5, "top"), (15.5, "bottom")]  # centre x of the RJ12 openings
-JACK_W, JACK_H = 15.0, 14.5  # opening width (body 14.6); jack height above the PCB (C77859, LCSC data)
+JACKS = [(20.0, "top"), (20.0, "bottom")]  # centre x of the RJ12 openings (centred)
+JACK_W, JACK_H = 13.8, 11.45  # opening width (body 13.3); jack height above the PCB (EVERCOM 5301, C3097716)
 LEDS = []  # light holes in the lid, read from pcb_features.json (written by tools/gen_pcb.py)
 _feat = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pcb_features.json")
 if os.path.exists(_feat):

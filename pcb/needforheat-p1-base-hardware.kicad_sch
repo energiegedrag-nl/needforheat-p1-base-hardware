@@ -2765,7 +2765,7 @@
 			(effects
 				(font
 					(size 1.27 1.27))))
-		(property "Footprint" "Connector_RJ:RJ25_Wayconn_MJEA-660X1_Horizontal"
+		(property "Footprint" "p1base:RJ12_EVERCOM_5301-6P6C"
 			(at 30.48 50.8 0)
 			(effects
 				(font
@@ -2777,7 +2777,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C77859"
+		(property "LCSC" "C3097716"
 			(at 30.48 50.8 0)
 			(effects
 				(font
@@ -5529,7 +5529,7 @@
 			(effects
 				(font
 					(size 1.27 1.27))))
-		(property "Footprint" "Connector_RJ:RJ25_Wayconn_MJEA-660X1_Horizontal"
+		(property "Footprint" "p1base:RJ12_EVERCOM_5301-6P6C"
 			(at 388.62 55.88 0)
 			(effects
 				(font
@@ -5541,7 +5541,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C77859"
+		(property "LCSC" "C3097716"
 			(at 388.62 55.88 0)
 			(effects
 				(font

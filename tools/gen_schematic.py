@@ -127,7 +127,7 @@ C0805 = "Capacitor_SMD:C_0805_2012Metric"
 SOT23 = "Package_TO_SOT_SMD:SOT-23"
 SOT235 = "Package_TO_SOT_SMD:SOT-23-5"
 LED0603 = "LED_SMD:LED_0603_1608Metric"
-RJ = "Connector_RJ:RJ25_Wayconn_MJEA-660X1_Horizontal"
+RJ = "p1base:RJ12_EVERCOM_5301-6P6C"  # 11.45 mm high
 TP_FP = "TestPoint:TestPoint_Pad_D1.0mm"
 
 RES_LCSC = {"0R": "C21189", "47R": "C23182", "100R": "C22775", "220R": "C22962", "1k": "C21190", "2k2": "C4190", "4k7": "C23162",
@@ -167,7 +167,7 @@ def TP(ref, net):
 
 PARTS = [
     # 1. meter connector, protection, supplies
-    dict(ref="J2", lib="Connector:6P6C", value="RJ12 to meter", fp=RJ, lcsc="C77859",
+    dict(ref="J2", lib="Connector:6P6C", value="RJ12 to meter", fp=RJ, lcsc="C3097716",
          nets={"1": "P1_5V", "2": "METER_REQ_RAW", "3": "GND", "4": None, "5": "P1_DATA_RAW", "6": "GND"}),
     PMOS("Q1", "Q1_G", "P1_5V", "VMETER"),
     R("R1", "10k", "Q1_G", "GND"),
@@ -199,7 +199,7 @@ PARTS = [
     R("R6", "10k", "EXT_DATA_OUT", "V5", dnp=True),
     ESD("D4", "EXT_DATA_OUT"),
     # 3. existing reader
-    dict(ref="J3", lib="Connector:6P6C", value="RJ12 existing reader", fp=RJ, lcsc="C77859",
+    dict(ref="J3", lib="Connector:6P6C", value="RJ12 existing reader", fp=RJ, lcsc="C3097716",
          nets={"1": "VMETER", "2": "EXT_REQ_RAW", "3": "GND", "4": None, "5": "EXT_DATA_OUT", "6": "GND"}),
     # 4. data request
     ESD("D5", "METER_REQ_RAW"),
