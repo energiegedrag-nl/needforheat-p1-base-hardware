@@ -433,7 +433,7 @@ def autoroute(path):
         raise SystemExit("DSN export failed")
     cmd = [JAVA, "-Xmx2g", "-jar", FREEROUTING, "-de", dsn, "-do", ses, "-mp", "30", "-mt", "0", "--gui.enabled=false"]
     print(" ".join(cmd))
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=int(os.environ.get("P1BASE_ROUTE_TIMEOUT", "900")))
     print(r.stdout[-3000:], r.stderr[-3000:])
     if not os.path.exists(ses):
         raise SystemExit("Freerouting produced no SES file")
@@ -555,8 +555,8 @@ def fix_islands(path, step=0.25):
             bb = polys.Outline(i).BBox()
             done = False
             # the fill already keeps 0.25 mm from other copper, so the via only has to lie inside it;
-            # try a normal via first, then a small one (0.5/0.25 mm, within JLCPCB's limits)
-            for via_d, drill in ((0.6, 0.3), (0.5, 0.25)):
+            # try a normal via first, then a small one (0.56/0.3 mm: the board minimums, 0.3 mm drill and 0.13 mm ring)
+            for via_d, drill in ((0.6, 0.3), (0.56, 0.3)):
                 rr = MM(via_d / 2 + 0.02)
                 ring = [(int(rr * math.cos(k * math.pi / 8)), int(rr * math.sin(k * math.pi / 8))) for k in range(16)]
                 y = bb.GetTop()
