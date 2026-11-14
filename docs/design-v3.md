@@ -22,6 +22,7 @@ This document records the requirements, architecture, calculations and design de
 - [9. Design decisions](#9-design-decisions)
 - [10. Open points to verify](#10-open-points-to-verify)
 - [11. Out of scope](#11-out-of-scope)
+- [12. Independent checks](#12-independent-checks)
 
 ## 1. Requirements
 
@@ -200,7 +201,8 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 
 ## 10. Open points to verify
 
-1. **Blocking: the CoreInk connector part.** C72555 is listed as "Extended Female Pin Header 3.8"; its LCSC/EasyEDA 3D model has only ≈ 3 mm of pin below the body, so it would stick out ≈ 1.4 mm under the board, far too short to reach into the CoreInk socket (assumed ≥ 10.5 mm). The CoreInk socket is 8 mm deep and flush with the case (measured). With the 3.5 mm gap that the RJ12 leads (3.2 mm) and posts (2.9 mm) need, a top-mounted stacking header needs a tail of 10–13 mm below its body (1.6 mm board + 3.5 mm gap + 5–8 mm engagement). A plain male header on the bottom (as in v2.7) gives only a 2.5 mm gap, so the RJ12 leads and posts would hit the CoreInk case. No suitable part with a known tail length is in the JLCPCB library (November 2026); C72555 has no datasheet.
+1. **Blocking: the CoreInk connector part.** C72555 is listed as "Extended Female Pin Header 3.8"; its LCSC/EasyEDA 3D model has only ≈ 3 mm of pin below the body, so it ends ≈ 1.4 mm under the board, 2.1 mm short of the CoreInk back (confirmed by check 5, § 12). The CoreInk socket is 8 mm deep and flush with the case (measured). A top-mounted stacking header therefore needs a tail of 10–13 mm below its body (1.6 mm board + 3.5 mm gap + 5–8 mm engagement); no part with a known tail length is in the JLCPCB library (November 2026) and C72555 has no datasheet.
+   *Reopened option:* the LCSC model of the RJ12 jack puts its leads 3.2 mm below the **seating plane** (PCB top), i.e. only ≈ 1.6 mm below the board, and the posts ≈ 1.3 mm. If the datasheet or a sample confirms this, a plain 2x8 male header on the bottom (as in v2.7, 2.5 mm plastic) leaves ≈ 0.9 mm under the jack leads; the tray's disc pads (1.6 mm) would then have to move clear of the jacks, and JLCPCB would have to solder a THT part on the bottom side.
 2. RJ12 jack C77859 (CONNFLY DS1133-S60BPX): its LCSC footprint matches the Wayconn MJEA-660X1 footprint (same pin and post positions after a 90° rotation, pin 1 at the same place); the body is 14.5 mm tall and 14.6 mm wide (Wayconn outline: 12.2 mm), which clears the neighbouring pads. In the JLCPCB 3D preview the jack front reaches about 1 mm past the board edge; check against the datasheet (fine for the cable, but the enclosure opening must allow it).
 3. TP4056 behaviour in parallel with the CoreInk's own charger (TP4057) on USB.
 4. CoreInk `5V_OUT`: is it present on battery power (boost converter on) and when the CoreInk is switched off?
@@ -213,3 +215,32 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * DSMR 6 / X1 (from 2027): Ethernet (RJ45) with a REST/WebSocket API and USB-C power; this BASE does not apply.
 * Measuring the current drawn by the existing reader (only the meter voltage is monitored).
 * Galvanic isolation: the P1 port is isolated inside the meter.
+
+## 12. Independent checks
+
+Besides ERC/DRC in KiCad, `tools/checks/run_checks.py` runs four checks that use other data or other software than the
+tools that made the design. Reports: [`docs/checks/`](checks/). Results of November 2026:
+
+| # | Check | How | Result |
+|---|---|---|---|
+| 1 | Footprints and pinout against JLCPCB's library | Fetch the LCSC symbol and footprint of every BOM part (easyeda2kicad), place them as JLCPCB does from our CPL, and test that each LCSC pad lands on exactly one, distinct pad of ours; list LCSC pin function → our pin and net | All 161 pads land correctly; every pin function (G/S/D, A/K, TP4056, 74LVC1G14) matches |
+| 2 | Worst-case voltage per pin | Hand-derived worst-case voltage of every net (meter 5.5 V) against the absolute maximum rating of every connected pin; a pin without a limit is reported | See findings A and B |
+| 4 | Gerbers against the schematic | Rebuild the copper from the gerber and drill files alone (gerbonara + shapely; the net attributes in the files are ignored), find the connected islands and compare them with the netlist exported from the schematic | 47 nets, no opens, no shorts (a removed trace and an added short in a test copy were both caught) |
+| 5 | 3D fit | CadQuery/OpenCascade: populated board (KiCad STEP), tray and lid, a CoreInk proxy with the 8 mm socket, and RJ12 plugs with cable; pairwise overlap volumes and closest approach | After fix C: no collisions; plugs pass the openings; lowest part under the board 2.1 mm above the CoreInk |
+
+Check 3 (SPICE with tolerances) is still to be added to `tools/sim/`.
+
+Findings:
+
+* **A. G13 back-feeds a switched-off CoreInk.** The 4k7/10k divider from the 5 V splitter output drives G13 to 3.2 V
+  (3.57 V at a 5.5 V meter, close to the ESP32's 3.6 V maximum). When the CoreInk is off but the meter powers the
+  P1-BASE, G13 idles high and pushes ≈ 1 mA through the ESP32's protection diode into its unpowered 3.3 V rail. This can
+  partly power the ESP32 and disturb its power-on reset. Proposed fix: replace the divider with a single-gate buffer powered
+  from the CoreInk's 3V3 pin (e.g. 74LVC1G17, whose input tolerates 5.5 V and which is high-impedance when unpowered).
+  G36 (43 µA, continuous) and G34 (0.1 mA, only while a reader requests) are minor.
+* **B. TVS stand-off voltage.** SMF5.0A and PESD5V0S1BB have a 5.0 V stand-off voltage; a meter at the top of its tolerance
+  (5.5 V) or the reader's own 5 V puts them above it, where leakage rises. Consider 6 V stand-off parts (e.g. SMF6.0A).
+* **C. Lid against the jacks (fixed).** The lid's centring lip and the tongues over the RJ12 openings reached 0.3–0.9 mm into the
+  top of the jacks. The lip now has a notch above each jack and the tongues stop 0.2 mm above them (`enclosure/kuip.py`).
+* **D. Stacking header (known, § 10 point 1).** Confirmed numerically; see the reopened bottom-header option there.
+

@@ -1,0 +1,15 @@
+assumptions: meter 5V = 5.5 V, V5 = 5.25 V
+coverage gaps: none
+D1.1 SMF5.0A on VMETER: 0.00..5.50 V vs -0.5..5.0 V (TVS stand-off 5.0 V (leakage rises above))
+D3.1 PESD5V0S1BB on P1_DATA_RAW: 0.00..5.25 V vs -5.0..5.0 V (TVS stand-off +/-5 V)
+D4.1 PESD5V0S1BB on EXT_DATA_OUT: 0.00..5.50 V vs -5.0..5.0 V (TVS stand-off +/-5 V)
+D5.1 PESD5V0S1BB on METER_REQ_RAW: 0.00..5.50 V vs -5.0..5.0 V (TVS stand-off +/-5 V)
+D6.1 PESD5V0S1BB on EXT_REQ_RAW: 0.00..5.50 V vs -5.0..5.0 V (TVS stand-off +/-5 V)
+(margin <5%) J1.5VOUT CoreInk bus on COREINK_5VOUT: max 5.25 V vs 5.5 V (CoreInk 5V out)
+(margin <5%) J1.BAT CoreInk bus on COREINK_BAT: max 4.25 V vs 4.35 V (CoreInk battery pin (Li-ion))
+(margin <5%) J1.G13 CoreInk bus on G13_RX: max 3.57 V vs 3.6 V (ESP32 GPIO, VDD+0.3 at VDD=3.3 (abs max 3.6))
+
+CoreInk off, meter on: current into each ESP32 input (pin clamp ~0.5 V to a 0 V rail)
+  G13_RX      3.57 V via   3.2 kohm ->    961 uA  (whenever the P1 line idles (UART idle = high): continuous)
+  G36_VMETER  2.23 V via  40.5 kohm ->     43 uA  (whenever the meter supplies 5 V: continuous)
+  G34_EXTREQ  3.25 V via  27.8 kohm ->     99 uA  (only while the existing reader requests data)

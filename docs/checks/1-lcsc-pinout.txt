@@ -1,0 +1,177 @@
+
+C1 1u C15849 ('CL10A105KB8NNNC', LCSC footprint C0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              VMETER
+   LCSC   2 2        -> pad     2              GND
+
+C2 100n C14663 ('CC0603KRX7R9BB104', LCSC footprint C0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              VMETER
+   LCSC   2 2        -> pad     2              GND
+C3    C15849    same mapping as C1
+C4    C14663    same mapping as C2
+C6    C14663    same mapping as C2
+
+C7 22n C21122 ('CL10B223KB8NNNC', LCSC footprint C0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              CHG_GATE
+   LCSC   2 2        -> pad     2              CHG_IN
+
+C8 10u C15850 ('CL21A106KAYNNNE', LCSC footprint C0805, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              CHG_IN
+   LCSC   2 2        -> pad     2              GND
+C9    C15850    same mapping as C8
+
+D1 SMF5.0A C193402 ('SMF5.0A_C193402', LCSC footprint SOD-123FL_L2.7-W1.8-LS3.8-RD, CPL rotation 0.0)
+   LCSC   1 C        -> pad     1              VMETER
+   LCSC   2 A        -> pad     2              GND
+
+D2 BAT54C C37704 ('BAT54C,215', LCSC footprint SOT-23-3_L2.9-W1.6-P1.90-LS2.8-BR, CPL rotation 180.0)
+   LCSC   1 A        -> pad     1              VMETER
+   LCSC   2 A        -> pad     2              COREINK_5VOUT
+   LCSC   3 K        -> pad     3              V5
+
+D3 PESD5V0S1BB C2687128 ('PESD5V0S1BB_C2687128', LCSC footprint SOD-523_L1.2-W0.8-LS1.6-BI, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              P1_DATA_RAW
+   LCSC   2 2        -> pad     2              GND
+D4    C2687128  same mapping as D3
+D5    C2687128  same mapping as D3
+D6    C2687128  same mapping as D3
+
+D7 1N5819WS C191023 ('1N5819WS', LCSC footprint SOD-323_L1.8-W1.3-LS2.5-RD, CPL rotation 0.0)
+   LCSC   1 K        -> pad     1              METER_REQ
+   LCSC   2 A        -> pad     2              EXT_REQ
+
+J1 CoreInk bus C72555 ('2.54-2*8P母加长针3.8', LCSC footprint HDR-TH_16P-P2.54-V-F-R2-C8-S2.54-1, CPL rotation 90.0)
+   LCSC   1 1        -> pad   GND              GND
+   LCSC   2 2        -> pad   BAT              COREINK_BAT
+   LCSC   3 3        -> pad  5VIN              unconnected-(J1-5V_IN-Pad5VIN)
+   LCSC   4 4        -> pad 5VOUT              COREINK_5VOUT
+   LCSC   5 5        -> pad   RST              unconnected-(J1-EXT_RST-PadRST)
+   LCSC   6 6        -> pad   3V3              unconnected-(J1-Pad3V3)
+   LCSC   7 7        -> pad   G13              G13_RX
+   LCSC   8 8        -> pad   G14              G14_CHGHI
+   LCSC   9 9        -> pad   G21              unconnected-(J1-G21{slash}SDA-PadG21)
+   LCSC  10 10       -> pad   G22              unconnected-(J1-G22{slash}SCL-PadG22)
+   LCSC  11 11       -> pad   G18              unconnected-(J1-G18{slash}SCK-PadG18)
+   LCSC  12 12       -> pad   G36              G36_VMETER
+   LCSC  13 13       -> pad   G34              G34_EXTREQ
+   LCSC  14 14       -> pad   G26              G26_REQ
+   LCSC  15 15       -> pad   G23              unconnected-(J1-G23{slash}MOSI-PadG23)
+   LCSC  16 16       -> pad   G25              G25_CHG
+
+J2 RJ12 to meter C77859 ('DS1133-S60BPX', LCSC footprint RJ11-TH_DS1133-S60BPX, CPL rotation 270.0)
+   LCSC   1 1        -> pad     1              P1_5V
+   LCSC   2 2        -> pad     2              METER_REQ_RAW
+   LCSC   3 3        -> pad     3              GND
+   LCSC   4 4        -> pad     4              unconnected-(J2-Pad4)
+   LCSC   5 5        -> pad     5              P1_DATA_RAW
+   LCSC   6 6        -> pad     6              GND
+J3    C77859    same mapping as J2
+
+LED1 LED green C12624 ('0603 Green 509-620mcd', LCSC footprint LED0603-RD, CPL rotation 0.0)
+   LCSC   1 K        -> pad     1              SPLIT_DRV
+   LCSC   2 A        -> pad     2              LED1_A
+
+LED2 LED yellow C2287 ('0603YYellow light 90-110', LCSC footprint LED0603-R-RD, CPL rotation 0.0)
+   LCSC   1 A        -> pad     2              LED2_A
+   LCSC   2 K        -> pad     1              REQ_GATE
+
+LED3 LED red C2286 ('KT-0603R', LCSC footprint LED-SMD_L1.6-W0.8-R-RD, CPL rotation 0.0)
+   LCSC   1 A        -> pad     2              LED3_A
+   LCSC   2 K        -> pad     1              CHRG_N
+
+Q1 AO3401A C15127 ('AO3401A', LCSC footprint SOT-23_L2.9-W1.3-P1.90-LS2.4-BR, CPL rotation 180.0)
+   LCSC   1 G        -> pad     1              Q1_G
+   LCSC   2 S        -> pad     2              VMETER
+   LCSC   3 D        -> pad     3              P1_5V
+
+Q2 2N7002 C8545 ('2N7002', LCSC footprint SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR, CPL rotation 180.0)
+   LCSC   1 G        -> pad     1              SPLIT_DRV
+   LCSC   2 S        -> pad     2              GND
+   LCSC   3 D        -> pad     3              EXT_DATA_FET
+Q3    C15127    same mapping as Q1
+Q4    C8545     same mapping as Q2
+Q5    C8545     same mapping as Q2
+Q6    C15127    same mapping as Q1
+Q7    C8545     same mapping as Q2
+Q8    C8545     same mapping as Q2
+
+R1 10k C25804 ('0603WAF1002T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              Q1_G
+   LCSC   2 2        -> pad     2              GND
+
+R10 100k C25803 ('0603WAF1003T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              REQ_GATE
+   LCSC   2 2        -> pad     2              V5
+
+R11 1k C21190 ('0603WAF1001T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              G26_REQ
+   LCSC   2 2        -> pad     2              REQ_EN
+R12   C25803    same mapping as R10
+R13   C25804    same mapping as R1
+R14   C25803    same mapping as R10
+
+R16 100R C22775 ('0603WAF1000T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              EXT_REQ_RAW
+   LCSC   2 2        -> pad     2              EXT_REQ
+
+R18 47k C25819 ('0603WAF4702T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              EXT_REQ
+   LCSC   2 2        -> pad     2              G34_EXTREQ
+
+R19 68k C23231 ('0603WAF6802T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              G34_EXTREQ
+   LCSC   2 2        -> pad     2              GND
+R2    C22775    same mapping as R16
+
+R20 3k3 C22978 ('0603WAF3301T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              V5
+   LCSC   2 2        -> pad     2              LED2_A
+R21   C25803    same mapping as R10
+R22   C23231    same mapping as R19
+R23   C25803    same mapping as R10
+R24   C25819    same mapping as R18
+R25   C21190    same mapping as R11
+R26   C25803    same mapping as R10
+
+R27 20k C4184 ('0603WAF2002T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              PROG
+   LCSC   2 2        -> pad     2              GND
+R28   C4184     same mapping as R27
+R29   C21190    same mapping as R11
+R3    C21190    same mapping as R11
+R30   C25803    same mapping as R10
+
+R31 2k2 C4190 ('0603WAF2201T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              CHG_IN
+   LCSC   2 2        -> pad     2              LED3_A
+R32   C25804    same mapping as R1
+
+R4 4k7 C23162 ('0603WAF4701T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              SPLIT_DRV
+   LCSC   2 2        -> pad     2              G13_RX
+
+R5 47R C23182 ('0603WAF470JT5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              EXT_DATA_FET
+   LCSC   2 2        -> pad     2              EXT_DATA_OUT
+R7    C4190     same mapping as R31
+R8    C22775    same mapping as R16
+R9    C25803    same mapping as R10
+
+U1 74LVC1G14 C7835 ('SN74LVC1G14DBVR', LCSC footprint SOT-23-5_L3.0-W1.7-P0.95-LS2.8-BR, CPL rotation 180.0)
+   LCSC   1 N.C      -> pad     1              unconnected-(U1-NC-Pad1)
+   LCSC   2 A        -> pad     2              P1_DATA
+   LCSC   3 GND      -> pad     3              GND
+   LCSC   4 Y        -> pad     4              SPLIT_DRV
+   LCSC   5 VCC      -> pad     5              V5
+
+U3 TP4056 C16581 ('TP4056', LCSC footprint ESOP-8_L4.9-W3.9-P1.27-LS6.0-BL-EP, CPL rotation 270.0)
+   LCSC   1 TEMP     -> pad     1              GND
+   LCSC   2 PROG     -> pad     2              PROG
+   LCSC   3 GND      -> pad     3              GND
+   LCSC   4 VCC      -> pad     4              CHG_IN
+   LCSC   5 BAT      -> pad     5              COREINK_BAT
+   LCSC   6 STDBY#   -> pad     6              unconnected-(U3-~{STDBY}-Pad6)
+   LCSC   7 CHRG#    -> pad     7              CHRG_N
+   LCSC   8 CE       -> pad     8              CHG_IN
+   LCSC   9 EP       -> pad     9              GND
+
+RESULT: every LCSC pad lands on exactly one, distinct KiCad pad

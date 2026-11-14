@@ -1,0 +1,5 @@
+COLLISIONS: none
+closest approach < 0.5 mm (part, printed part): [(0.0, 'PCB', 'tray'), (0.4, 'J2', 'lid'), (0.4, 'J3', 'lid'), (0.49, 'J2', 'tray')]
+J1 header pins end at z = -4.51 (CoreInk back = 0): engagement 4.5 mm of the 8.0 mm socket -> pin length below the PCB = 8.0 mm
+lowest other parts under the PCB (z, ref): [(2.09, 'J2'), (2.09, 'J3'), (5.09, 'C1'), (5.09, 'C2')]  (CoreInk back z=0, magnet pads up to z=1.6)
+note: the J1 model (tools/gen_3d_models.py) assumes stacking-header pins 9.5 mm below the PCB; the LCSC model of C72555 ends 1.4 mm below the PCB, i.e. 2.1 mm above the CoreInk back: it does not reach the socket.

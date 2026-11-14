@@ -105,11 +105,15 @@ def lid():
     plate = slab(CI_W, CI_H, CI_R, Z_TOP, Z_TOP + LID_T, CLR + WALL)
     lip = slab(CI_W, CI_H, CI_R, Z_TOP - 1.5, Z_TOP, CLR - 0.15).cut(
         slab(CI_W, CI_H, CI_R, Z_TOP - 2, Z_TOP + 1, CLR - 1.35))
+    # notch the lip above the RJ12 jacks, which reach the board edge
+    for (x, side) in JACKS:
+        y = 0.0 if side == "top" else CI_H
+        lip = lip.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(x, y)).rect(JACK_W + 0.4, 6).extrude(2))
     body = plate.union(lip)
     # tongues closing the RJ12 openings above the jacks
     for (x, side) in JACKS:
         y = -CLR - WALL / 2 if side == "top" else CI_H + CLR + WALL / 2
-        t = cq.Workplane("XY").workplane(offset=Z_TOP).center(*P(x, y)).rect(JACK_W - 0.4, WALL).extrude(-(TOP_CLR + 0.3))
+        t = cq.Workplane("XY").workplane(offset=Z_TOP).center(*P(x, y)).rect(JACK_W - 0.4, WALL).extrude(-(TOP_CLR - 0.2))  # stops 0.2 mm above the jack
         body = body.union(t)
     for (x, y) in LEDS:
         body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(x, y)).circle(1.0).extrude(LID_T + 3))
