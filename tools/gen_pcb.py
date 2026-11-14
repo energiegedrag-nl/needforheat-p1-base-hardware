@@ -422,12 +422,20 @@ def fanout_gnd(b, via_d=0.56, drill=0.3, width=0.3, clr=0.3, ep_area=2.0):
     print("GND fanout vias:", n)
 
 
+HOLE_TO_HOLE = 0.5  # mm, edge to edge (board setup min_hole_to_hole)
+
+
 def stitch(b, pitch=1.5, via_d=0.6, drill=0.3, clr=0.25):
     """Add GND vias on a grid wherever they clear all other copper, tying the two GND pours together."""
     gnd = b.FindNet("GND")
     obst = []  # (kind, geometry, half-width) in mm
     for t in b.GetTracks():
         if t.GetNetCode() == gnd.GetNetCode():
+            if isinstance(t, pcbnew.PCB_VIA):
+                # GND vias (fanout, router) may touch a stitching via's copper, but the drills must
+                # keep the board's hole-to-hole distance
+                p = t.GetPosition()
+                obst.append(("h", (pcbnew.ToMM(p.x), pcbnew.ToMM(p.y)), pcbnew.ToMM(t.GetDrillValue()) / 2))
             continue
         if isinstance(t, pcbnew.PCB_VIA):
             p = t.GetPosition()
@@ -462,6 +470,11 @@ def stitch(b, pitch=1.5, via_d=0.6, drill=0.3, clr=0.25):
             for kind, g, hw in obst:
                 if kind == "r":
                     if g[0] - 0.5 <= px <= g[2] + 0.5 and g[1] - 0.5 <= py <= g[3] + 0.5:
+                        ok = False
+                        break
+                    continue
+                if kind == "h":
+                    if ((px - g[0]) ** 2 + (py - g[1]) ** 2) ** 0.5 < hw + drill / 2 + HOLE_TO_HOLE:
                         ok = False
                         break
                     continue
@@ -621,7 +634,7 @@ def fix_islands(path, step=0.25):
                     while x <= bb.GetRight():
                         pt = pcbnew.VECTOR2I(x, y)
                         pts = [pt] + [pcbnew.VECTOR2I(x + dx, y + dy) for dx, dy in ring]
-                        if all(polys.Contains(q, i) for q in pts) and all(op.Contains(q) for op in other for q in pts):
+                        if all(polys.Contains(q, i) for q in pts) and all(op.Contains(q) for op in other for q in pts)                                 and all((pt - a).EuclideanNorm() >= MM(0.3 + HOLE_TO_HOLE) for a in anchors):
                             v = pcbnew.PCB_VIA(b)
                             v.SetPosition(pt); v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd)
                             b.Add(v)
