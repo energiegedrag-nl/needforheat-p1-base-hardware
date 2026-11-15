@@ -1,4 +1,4 @@
-"""Build the P1-BASE v3 board from the schematic netlist, then autoroute it.
+﻿"""Build the P1-BASE v3 board from the schematic netlist, then autoroute it.
 
 Run with KiCad's own Python (it needs the pcbnew module):
   "<KiCad>/bin/python.exe" tools/gen_pcb.py [--no-route]
@@ -154,12 +154,17 @@ def _hit(a, b, gap):
     return not (a[2] + gap <= b[0] or b[2] + gap <= a[0] or a[3] + gap <= b[1] or b[3] + gap <= a[1])
 
 
+# U3 (TP4056) turned so pins 1-4 (GND, PROG, GND, CHG_IN) face the board interior and the two NC pins face the
+# edge: at 0 deg PROG sits between two GND pads next to the edge keepout and cannot escape
+BLOCK_ROT = {"U3": 180}
+
+
 def place_block(fps, rect, refs, obstacles, gap=0.3, step=0.25):
     """Raster-scan placement: each part goes to the first free spot in the block."""
     x1, y1, x2, y2 = rect
     for ref in refs:
         fp = fps[ref]
-        fp.SetOrientationDegrees(0)
+        fp.SetOrientationDegrees(BLOCK_ROT.get(ref, 0))
         fp.SetPosition(P(0, 0))
         w, h, bb = courtyard(fp)
         ox, oy = pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop())
@@ -217,6 +222,9 @@ def add_zone(b, net, layer):
 
 
 VARIANT = int(os.environ.get("P1BASE_VARIANT", "0"))  # rotates the packing order inside block 3
+# spacing in block 3 (logic under the meter jack); 0.45 mm (the most that fits) did not reduce the GND islands:
+# where they fall is mostly down to the router, so try P1BASE_VARIANT instead
+GAP3 = float(os.environ.get("P1BASE_GAP3", "0.3"))
 
 
 def build(route=True):
@@ -268,7 +276,7 @@ def build(route=True):
         if bi == 2 and VARIANT:
             k = VARIANT % len(refs)
             refs = refs[k:] + refs[:k]
-        place_block(fps, rect, refs, obstacles)
+        place_block(fps, rect, refs, obstacles, gap=GAP3 if bi == 2 else 0.3)
         placed.update(refs)
     missing = set(fps) - placed
     if missing:
