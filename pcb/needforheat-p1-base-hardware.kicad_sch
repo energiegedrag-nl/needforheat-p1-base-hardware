@@ -2198,6 +2198,161 @@
 							(font
 								(size 1.27 1.27))))))
 			(embedded_fonts no))
+		(symbol "74xGxx:74LVC1G17"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "U"
+				(at 0 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(justify left)))
+			(property "Value" "74LVC1G17"
+				(at 0 -3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(justify left)))
+			(property "Footprint" ""
+				(at -2.54 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "Datasheet" "https://www.ti.com/lit/ds/symlink/sn74lvc1g17.pdf"
+				(at 0 -6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))
+					(justify left)))
+			(property "Description" "Single Schmitt Buffer Gate, Low-Voltage CMOS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "ki_keywords" "Single Gate Buff Schmitt LVC CMOS"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(property "ki_fp_filters" "SOT?23* SOT?553* Texas?R-PDSO-G5?DCK* Texas?R-PDSO-N5?DRL* Texas?X2SON*0.8x0.8mm*P0.48mm*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27))))
+			(symbol "74LVC1G17_0_1"
+				(polyline
+					(pts
+						(xy -7.62 6.35)
+						(xy -7.62 -6.35)
+						(xy 5.08 0)
+						(xy -7.62 6.35))
+					(stroke
+						(width 0.254)
+						(type default))
+					(fill
+						(type background)))
+				(polyline
+					(pts
+						(xy -3.81 -1.27)
+						(xy -2.54 -1.27)
+						(xy -2.54 1.27)
+						(xy -1.27 1.27))
+					(stroke
+						(width 0.254)
+						(type default))
+					(fill
+						(type background)))
+				(polyline
+					(pts
+						(xy -2.54 -1.27)
+						(xy -1.27 -1.27)
+						(xy -1.27 1.27)
+						(xy 0 1.27))
+					(stroke
+						(width 0.254)
+						(type default))
+					(fill
+						(type background))))
+			(symbol "74LVC1G17_1_1"
+				(pin no_connect line
+					(at -7.62 5.08 180)
+					(length 5.08)
+					(hide yes)
+					(name "NC"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin input line
+					(at -12.7 0 0)
+					(length 5.08)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin power_in line
+					(at -5.08 -10.16 90)
+					(length 5.08)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin output line
+					(at 10.16 0 180)
+					(length 5.08)
+					(name ""
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)))))
+				(pin power_in line
+					(at -5.08 10.16 270)
+					(length 5.08)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27))))
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27))))))
+			(embedded_fonts no))
 		(symbol "p1base:PCA9633_8pin"
 			(pin_names
 				(offset 1.016))
@@ -5345,7 +5500,7 @@
 		(at 215.9 83.82)
 		(uuid "c1b3cd4f-a944-5d7b-8e7e-9e82f80610db"))
 	(symbol
-		(lib_id "74xGxx:74LVC1G14")
+		(lib_id "74xGxx:74LVC1G17")
 		(at 223.52 88.9 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -5359,7 +5514,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify left)))
-		(property "Value" "74LVC1G14"
+		(property "Value" "74LVC1G17"
 			(at 226.06 96.52 0)
 			(effects
 				(font
@@ -5377,7 +5532,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C7835"
+		(property "LCSC" "C7836"
 			(at 223.52 88.9 0)
 			(effects
 				(font
@@ -5541,22 +5696,6 @@
 			(width 0)
 			(type default))
 		(uuid "cee3ed5f-ea71-51de-9c02-37746bbefa51"))
-	(wire
-		(pts
-			(xy 205.74 55.88)
-			(xy 205.74 88.9))
-		(stroke
-			(width 0)
-			(type default))
-		(uuid "5f1db6f6-842d-5689-acf1-3818fd167df5"))
-	(wire
-		(pts
-			(xy 205.74 88.9)
-			(xy 208.28 88.9))
-		(stroke
-			(width 0)
-			(type default))
-		(uuid "b1285131-a95b-5257-96d1-88e9b8485729"))
 	(label "P1_DATA"
 		(at 203.2 55.88 0)
 		(effects
@@ -6131,14 +6270,21 @@
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
 					(reference "#PWR026")
 					(unit 1)))))
+	(label "SPLIT_DRV"
+		(at 210.82 88.9 180)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify right bottom))
+		(uuid "119e7650-0554-5c36-8c43-5455c7756119"))
 	(wire
 		(pts
-			(xy 236.22 88.9)
+			(xy 233.68 88.9)
 			(xy 248.92 88.9))
 		(stroke
 			(width 0)
 			(type default))
-		(uuid "6593c8cb-fb74-52b1-a8c7-a76571b50926"))
+		(uuid "30371ef1-ea46-5259-a2a5-0fb3163d7857"))
 	(label "G13_RX"
 		(at 248.92 88.9 0)
 		(effects
@@ -6170,22 +6316,22 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "cd945e75-06d7-505b-9c8e-f8530f93159b"))
-	(text "U4: same Schmitt trigger at the CoreInk's 3.3 V; G13 = P1 RX (not inverted). Unpowered when the"
+	(text "U4: Schmitt buffer at the CoreInk's 3.3 V fed from SPLIT_DRV; G13 = P1 RX (not inverted). Unpowered when"
 		(exclude_from_sim no)
 		(at 172.72 114.3 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "bbece425-69c9-5f78-8780-27dd85e4a6aa"))
-	(text "CoreInk is off, so no current flows into the ESP32 (power-off isolation)."
+		(uuid "08b9cc7a-904c-5839-8d03-0ed99d75240a"))
+	(text "the CoreInk is off, so no current flows into the ESP32 (power-off isolation)."
 		(exclude_from_sim no)
 		(at 172.72 116.84 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "61975ac9-b4c8-5fb3-8975-6e13e81e7888"))
+		(uuid "fad8fa5c-1fcd-5518-80f6-704336a1c9a8"))
 	(rectangle
 		(start 325.12 15.24)
 		(end 405.13 71.12)
@@ -12133,11 +12279,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "199b74d7-1e45-54a0-9d73-4133cf66e4f1"))
-	(junction
-		(at 205.74 55.88)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "7177c21d-06fb-5eb0-90e6-35978103e398"))
 	(junction
 		(at 99.06 167.64)
 		(diameter 0)

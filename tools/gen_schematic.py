@@ -199,9 +199,10 @@ PARTS = [
     C("C4", "100n", "V5", "GND"),
     R("R7", "2k2", "VLED", "LED1_A"),
     LED("LED1", "green", "LED1_A", "SPLIT_DRV"),
-    # second Schmitt trigger at the CoreInk's 3.3 V: drives G13, and nothing flows into a switched-off CoreInk
-    dict(ref="U4", lib="74xGxx:74LVC1G14", value="74LVC1G14", fp=SOT235, lcsc="C7835",
-         nets={"1": None, "2": "P1_DATA", "3": "GND", "4": "G13_RX", "5": "COREINK_3V3"}),
+    # Schmitt buffer at the CoreInk's 3.3 V, fed from U1's clean 5 V output: drives G13 with U1's thresholds, and
+    # nothing flows into a switched-off CoreInk (5 V tolerant input, unpowered output)
+    dict(ref="U4", lib="74xGxx:74LVC1G17", value="74LVC1G17", fp=SOT235, lcsc="C7836",
+         nets={"1": None, "2": "SPLIT_DRV", "3": "GND", "4": "G13_RX", "5": "COREINK_3V3"}),
     C("C10", "100n", "COREINK_3V3", "GND"),
     NMOS("Q2", "SPLIT_DRV", "EXT_DATA_FET", "GND"),
     R("R5", "47R", "EXT_DATA_FET", "EXT_DATA_OUT"),
@@ -412,7 +413,7 @@ class Sheet:
                 f = [((X + 5.08, Y - 0.635), L), ((X + 5.08, Y + 1.905), L)]
         elif lid == "Diode:BAT54C":
             f = [((X, Y - 6.35), "center"), ((X, Y - 4.445), "center")]
-        elif lid == "74xGxx:74LVC1G14":
+        elif lid in ("74xGxx:74LVC1G14", "74xGxx:74LVC1G17"):
             f = [((X + 2.54, Y + 5.715), "left"), ((X + 2.54, Y + 7.62), "left")]
         elif lid == "p1base:PCA9633_8pin":
             f = [((X, Y - 6.35), "center"), ((X + 1.27, Y + 12.065), "left")]
@@ -609,7 +610,6 @@ def draw(s):
     s.wire((170.18, 55.88), "D3.1")
     s.power("GND", "D3.2")
     s.wire("R2.2", (190.5, 55.88), (193.04, 55.88), "U1.2")
-    s.wire((193.04, 55.88), "U4.2", first="v")
     s.label("P1_DATA", (190.5, 55.88), "r", 1.0)
     s.wire("R3.1", (190.5, 55.88))
     s.power("V5", "R3.2")
@@ -639,13 +639,14 @@ def draw(s):
     s.power("GND", "C10.2")
     s.label("COREINK_3V3", (223.52, 76.2))
     s.power("GND", "U4.3")
+    s.label("SPLIT_DRV", "U4.2", "l")
     s.wire("U4.4", (236.22, 88.9))
     s.label("G13_RX", (236.22, 88.9))
     s.note("U1: Schmitt trigger at V5 with the 1 k pull-up of v2.7 (reads weak meter outputs).", 160.02, 106.68)
     s.note("Q2 drives the existing reader from V5, so it keeps working when the CoreInk is off. R6 (not fitted):", 160.02, 109.22)
     s.note("pull-up for readers without their own. LED1 (green): blinks with the meter data.", 160.02, 111.76)
-    s.note("U4: same Schmitt trigger at the CoreInk's 3.3 V; G13 = P1 RX (not inverted). Unpowered when the", 160.02, 114.3)
-    s.note("CoreInk is off, so no current flows into the ESP32 (power-off isolation).", 160.02, 116.84)
+    s.note("U4: Schmitt buffer at the CoreInk's 3.3 V fed from SPLIT_DRV; G13 = P1 RX (not inverted). Unpowered when", 160.02, 114.3)
+    s.note("the CoreInk is off, so no current flows into the ESP32 (power-off isolation).", 160.02, 116.84)
 
     # 3 ---------------------------------------------------------------------
     s.block("3  Existing P1 reader", 325.12, 15.24, 405.13, 71.12)

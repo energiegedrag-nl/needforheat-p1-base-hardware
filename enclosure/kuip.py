@@ -66,6 +66,11 @@ SOCKET_H = 13.59  # J1 Samtec ESQ-108-24-G-D: socket top above the board ("C", S
 Z_TOP = GAP + PCB_T + SOCKET_H - LID_T
 TOP_CLR = Z_TOP - (GAP + PCB_T + JACK_H)  # 0.74 mm above the RJ12 jacks
 assert TOP_CLR >= 0.5
+# shipping: each module goes loose (not stacked) in a letterbox parcel (PostNL brievenbuspakje, max. 32 mm thick);
+# 27 mm leaves ≥ 5 mm for the box and padding. Thickness = lid top to the tips of the LEGO posts.
+SHIP_MAX = 27.0
+SHIP_T = Z_TOP + LID_T + POST_L
+assert SHIP_T <= SHIP_MAX, f"P1-BASE is {SHIP_T:.1f} mm thick, more than {SHIP_MAX} mm for a letterbox parcel"
 
 
 def slab(w, h, r, z0, z1, off=0.0):
@@ -81,19 +86,17 @@ def P(x, y):
 
 
 def lego_post(x, y, z0, length=POST_L):
-    """A LEGO-compatible post pointing down from z0: core, three crush ribs, a lead-in at the tip and a
-    flared root against breaking off at the layer lines."""
+    """A LEGO-compatible post pointing down from z0: core, three crush ribs and a lead-in at the tip.
+    No flared root: below z0 is the CoreInk's back, and the post grows out of the 6 x 6 mm corner block above it."""
     c = P(x, y)
     # starts 0.5 mm inside the part it hangs from, so the two fuse into one solid
     core = cq.Workplane("XY").workplane(offset=z0 + 0.5).center(*c).circle(POST_D / 2).extrude(-(length - 0.8 + 0.5))
     tip = (cq.Workplane("XY").workplane(offset=z0 - (length - 0.8)).center(*c).circle(POST_D / 2)
            .workplane(offset=-0.8).circle(POST_D / 2 - 0.6).loft())
-    root = (cq.Workplane("XY").workplane(offset=z0).center(*c).circle(POST_D / 2 + 0.8)
-            .workplane(offset=-0.8).circle(POST_D / 2).loft())
-    post = core.union(tip).union(root)
+    post = core.union(tip)
     for k in range(3):
         rib = (cq.Workplane("XY").workplane(offset=z0 - 0.8).center(*c)
-               .center((POST_D + RIB_D) / 4, 0).rect((RIB_D - POST_D) / 2 + 0.2, RIB_W)
+               .center((POST_D / 2 - 0.1 + RIB_D / 2) / 2, 0).rect((RIB_D - POST_D) / 2 + 0.1, RIB_W)  # from inside the core to RIB_D / 2
                .extrude(-(length - 2.4)).rotate((c[0], c[1], 0), (c[0], c[1], 1), 120 * k))
         post = post.union(rib)
     return post
@@ -114,10 +117,11 @@ def kuip():
         if (x, y) in PEGS:
             peg = cq.Workplane("XY").workplane(offset=GAP).center(*P(x, y)).circle(PEG_D / 2).extrude(PCB_T - 0.2)
             body = body.union(peg)
-    # RJ12 openings, from the PCB top surface up to the top (the lid closes them)
+    # RJ12 openings, from 0.3 mm below the PCB top surface up to the top (the lid closes them); the jack front
+    # sticks out 0.55 mm past the board edge, so the opening floor must be below the jack's seating plane
     for (x, side) in JACKS:
         y = -WALL - CLR - 1 if side == "top" else CI_H + CLR - 1
-        cut = (cq.Workplane("XY").workplane(offset=GAP + PCB_T)
+        cut = (cq.Workplane("XY").workplane(offset=GAP + PCB_T - 0.3)
                .center(*P(x, y + (WALL + 2) / 2)).rect(JACK_W, WALL + 2).extrude(Z_TOP))
         body = body.cut(cut)
     # cut-outs in the skirt: HAT edge (top), USB-C + Grove (bottom), dial and power switch (left in this view)
@@ -189,6 +193,7 @@ def main():
         cq.exporters.export(part, os.path.join(OUT, name + ".step"))
         cq.exporters.export(part, os.path.join(OUT, name + ".stl"), tolerance=0.02, angularTolerance=0.1)
         print("wrote", name)
+    print(f"thickness for shipping (lid top to post tips): {SHIP_T:.1f} mm (max. {SHIP_MAX} mm)")
 
 
 if __name__ == "__main__":

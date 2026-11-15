@@ -48,7 +48,8 @@ jb = Bnd_Box(); [BRepBndLib.Add_s(s, jb) for s in j1]; jx0, jy0, _, jx1, jy1, _ 
 jcx, jcy = (jx0 + jx1) / 2, (jy0 + jy1) / 2
 core = (cq.Workplane("XY").center(20, -28).rect(40, 56).extrude(-16).edges("|Z").fillet(3))
 for (x, y) in K.LEGO_HOLES:
-    core = core.cut(cq.Workplane("XY").center(x, -y).circle(4.85 / 2).extrude(-4))
+    # through holes (measured); cut at the crush-rib diameter: the ribs press 0.05 mm into the 4.85 mm hole by design
+    core = core.cut(cq.Workplane("XY").center(x, -y).circle(K.RIB_D / 2 + 0.02).extrude(-16))
 SOCK_D = 8.0
 core = core.cut(cq.Workplane("XY").center(jcx, jcy).rect(2 * 2.54 + 0.4, 8 * 2.54 + 0.4).extrude(-SOCK_D))
 core = core.val().wrapped
@@ -97,10 +98,11 @@ for ref, shapes in sorted(board.items()):
 pins_z = min(bbox(s)[2] for s in board["J1"])
 under = min(bbox(s)[2] for ref, sh in board.items() if ref not in ("J1", "PCB") for s in sh)
 lowest = sorted(((round(min(bbox(s)[2] for s in sh), 2), ref) for ref, sh in board.items() if ref not in ("J1", "PCB")))[:4]
+print(f"LEGO posts: core {K.POST_D} mm, crush ribs {K.RIB_D} mm in a {K.LEGO_D} mm hole (interference by design, not counted)")
 print("COLLISIONS:", "\n  ".join([""] + report) if report else "none")
 print("closest approach < 0.5 mm (part, printed part):", sorted(mind) or "none")
 print(f"J1 header pins end at z = {pins_z:.2f} (CoreInk back = 0): engagement {max(0, -pins_z):.1f} mm of the {SOCK_D} mm socket"
       f" -> pin length below the PCB = {GAP - pins_z:.1f} mm")
 print(f"lowest other parts under the PCB (z, ref): {lowest}  (CoreInk back z=0, magnet pads up to z=1.6)")
-print("note: the J1 model (tools/gen_3d_models.py) assumes stacking-header pins 9.5 mm below the PCB; the LCSC model of"
-      f" C72555 ends 1.4 mm below the PCB, i.e. {GAP - 1.4:.1f} mm above the CoreInk back: it does not reach the socket.")
+print("note: J1 is modelled as the Samtec ESQ-108-24-G-D (tools/gen_3d_models.py: tail 9.65 mm below the board's top"
+      " surface, from the Samtec table); VERIFY on the Samtec drawing and a sample.")

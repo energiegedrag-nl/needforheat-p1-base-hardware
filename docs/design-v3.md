@@ -167,6 +167,19 @@ P1-BASE, the setting stays until the meter supply is lost):
 
 A P1-BASE without the dimmer does not acknowledge address 0x62, so the firmware can tell the versions apart.
 
+**Variant without dimming (U5 not placed).** The dimmer is built so that it can be left out by a BOM change only, with
+the same board, layout and stencil:
+
+* Mark **U5 as "do not place"** (remove it from the BOM and CPL, or deselect it in the JLCPCB BOM step).
+* **Keep U6, C11, C12, R34, Q10, Q9 and R33** (all basic parts, a few cents). With U5 absent, R34 holds `LED_DIM` at
+  3.3 V, so Q10 and Q9 are on and `VLED` = `V5`: the LEDs are at full brightness, as before the dimmer.
+* Do **not** leave out U6: without it R34 has no supply, Q10 stays off and the LEDs never light.
+* The firmware finds no device at 0x62 and skips the LED settings; nothing else on G21/G22 changes.
+* Saving (quote of 15 November 2026): the PCA9633 (≈ € 2.80 per board at 5 pieces) and one extended-part fee
+  (≈ € 2.80 per order). It also removes the only part that talks on the CoreInk's I²C bus, shared with its RTC.
+
+The first prototype order keeps U5, to learn whether dimming is wanted and whether the I²C control works.
+
 ## 5. Firmware interface
 
 | CoreInk pin | Direction | Function | Notes |
@@ -215,6 +228,11 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 
 * **Board:** 40 x 56 mm, the CoreInk outline. The meter socket J2 sits at the top edge (opening up): the device hangs from a short cable under the P1 port with the screen upright. The socket for the existing reader J3 is at the bottom edge (opening down).
 * **CoreInk connection** (*being redesigned, see § 9a*): a 2x8 stackable female header (long pins) is inserted from the top and soldered by JLC like any THT part. Its pins pass through the board into the CoreInk socket; the female body on top keeps the MI-BUS available for measurements. Gap board–CoreInk: 3.5 mm, enough for the RJ12 leads and pegs.
+* **Shipping by letterbox post:** a PostNL letterbox parcel is at most 38 × 26.5 × 3.2 cm. The modules ship loose,
+  side by side, not stacked (CoreInk + P1-BASE stacked is ≈ 34 mm). Each module must stay ≤ 27 mm thick from the
+  lid top to the tips of its LEGO posts, which leaves ≥ 5 mm for the box and padding; `enclosure/kuip.py` asserts
+  this (P1-BASE: 24.7 mm). The posts are longer than the J1 pins, so a loose module rests on its posts. Cells
+  (BatteryBASE) are never shipped in the parcel; the user clicks the modules together.
 * **LED windows and lid:** three 2.0 x 1.4 mm windows in the tray's top wall, in front of the side-looking LEDs. The lid
   clicks onto the tray: a thin lip (1.0 mm) with two half-round bumps on each long side snaps into grooves in the long
   walls; a notch in the top of the bottom wall lets a fingernail or a coin lift it off again. No screws.
@@ -225,7 +243,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 
 * Two-layer board, 1.6 mm, JLCPCB standard capabilities (track/space ≥ 0.2 mm, via 0.6/0.3 mm).
 * All parts on the top side; SMD plus three THT parts (J1–J3) that JLC solders.
-* Basic parts: all resistors and capacitors, AO3401A, 2N7002, 1N5819WS, XC6206P332MR. Extended parts (each adds a one-off loading fee per order): TP4056, 74LVC1G14, BAT54C, SMF6.0A, PESD5V0S1BB, PCA9633DP1, the three side-looking LEDs, RJ12 jacks, stacking header.
+* Basic parts: all resistors and capacitors, AO3401A, 2N7002, 1N5819WS, XC6206P332MR. Extended parts (each adds a one-off loading fee per order): TP4056, 74LVC1G14, 74LVC1G17, BAT54C, SMF6.0A, PESD5V0S1BB, PCA9633DP1, the three side-looking LEDs, RJ12 jacks, stacking header.
 * Assembly variants: R6 (pull-up on the splitter output) and R15 (always request) are not fitted by default.
 * JLCPCB *Economic* assembly needs a HASL finish (it is not offered with OSP); LeadFree HASL is fine.
 * JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23, SOT-23-3 and SOT-23-5 +180°, SOIC-8 and TSSOP-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
@@ -254,8 +272,9 @@ Decided in November 2026, after the independent checks (§ 12) and the BatteryBA
 has the circuit changes, the PCB and enclosure do not yet** (DRC with schematic parity fails on purpose until the
 board is redone):
 
-1. **U4 instead of R4/R32** (finding A): a second 74LVC1G14 (C7835) powered from the CoreInk's 3V3 drives G13, with
-   C10 100 nF. Nothing flows into a switched-off CoreInk; G13 high is exactly 3.3 V.
+1. **U4 instead of R4/R32** (finding A): a Schmitt buffer powered from the CoreInk's 3V3 drives G13, with C10 100 nF.
+   Nothing flows into a switched-off CoreInk; G13 high is exactly 3.3 V. First a 74LVC1G14 on `P1_DATA`; since
+   15 November 2026 a **74LVC1G17 (C7836) fed from `SPLIT_DRV`** (U1's output), see open point 11.
 2. **D1 = SMF6.0A** (C178260, finding B): stand-off 6.0 V, above any meter voltage.
 3. **Gap CoreInk–PCB from 3.5 to 2.5 mm**: the RJ12 leads are at most 1.9 mm below the board (datasheet), leaving
    0.6 mm clearance. Done in `enclosure/kuip.py`.
@@ -269,7 +288,7 @@ board is redone):
    raised socket 3–4.5 mm lower.
 6. **LEGO posts on every enclosure:** four posts underneath, at the CoreInk's LEGO holes (through holes; a LEGO
    Technic pin fits, measured), 7 mm long so they engage before the 6 mm pins and protect them in transport, with
-   three crush ribs for light friction and a flared root against breaking off. The P1-BASE lid has four matching
+   three crush ribs for light friction (0.05 mm interference); the post grows out of the corner block, no flared root below it (that would sit in the CoreInk's back). The P1-BASE lid has four matching
    LEGO holes (tubes under the lid) and a cut-out for the raised socket. Done in `enclosure/kuip.py`.
 8. **Lower RJ12 jacks: EVERCOM 5301-6P6C** (C3097716, JLCPCB stock): 11.45 mm high instead of 14.5 mm (13.30 x 18.05 mm,
    leads 3.0 mm below the seating plane, snap-in posts Ø3.2 mm, latch down; EVERCOM drawing 5301-660XXX). The footprint
@@ -306,6 +325,14 @@ give the same result on every run, so a re-route may need a different fix. Then
    and on the first board the lens height (the tray windows assume 0.5 mm above the board, 1.4 mm tall).
 9. I²C pull-ups on G21/G22 inside the CoreInk (they serve the RTC); the P1-BASE adds none.
 10. Snap fit of the lid (bump 0.35 mm, groove 0.55 mm deep): print a test and adjust `SNAP_P` in `enclosure/kuip.py`.
+11. **G13 with a slow meter output (simulation, 15 November 2026).** U4 (74LVC1G14 at the CoreInk's 3.3 V) takes its
+    input from `P1_DATA`, like U1. At 3.3 V its thresholds are lower (≈ 1.8 V / 1.1 V instead of ≈ 2.75 V / 1.65 V at
+    5 V), so with a slow, current-limited meter output (opto, 4 mA) the slow falling edge crosses late: the bit-width
+    error on G13 is ≈ 46 % instead of ≈ 21 % (docs/simulation § 1), close to what a UART can take. Fast meter outputs
+    are fine (0.4 %). **Done (schematic, 15 November 2026):** U4 = 74LVC1G17 (C7836, non-inverting Schmitt buffer,
+    same pinout, 5 V tolerant input) fed from `SPLIT_DRV` (U1's clean 5 V output): same polarity at G13, U1's
+    thresholds, still nothing into a switched-off CoreInk. One more extended part (≈ € 2.80 per order). Simulated: bit-width
+    error on G13 with the slow meter output back to ≈ 21 % (same as the splitter output), fast outputs 0.6 %.
 
 ## 11. Out of scope
 
