@@ -487,6 +487,12 @@ def stitch(b, pitch=1.5, via_d=0.6, drill=0.3, clr=0.25):
             # connectors: keep vias out of their whole footprint
             obst.append(("r", (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
                                pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())), 0.0))
+    for t in b.GetDrawings():
+        # keep vias out of the silkscreen texts: a via (on either side) breaks up the letters
+        if isinstance(t, pcbnew.PCB_TEXT) and t.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+            bb = t.GetBoundingBox()
+            obst.append(("r", (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
+                               pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())), 0.0))
     for (x, y) in CORNERS:
         obst.append(("c", (X0 + x, Y0 + y), 3.2))  # keep the kuip corner posts' area free
     n = 0

@@ -64,7 +64,7 @@ TECH_L = 7.8
 LIP_H, LIP_T = 1.8, 1.0  # lip height below the lid, thickness (thin enough to flex)
 SNAP_R, SNAP_P = 0.6, 0.35  # bump radius and how far it sticks out past the lip
 SNAP_L = 7.0  # bump length
-SNAP_Y = [14.0, 42.0]  # bump centres along the long walls
+SNAP_Y = [16.0, 40.0]  # bump centres along the long walls (clear of the key at the top-left corner)
 GROOVE_D = 0.55  # groove depth in the wall: the bump sits in it with 0.2 mm to spare
 LID_T = 1.4
 SOCKET_H = 13.59  # J1 Samtec ESQ-108-24-G-D: socket top above the board ("C", Samtec table 1)
@@ -117,6 +117,41 @@ def corner_box(x, y, z0, z1):
 
 Z_LID = Z_TOP + LID_T  # outer face of the lid
 Z_CORNER = Z_LID - (TECH_L + 0.5)  # bottom of the lid's corner pillars
+
+# Key against fitting the lid the wrong way round (turned 180 deg; flipped is impossible because of the lip): the
+# top-left corner pillar (meter edge, the corner without a PCB peg) is an L, KEY_L longer along both walls it meets,
+# and only that corner of the tray is cut away that far. Turned round, the L lands on the full-height wall of the
+# bottom-right corner: it stops on the rim at first contact, ~8 mm before the lid would close. The L is part of the
+# pillar over its full height (wall thickness + lip), not a separate tab that can break off.
+KEY_L, KEY_CLR = 2.5, 0.2
+KEY_T = WALL + 0.15 + LIP_T  # strip thickness in the lid: wall + gap + lip, so it fuses with the lip as well
+KEY_STRIPS = [(CORNER, CORNER + KEY_L, 0.0, KEY_T), (0.0, KEY_T, CORNER, CORNER + KEY_L)]  # x0, x1, y0, y1 (board frame)
+
+
+def _turned(x0, x1, y0, y1):
+    return CI_W - x1, CI_W - x0, CI_H - y1, CI_H - y0
+
+
+# the turned L must meet solid wall at the rim: no jack opening, groove, pry notch or window there
+_bx0, _bx1, _, _ = _turned(*KEY_STRIPS[0])  # on the bottom wall
+_, _, _ry0, _ry1 = _turned(*KEY_STRIPS[1])  # on the right wall
+assert _bx0 > JACKS[1][0] + JACK_W / 2 + 1.0, "turned key would drop into the J3 opening"
+assert all(abs(y - (_ry0 + _ry1) / 2) > (SNAP_L + 1.0) / 2 + 0.5 + (_ry1 - _ry0) / 2 for y in SNAP_Y), \
+    "turned key would drop into a snap groove"
+# and the key's own cut-out in the tray must stay clear of the top-left groove and of LED1's window
+# (LED1's window sits low in the wall: beside the cut-out, or with ≥ 2 mm of wall between them)
+assert CORNER + KEY_L + KEY_CLR + 0.5 < SNAP_Y[0] - (SNAP_L + 1.0) / 2, "key cut-out runs into the snap groove"
+assert all(x - LED_HOLE_W / 2 > CORNER + KEY_L + KEY_CLR + 0.3
+           or GAP + PCB_T + LED_LENS_Z + LED_HOLE_H / 2 + 2.0 < Z_CORNER - 0.2
+           for x, y in LEDS if y < CI_H / 2), "key cut-out runs into LED1's window"
+
+
+def key_box(x0, x1, y0, y1, z0, z1):
+    """Box in the board frame (x0..x1, y0..y1) between z0 and z1."""
+    return (cq.Workplane("XY").workplane(offset=z0).center(*P((x0 + x1) / 2, (y0 + y1) / 2))
+            .rect(x1 - x0, y1 - y0).extrude(z1 - z0))
+
+
 # pry notch: middle of the bottom wall between the left corner pillar and the J3 opening (LED2's window is right of J3)
 PRY_X = (CORNER + JACKS[1][0] - JACK_W / 2) / 2
 PRY_W, PRY_D = 3.5, 0.8
@@ -136,6 +171,10 @@ def kuip():
             body = body.union(cq.Workplane("XY").workplane(offset=GAP).center(*P(x, y)).circle(PEG_D / 2).extrude(PCB_T - 0.2))
         # the lid's corner pillar takes over the top of the corner
         body = body.cut(corner_box(x, y, Z_CORNER - 0.2, Z_TOP + 1))
+    # the key: the top-left corner is cut away KEY_L (+ clearance) further along both walls
+    (ax0, ax1, ay0, ay1), (bx0, bx1, by0, by1) = KEY_STRIPS
+    body = body.cut(key_box(ax0, ax1 + KEY_CLR, -1.0, WALL + 0.3, Z_CORNER - 0.2, Z_TOP + 1))
+    body = body.cut(key_box(-1.0, WALL + 0.3, by0, by1 + KEY_CLR, Z_CORNER - 0.2, Z_TOP + 1))
     # RJ12 openings through the top and bottom walls, from 0.3 mm below the PCB top surface up (the lid closes them);
     # the jack front sticks out 0.5 mm past the board edge into the wall
     for (x, side) in JACKS:
@@ -194,6 +233,9 @@ def lid():
     outline = slab(CI_W, CI_H, CI_R, Z_CORNER, Z_LID)
     for (x, y) in LEGO_HOLES:
         body = body.union(corner_box(x, y, Z_CORNER, Z_LID).intersect(outline))
+    # the key: the top-left pillar is an L, KEY_L longer along both walls
+    for strip in KEY_STRIPS:
+        body = body.union(key_box(*strip, Z_CORNER, Z_LID).intersect(outline))
     for (x, y) in LEGO_HOLES:
         body = body.cut(technic_hole(x, y))
     # cut-out for the raised bus socket, whose top is flush with the lid (VERIFY against the chosen part)

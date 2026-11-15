@@ -7,7 +7,7 @@ Two printed parts:
 | `fabrication/p1-base-kuip.step` / `.stl` | tray: holds the PCB on four corner blocks, LEGO posts underneath; a light window for each LED, next to its RJ12 opening |
 | `fabrication/p1-base-lid.step` / `.stl` | lid that clicks onto the tray: the module's back, with tongues that close the RJ12 openings and corner pillars with LEGO Technic holes |
 
-`kuip.py` is the parametric source (CadQuery 2.x): `python enclosure/kuip.py`. It reads the LED and jack positions from `pcb_features.json`, which `tools/gen_pcb.py` writes. `p1-base-v3-pcb.step` is the populated board, for checking the fit in a CAD program. `callouts.py` renders the parts with numbered callouts (`docs/images/enclosure-*-callouts.png`).
+`kuip.py` is the parametric source (CadQuery 2.x): `python enclosure/kuip.py`. It reads the LED and jack positions from `pcb_features.json`, which `tools/gen_pcb.py` writes. `p1-base-v3-pcb.step` is the populated board, for checking the fit in a CAD program. `callouts.py` renders the parts with numbered callouts (`docs/images/enclosure-*-callouts.png`) and the lid keying picture for the manual (`docs/images/enclosure-lid-keying.png`).
 
 | Tray, top edge | Tray, underside | Lid, inside |
 |---|---|---|
@@ -20,6 +20,9 @@ How it works (frame: back of the CoreInk, HAT edge up):
 * The **lid repeats the CoreInk's back**: four LEGO holes at the same positions and a cut-out for the raised bus socket. Each hole is a **LEGO Technic hole** in a corner pillar of the lid: a counterbore at the entry and a snap groove one Technic module (7.8 mm) deep, so a real Technic pin clicks in as on the CoreInk (LEGO standard values, verify on a print). The tray's walls are notched at the corners for these pillars.
 * The PCB rests on the corner blocks, 2.5 mm above the CoreInk, and is keyed by **three pegs**; the top-left corner has none, so the PCB fits one way only.
 * An arrow on the lid's outside points to the meter edge.
+* **The lid fits one way only.** Its top-left corner pillar (meter edge) is an L, 2.5 mm longer along both walls, and only that corner of the tray is cut away that far. Turned round, the L lands on the full-height wall at the J3 corner at the very first touch: the lid stays 6.9 mm up, its lip never enters the tray and nothing clicks. The key is part of the pillar over its full height, not a tab that can break off. `tools/checks/check_3d_fit.py` checks this stand-off on the solids.
+
+  ![The lid fits one way only](../docs/images/enclosure-lid-keying.png)
 * Two green **side-looking LEDs**, one beside each RJ12 socket, shine through a window in the wall next to the plug: LED1 in the top (meter-side) wall left of J2, LED2 in the bottom wall right of J3 (seen from the back). They stay visible with a module behind the P1-BASE.
 * The **lid clicks on**: a 1 mm lip inside the walls with two half-round bumps on each long side snaps into grooves in the long walls. To open it, lift it at the notch in the bottom wall (left of the J3 opening, seen from the back).
 

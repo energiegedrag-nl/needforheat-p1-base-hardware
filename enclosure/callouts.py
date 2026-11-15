@@ -40,6 +40,7 @@ VIEWS = [
         ((36.0, -4.0, K.GAP + K.PCB_T - 0.2), "Peg in a corner block: keys and holds the PCB;\nthe block carries it 2.5 mm above the CoreInk"),
         ((4.0, -4.0, K.GAP), "Corner block without a peg:\nthe PCB fits one way only"),
         ((36.0, -1.0, K.Z_CORNER), "Corner notch: the lid's corner pillar fills it"),
+        ((K.CORNER + K.KEY_L / 2, YW, K.Z_CORNER), "Key: only this corner is cut 2.5 mm further along\nboth walls, so the lid fits one way only"),
     ]),
     ("tray-underside", "p1-base-kuip.stl", -32, -60, [
         ((4.0, -52.0, -4.0), "LEGO-compatible post (4x, 7 mm, three crush ribs):\nlocates the tray in the CoreInk's LEGO holes"),
@@ -52,7 +53,8 @@ VIEWS = [
     ("lid-underside", "p1-base-lid.stl", -40, 62, [
         ((XL + 1.6, -K.SNAP_Y[0], ZT - K.LIP_H / 2), "Snap bump on the flexible lip (2 per long side)"),
         ((20.0, YW, ZT - 0.3), "Tongue that closes the RJ12 opening above J2\n(same above J3)"),
-        ((4.0, -4.0, K.Z_CORNER), "Corner pillar (4x) with a LEGO Technic hole at the\nCoreInk's position: counterbore, bore and snap groove,\nso a Technic pin clicks in; also takes the next module's posts"),
+        ((K.CORNER + K.KEY_L / 2, YW, K.Z_CORNER), "Key: this corner pillar is an L, 2.5 mm longer along\nboth walls; turned round it stops on the tray's wall"),
+        ((36.0, -4.0, K.Z_CORNER), "Corner pillar (4x) with a LEGO Technic hole at the\nCoreInk's position: counterbore, bore and snap groove,\nso a Technic pin clicks in; also takes the next module's posts"),
         ((K.BUS[0], -K.BUS[1], ZT), "Cut-out for the raised bus socket J1,\nflush with the lid like the CoreInk's back"),
         ((20.0, -(K.CI_H - K.WALL - 1.0), ZT - 1.0), "Lip notch above the RJ12 jacks"),
     ]),
@@ -109,10 +111,104 @@ def draw(name, stl, elev, azim, callouts):
     print("wrote", out)
 
 
+def keying(lift_ok=12.0):
+    """Manual picture: the lid goes on one way only. Left: right way round, the L-shaped key pillar above its cut-out.
+    Right: turned 180 deg, the key lands on the full wall and the lid stays up (stand-off computed from the solids)."""
+    import cadquery as cq
+    tray = trimesh.load(os.path.join(HERE, "fabrication", "p1-base-kuip.stl"))
+    lid = trimesh.load(os.path.join(HERE, "fabrication", "p1-base-lid.stl"))
+    (ax0, ax1, ay0, ay1), (bx0, bx1, by0, by1) = K.KEY_STRIPS
+
+    reach = K.CORNER + K.KEY_L + K.KEY_CLR + 0.05  # the key corner, board frame from (0, 0)
+
+    def in_key(mesh, is_lid):
+        """Faces of the L-shaped key pillar (lid) or of the key corner's cut-out (tray); CadQuery y = -board y."""
+        c = mesh.triangles_center
+        x, y, z = c[:, 0], -c[:, 1], c[:, 2]
+        if is_lid:
+            return (x <= reach) & (y <= reach) & (z >= K.Z_CORNER - 0.1) & (z <= K.Z_TOP + 0.05)
+        return (x <= reach) & (y <= reach) & (z >= K.Z_CORNER - 0.3)
+
+    def landing(mesh):
+        """Rim faces of the tray's bottom-right corner, where the turned key lands."""
+        c, nz = mesh.triangles_center, mesh.face_normals[:, 2]
+        return (c[:, 0] >= K.CI_W - reach) & (-c[:, 1] >= K.CI_H - reach) & (c[:, 2] >= K.Z_TOP - 0.05) & (nz > 0.9)
+
+    # how far the turned lid stays up: from the solids, like check 5
+    kt = cq.importers.importStep(os.path.join(HERE, "fabrication", "p1-base-kuip.step"))
+    lt = cq.importers.importStep(os.path.join(HERE, "fabrication", "p1-base-lid.step"))
+    ctr = cq.Vector(K.CI_W / 2, -K.CI_H / 2, 0)
+    lt = lt.rotate(ctr, ctr + cq.Vector(0, 0, 1), 180)
+    lo, hi = 0.0, 20.0
+    while hi - lo > 0.05:
+        m = (lo + hi) / 2
+        if kt.intersect(lt.translate((0, 0, m))).val().Volume() > 1e-3:
+            lo = m
+        else:
+            hi = m
+    stand = hi
+
+    light = np.array([0.4, 0.6, 0.8]) / np.linalg.norm([0.4, 0.6, 0.8])
+    fig = plt.figure(figsize=(14, 7.6), dpi=120)
+    panels = [("Right way round: arrow to the meter edge", False, lift_ok, "#2b8a3e"),
+              ("Turned round: the lid will not go on", True, stand, "#c92a2a")]
+    for n, (title, turned, dz, accent) in enumerate(panels):
+        ax = fig.add_axes([0.0 + n * 0.5, 0.06, 0.5, 0.82], projection="3d")
+        tris, cols = [], []
+        for mesh, is_lid in ((tray, False), (lid, True)):
+            v = mesh.vertices.copy()
+            key = in_key(mesh, is_lid)
+            hit = landing(mesh) if (turned and not is_lid) else np.zeros(len(mesh.faces), bool)
+            if is_lid and turned:
+                v[:, 0], v[:, 1] = K.CI_W - v[:, 0], -K.CI_H - v[:, 1]
+            if is_lid:
+                v[:, 2] += dz
+            shade = 0.45 + 0.55 * np.clip(np.abs(mesh.face_normals @ light), 0, 1)
+            base = np.array([0.42, 0.44, 0.48]) if is_lid else np.array([0.30, 0.31, 0.34])
+            hl = np.array(matplotlib.colors.to_rgb("#f08c00"))
+            c = np.where(key[:, None], np.outer(shade, hl), np.outer(shade, base))
+            c = np.where(hit[:, None], np.outer(shade, matplotlib.colors.to_rgb("#e03131")), c)
+            tris.append(v[mesh.faces]); cols.append(np.c_[c, np.ones(len(c))])
+        ax.add_collection3d(Poly3DCollection(np.concatenate(tris), facecolors=np.concatenate(cols), edgecolors="none"))
+        r = 30
+        ax.set_xlim(20 - r, 20 + r); ax.set_ylim(-28 - r, -28 + r); ax.set_zlim(-8, -8 + 2 * r)
+        ax.set_box_aspect((1, 1, 1)); ax.view_init(elev=14, azim=-58 if turned else 122)  # each looks at the key
+        ax.set_axis_off()
+        fig.canvas.draw()
+
+        def at(x, y, z):
+            px, py, _ = proj3d.proj_transform(x, y, z, ax.get_proj())
+            return fig.transFigure.inverted().transform(ax.transData.transform((px, py)))
+        fig.text(0.25 + n * 0.5, 0.93, ("✔ " if not turned else "✘ ") + title, ha="center", va="top",
+                 fontsize=14, weight="bold", color=accent)
+        if not turned:
+            notes = [(at(K.CORNER / 2, -K.WALL / 2, K.Z_CORNER + dz), (0.06, 0.80),
+                      "Key: L-shaped corner pillar on the lid (orange)"),
+                     (at(K.CORNER + K.KEY_L / 2, -K.WALL / 2, K.Z_TOP), (0.06, 0.20),
+                      "...drops into the matching cut-out at the meter-edge\ncorner of the tray (J2 side)")]
+            msg = "Hold the arrow on the lid towards the meter edge (J2). The lid slides in and clicks on."
+        else:
+            cx, cy = K.CI_W - (ax0 + ax1) / 2, -(K.CI_H - K.WALL / 2)
+            notes = [(at(cx, cy, K.Z_TOP), (0.58, 0.20),
+                      f"The key lands on the wall's rim (red) at the J3 corner:\nthe lid stays {stand:.1f} mm up, the lip never\nenters the tray, nothing clicks")]
+            msg = "Felt at the very first touch: turn the lid round."
+        for (fx, fy), (tx, ty), text in notes:
+            fig.add_artist(plt.Line2D([fx, tx + 0.09], [fy, ty], transform=fig.transFigure, color=accent, lw=1.2))
+            fig.add_artist(plt.Circle((fx, fy), 0.005, transform=fig.transFigure, color=accent))
+            fig.text(tx, ty, text, fontsize=10.5, va="center",
+                     bbox=dict(boxstyle="round,pad=0.35", fc="white", ec=accent, lw=0.9))
+        fig.text(0.25 + n * 0.5, 0.04, msg, ha="center", fontsize=11)
+    out = os.path.join(IMG, "enclosure-lid-keying.png")
+    fig.savefig(out, facecolor="white")
+    plt.close(fig)
+    print("wrote", out, f"(turned lid stands {stand:.1f} mm up)")
+
+
 def main():
     os.makedirs(IMG, exist_ok=True)
     for v in VIEWS:
         draw(*v)
+    keying()
 
 
 if __name__ == "__main__":

@@ -106,3 +106,22 @@ print(f"J1 header pins end at z = {pins_z:.2f} (CoreInk back = 0): engagement {m
 print(f"lowest other parts under the PCB (z, ref): {lowest}  (CoreInk back z=0, magnet pads up to z=1.6)")
 print("note: J1 is modelled as the Samtec ESQ-108-24-G-D (tools/gen_3d_models.py: tail 9.65 mm below the board's top"
       " surface, from the Samtec table); VERIFY on the Samtec drawing and a sample.")
+
+# --- lid keying: turned 180 deg, how far above its seat does the lid stop? -----------------------------------
+def standoff(obstacles, lid_shape):
+    lo, hi = 0.0, 20.0
+    while hi - lo > 0.05:
+        m = (lo + hi) / 2
+        moved = cq.Shape.cast(lid_shape).moved(cq.Location(cq.Vector(0, 0, m))).wrapped
+        if any(overlap(o, moved) > 1e-3 for o in obstacles):
+            lo = m
+        else:
+            hi = m
+    return hi
+
+
+turned = cq.Shape.cast(lid).rotate(cq.Vector(K.CI_W / 2, -K.CI_H / 2, 0), cq.Vector(K.CI_W / 2, -K.CI_H / 2, 1), 180).wrapped
+s_tray = standoff([tray], turned)
+s_all = standoff([tray] + board["J1"], turned)
+print(f"lid turned 180 deg: stops {s_tray:.1f} mm above its seat on the tray alone (key), {s_all:.1f} mm with J1 fitted"
+      f" (lip height {K.LIP_H} mm: {'cannot click in' if s_tray > K.LIP_H else 'KEY TOO SHORT'})")
