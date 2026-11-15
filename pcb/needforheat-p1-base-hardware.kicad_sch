@@ -7193,14 +7193,14 @@
 				(size 1.27 1.27))
 			(justify right bottom))
 		(uuid "72196807-fb0f-57ea-ae20-29d94041b3ee"))
-	(text "Q9 switches VLED, the supply of LED1-3; U5 (address 0x62) dims it at 190 Hz."
+	(text "Q9 switches VLED, the supply of LED1-2; U5 (address 0x62) dims it at 190 Hz."
 		(exclude_from_sim no)
 		(at 327.66 114.3 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "435cf69a-e4f8-52f4-abe6-92b5d2d650c4"))
+		(uuid "5c231a4c-7f9a-55a5-9876-e4807fe6f666"))
 	(text "U5 not set up (after power-up): LEDs at full brightness. See design-v3.md."
 		(exclude_from_sim no)
 		(at 327.66 116.84 0)
@@ -7518,7 +7518,7 @@
 					(unit 1)))))
 	(symbol
 		(lib_id "Device:R")
-		(at 106.68 149.86 0)
+		(at 165.1 137.16 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7526,31 +7526,31 @@
 		(dnp no)
 		(uuid "00d4a835-3784-5e9a-9b83-74f1b9e898f2")
 		(property "Reference" "R20"
-			(at 109.22 149.23 0)
+			(at 167.64 136.53 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify left)))
-		(property "Value" "3k3"
-			(at 109.22 151.77 0)
+		(property "Value" "2k2"
+			(at 167.64 139.06 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify left)))
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 106.68 149.86 0)
+			(at 165.1 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
 		(property "Datasheet" ""
-			(at 106.68 149.86 0)
+			(at 165.1 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C22978"
-			(at 106.68 149.86 0)
+		(property "LCSC" "C4190"
+			(at 165.1 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27))
@@ -7566,7 +7566,7 @@
 					(unit 1)))))
 	(symbol
 		(lib_id "Device:LED")
-		(at 106.68 160.02 90)
+		(at 165.1 147.32 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7574,31 +7574,31 @@
 		(dnp no)
 		(uuid "a0bac6f2-1bb5-544a-8100-bf7f14197264")
 		(property "Reference" "LED2"
-			(at 109.22 159.39 90)
+			(at 167.64 146.69 90)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify right)))
-		(property "Value" "LED yellow"
-			(at 109.22 161.93 90)
+		(property "Value" "LED green"
+			(at 167.64 149.22 90)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(justify right)))
 		(property "Footprint" "p1base:LED_LiteOn_LTST-S220_SideView"
-			(at 106.68 160.02 0)
+			(at 165.1 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
 		(property "Datasheet" ""
-			(at 106.68 160.02 0)
+			(at 165.1 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C160468"
-			(at 106.68 160.02 0)
+		(property "LCSC" "C160469"
+			(at 165.1 147.32 0)
 			(effects
 				(font
 					(size 1.27 1.27))
@@ -7611,6 +7611,57 @@
 			(project "needforheat-p1-base-hardware"
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
 					(reference "LED2")
+					(unit 1)))))
+	(symbol
+		(lib_id "Transistor_FET:2N7002")
+		(at 167.64 160.02 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "afe6143b-82f4-527e-932a-e0e6f916c464")
+		(property "Reference" "Q11"
+			(at 171.45 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify right)))
+		(property "Value" "2N7002"
+			(at 171.45 155.58 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(justify right)))
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+			(at 167.64 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "Datasheet" ""
+			(at 167.64 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(property "LCSC" "C8545"
+			(at 167.64 160.02 0)
+			(effects
+				(font
+					(size 1.27 1.27))
+				(hide yes)))
+		(pin "1"
+			(uuid "2c187901-2654-5ece-abc6-63545c05afed"))
+		(pin "2"
+			(uuid "f81598f3-658f-5b50-84c3-de9f7d771044"))
+		(pin "3"
+			(uuid "561577ba-c36c-55a5-93d5-3da9f02d8b00"))
+		(instances
+			(project "needforheat-p1-base-hardware"
+				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
+					(reference "Q11")
 					(unit 1)))))
 	(symbol
 		(lib_id "Transistor_FET:2N7002")
@@ -8355,19 +8406,11 @@
 	(wire
 		(pts
 			(xy 99.06 167.64)
-			(xy 106.68 167.64))
-		(stroke
-			(width 0)
-			(type default))
-		(uuid "0bd0278a-5c99-5f1e-84c5-5470154e51be"))
-	(wire
-		(pts
-			(xy 106.68 167.64)
 			(xy 116.84 167.64))
 		(stroke
 			(width 0)
 			(type default))
-		(uuid "9e1fca8a-12e9-520f-89dd-65337615a6e8"))
+		(uuid "a85d06f6-3804-5db0-8ec2-5c3ca72146ad"))
 	(label "REQ_GATE"
 		(at 88.9 167.64 0)
 		(effects
@@ -8472,34 +8515,71 @@
 					(unit 1)))))
 	(wire
 		(pts
-			(xy 106.68 163.83)
-			(xy 106.68 167.64))
+			(xy 165.1 151.13)
+			(xy 165.1 154.94))
 		(stroke
 			(width 0)
 			(type default))
-		(uuid "98e7a761-6e4a-5557-953b-5434fd06cf21"))
-	(wire
-		(pts
-			(xy 106.68 156.21)
-			(xy 106.68 153.67))
-		(stroke
-			(width 0)
-			(type default))
-		(uuid "271b3d87-adf6-52b0-97e5-d0206ff02e2d"))
-	(label "LED2_A"
-		(at 106.68 153.67 180)
+		(uuid "860dd095-58a9-5e84-9dd5-ad61e1b80aba"))
+	(label "LED2_K"
+		(at 165.1 154.94 180)
 		(effects
 			(font
 				(size 1 1))
 			(justify right bottom))
-		(uuid "327d2eec-b197-5313-ac29-5d847fefc171"))
+		(uuid "87eed443-9a8a-542d-a0f8-ae4933568b21"))
+	(wire
+		(pts
+			(xy 172.72 160.02)
+			(xy 175.26 160.02))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "bb52f10d-70e2-55cd-8f89-9f1060ff83bc"))
+	(label "EXT_REQ_G"
+		(at 175.26 160.02 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "2b7513a2-c89f-51c4-a8a3-103394c3813e"))
+	(wire
+		(pts
+			(xy 165.1 165.1)
+			(xy 165.1 167.64))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "4d36a278-9e79-590a-b4b1-009cdd911038"))
+	(label "SPLIT_DRV"
+		(at 165.1 167.64 270)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify right bottom))
+		(uuid "9fb16339-bbc5-581d-ae1a-12c169063fd8"))
+	(wire
+		(pts
+			(xy 165.1 143.51)
+			(xy 165.1 140.97))
+		(stroke
+			(width 0)
+			(type default))
+		(uuid "11e9dd45-3a17-5d55-bef2-99cb0bad27f3"))
+	(label "LED2_A"
+		(at 165.1 140.97 180)
+		(effects
+			(font
+				(size 1 1))
+			(justify right bottom))
+		(uuid "9b28881a-8a22-564c-a93d-ccadf5623833"))
 	(label "VLED"
-		(at 106.68 146.05 90)
+		(at 165.1 133.35 90)
 		(effects
 			(font
 				(size 1 1))
 			(justify left bottom))
-		(uuid "813acb91-6310-58f9-a11e-fe955050b933"))
+		(uuid "a5cf820e-c0b9-52fb-ba10-cb470a033189"))
 	(wire
 		(pts
 			(xy 99.06 180.34)
@@ -8989,7 +9069,7 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "08240bc1-430a-5686-a709-70e0a85ef8aa"))
-	(text "the reader requests. R15 (not fitted): always request. LED2 (yellow): data requested."
+	(text "the reader requests. R15 (not fitted): always request."
 		(exclude_from_sim no)
 		(at 20.32 226.06 0)
 		(effects
@@ -8997,6 +9077,14 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "ecc553aa-59eb-54b5-b847-5cf059c6dd03"))
+	(text "LED2 (green, next to J3) via Q11: blinks while the reader requests AND the meter sends (SPLIT_DRV low)."
+		(exclude_from_sim no)
+		(at 20.32 228.6 0)
+		(effects
+			(font
+				(size 1.27 1.27))
+			(justify left bottom))
+		(uuid "4fd1c6a2-f05c-516c-b09c-52c9e4b81281"))
 	(rectangle
 		(start 195.58 124.46)
 		(end 320.04 241.3)
@@ -9397,102 +9485,9 @@
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
 					(reference "C8")
 					(unit 1)))))
-	(symbol
-		(lib_id "Device:R")
-		(at 236.22 201.93 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "e8c87e59-fe3f-5444-ba2c-392484f3d267")
-		(property "Reference" "R31"
-			(at 238.76 201.3 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(justify left)))
-		(property "Value" "2k2"
-			(at 238.76 203.84 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(justify left)))
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 236.22 201.93 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "Datasheet" ""
-			(at 236.22 201.93 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "LCSC" "C4190"
-			(at 236.22 201.93 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(pin "1"
-			(uuid "420fc8b4-f9d4-5918-b37f-2324bc9fda6c"))
-		(pin "2"
-			(uuid "45d9190c-325c-5323-abc4-31eef067abf1"))
-		(instances
-			(project "needforheat-p1-base-hardware"
-				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "R31")
-					(unit 1)))))
-	(symbol
-		(lib_id "Device:LED")
-		(at 236.22 209.55 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "21d858e6-95cc-56ac-81a5-df970702a548")
-		(property "Reference" "LED3"
-			(at 238.76 208.92 90)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(justify right)))
-		(property "Value" "LED red"
-			(at 238.76 211.46 90)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(justify right)))
-		(property "Footprint" "p1base:LED_LiteOn_LTST-S220_SideView"
-			(at 236.22 209.55 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "Datasheet" ""
-			(at 236.22 209.55 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(property "LCSC" "C284935"
-			(at 236.22 209.55 0)
-			(effects
-				(font
-					(size 1.27 1.27))
-				(hide yes)))
-		(pin "1"
-			(uuid "c08552e5-dd3c-5be9-a441-f42094be6ff5"))
-		(pin "2"
-			(uuid "7658b75c-b641-53af-9de5-75a55fe617c0"))
-		(instances
-			(project "needforheat-p1-base-hardware"
-				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
-					(reference "LED3")
-					(unit 1)))))
+	(no_connect
+		(at 287.02 198.12)
+		(uuid "20469faa-ca86-50bf-a028-4fbbdeeefc4f"))
 	(no_connect
 		(at 287.02 200.66)
 		(uuid "eee8837b-af85-5cf0-9c1d-a8bcb9f63700"))
@@ -10182,35 +10177,6 @@
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
 					(reference "#PWR048")
 					(unit 1)))))
-	(label "VLED"
-		(at 236.22 198.12 0)
-		(effects
-			(font
-				(size 1 1))
-			(justify left bottom))
-		(uuid "5431c164-dbb8-5d0d-9b8a-4681087e49b6"))
-	(label "LED3_A"
-		(at 236.22 205.74 180)
-		(effects
-			(font
-				(size 1 1))
-			(justify right bottom))
-		(uuid "0a17dcbf-7802-555b-94cd-8ba0f6c80d29"))
-	(wire
-		(pts
-			(xy 236.22 213.36)
-			(xy 231.14 213.36))
-		(stroke
-			(width 0)
-			(type default))
-		(uuid "f9c13283-2eeb-503e-a09f-58956be6bcde"))
-	(label "CHRG_N"
-		(at 231.14 213.36 180)
-		(effects
-			(font
-				(size 1.27 1.27))
-			(justify right bottom))
-		(uuid "71ce8a74-d42a-5641-b052-225dcd63fd09"))
 	(wire
 		(pts
 			(xy 266.7 198.12)
@@ -10567,13 +10533,6 @@
 				(path "/9a70e74c-dfee-5276-86f8-7ff61c7aa02c"
 					(reference "#PWR053")
 					(unit 1)))))
-	(label "CHRG_N"
-		(at 287.02 198.12 0)
-		(effects
-			(font
-				(size 1.27 1.27))
-			(justify left bottom))
-		(uuid "be419ab8-b8cb-55a1-8aa0-784fe044d121"))
 	(wire
 		(pts
 			(xy 287.02 195.58)
@@ -10653,14 +10612,14 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "090d13ce-b4d7-5532-9252-82d7bd047d99"))
-	(text "LED3 (red): charging."
+	(text "CHRG (pin 7) unused: firmware switches charging (G25) and shows it on the e-paper screen."
 		(exclude_from_sim no)
 		(at 198.12 238.76 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "95cd88d7-e24d-5bb6-a3cc-d31882b701ef"))
+		(uuid "3d9fb1ea-64a8-5718-82f5-91e2c29a9d1f"))
 	(rectangle
 		(start 325.12 124.46)
 		(end 405.13 241.3)
@@ -12098,14 +12057,14 @@
 				(size 1.27 1.27))
 			(justify left bottom))
 		(uuid "a14e567a-2b97-5646-9a9b-d578310378af"))
-	(text "     2026-11  LED dimmer (I2C), side-looking LEDs at the top edge."
+	(text "     2026-11  LED dimmer (I2C); one green LED per socket (data from the meter, data to the reader)."
 		(exclude_from_sim no)
 		(at 193.04 260.35 0)
 		(effects
 			(font
 				(size 1.27 1.27))
 			(justify left bottom))
-		(uuid "5f3c4ad6-3887-5b94-b62d-3908182b7ba8"))
+		(uuid "1d227c3f-d6ad-541b-b1ec-6c3e58965a8c"))
 	(text "DNP = not fitted (R6, R15)."
 		(exclude_from_sim no)
 		(at 193.04 265.43 0)
@@ -12209,11 +12168,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "726ddaca-11dd-510d-ab58-4f83bf6e3d78"))
-	(junction
-		(at 106.68 167.64)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "6e89ee1e-502e-5e93-ab1c-a6f486ae586e"))
 	(junction
 		(at 210.82 157.48)
 		(diameter 0)

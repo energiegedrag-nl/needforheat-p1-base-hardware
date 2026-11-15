@@ -20,7 +20,7 @@ NETV = {
  "G34_EXTREQ": (0, th(VM, 47e3, 68e3)), "LED2_A": (0, V5),
  "CHG_GATE": (0, VM), "CHG_GATE_DRV": (0, VM), "CHG_EN": (0, 3.3), "G25_CHG": (0, 3.3), "CHG_IN": (0, VM),
  "PROG": (0, 1.0), "PROG_HI": (0, 1.0), "CHG_HI": (0, 3.3), "G14_CHGHI": (0, 3.3), "COREINK_BAT": (0, 4.25),
- "CHRG_N": (0, V5), "LED3_A": (0, V5),
+ "LED2_K": (0, V5),
  "V3LED": (0, 3.3), "G21_SDA": (0, 3.3), "G22_SCL": (0, 3.3), "LED_DIM": (0, 3.3), "VLED_G": (0, V5), "VLED": (0, V5),
 }
 # ---- pin limits: (part prefix or value, pad) -> (min, max, note) ----

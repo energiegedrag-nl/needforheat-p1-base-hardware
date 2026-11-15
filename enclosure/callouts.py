@@ -25,24 +25,27 @@ ZT = K.Z_TOP
 YW = -K.WALL / 2  # centre of the top wall (CadQuery y = -board y; the outside is the CoreInk outline)
 YB = -(K.CI_H - K.WALL / 2)  # centre of the bottom wall
 XL, XR = K.WALL / 2, K.CI_W - K.WALL / 2  # centres of the long walls
-LED_MID = sorted(K.LEDS)[len(K.LEDS) // 2] if K.LEDS else (8.2, 3.05)
+LED_TOP = min(K.LEDS, key=lambda p: p[1]) if K.LEDS else (11.7, 3.05)  # LED1, next to J2
+LED_BOT = max(K.LEDS, key=lambda p: p[1]) if K.LEDS else (28.3, 52.95)  # LED2, next to J3
 ZLED = K.GAP + K.PCB_T + K.LED_LENS_Z
 ZL = K.Z_LID
+ZSILL = K.GAP + K.PCB_T - 0.3  # bottom edge of the RJ12 openings
 
 # (anchor x, y, z in CadQuery coordinates, label); y = -board y
 VIEWS = [
     ("tray-top-edge", "p1-base-kuip.stl", 28, 62, [
-        ((20.0, YW, 10.0), "RJ12 opening for J2 (smart meter); the lid's tongue closes it above the jack"),
-        ((LED_MID[0], YW, ZLED), "Light windows for the three side-looking LEDs\n(red, yellow, green, from left to right)"),
+        ((K.JACKS[0][0], YW, ZSILL), "RJ12 opening for J2 (smart meter); the lid's tongue closes it above the jack"),
+        ((LED_TOP[0], YW, ZLED), "Light window for LED1 (green, side-looking):\nblinks with the data from the meter"),
         ((XL + 0.5, -K.SNAP_Y[0], ZT - K.LIP_H / 2), "Snap-fit groove (2 per long wall) for the lid's bumps"),
         ((36.0, -4.0, K.GAP + K.PCB_T - 0.2), "Peg in a corner block: keys and holds the PCB;\nthe block carries it 2.5 mm above the CoreInk"),
-        ((4.0, -4.0, K.GAP), "Top-left corner without a peg: the PCB fits one way only"),
+        ((4.0, -4.0, K.GAP), "Corner block without a peg:\nthe PCB fits one way only"),
         ((36.0, -1.0, K.Z_CORNER), "Corner notch: the lid's corner pillar fills it"),
-        ((24.0, YB, ZT - 0.3), "Pry notch: lift the lid here"),
     ]),
     ("tray-underside", "p1-base-kuip.stl", -32, -60, [
         ((4.0, -52.0, -4.0), "LEGO-compatible post (4x, 7 mm, three crush ribs):\nlocates the tray in the CoreInk's LEGO holes"),
-        ((20.0, YB, 10.0), "RJ12 opening for J3 (existing P1 reader)"),
+        ((K.JACKS[1][0], YB, ZSILL), "RJ12 opening for J3 (existing P1 reader)"),
+        ((LED_BOT[0], YB, ZLED), "Light window for LED2 (green, side-looking):\nblinks while the existing reader gets data"),
+        ((K.PRY_X, YB, ZT - K.PRY_D), "Pry notch: lift the lid here with a fingernail\nor a small screwdriver"),
         ((XR, -30.0, 1.0), "Outside flush with the CoreInk (40 x 56 mm, R3), no skirt:\nany CoreInk BASE also fits behind this module"),
         ((36.0, -52.0, K.GAP / 2), "Corner block: the PCB rests on it"),
     ]),

@@ -31,12 +31,12 @@ BUS_W, BUS_H = 5.08, 20.32  # 2 x 8 at 2.54 mm
 # --- P1-BASE board -------------------------------------------------------
 GAP = 2.5  # CoreInk back -> PCB bottom (RJ12 leads are 3.2 ± 0.3 mm below the seating plane: ≤ 1.9 mm below the PCB)
 PCB_T = 1.6
-PEGS = [(36, 4), (4, 52), (36, 52)]  # Ø2.2 NPTH in the PCB; the top-left corner has no peg (keys the PCB; LEDs there)
+PEGS = [(36, 4), (4, 52), (36, 52)]  # Ø2.2 NPTH in the PCB; the top-left corner has no peg (keys the PCB)
 JACKS = [(20.0, "top"), (20.0, "bottom")]  # centre x of the RJ12 openings (centred)
 JACK_W, JACK_H = 13.8, 11.45  # opening width (body 13.3); jack height above the PCB (EVERCOM 5301, C3097716)
-LEDS = []  # side-looking LEDs at the top board edge, read from pcb_features.json (written by tools/gen_pcb.py)
+LEDS = []  # side-looking LEDs at the top and bottom board edges, read from pcb_features.json (written by tools/gen_pcb.py)
 LED_LENS_Z = 0.5  # lens centre above the PCB (LTST-S220, VERIFY against the Lite-On drawing)
-LED_HOLE_W, LED_HOLE_H = 2.0, 1.4  # light window in the top wall, generous for the unverified lens height
+LED_HOLE_W, LED_HOLE_H = 2.0, 1.4  # light window in the wall, generous for the unverified lens height
 _feat = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pcb_features.json")
 if os.path.exists(_feat):
     import json
@@ -117,6 +117,11 @@ def corner_box(x, y, z0, z1):
 
 Z_LID = Z_TOP + LID_T  # outer face of the lid
 Z_CORNER = Z_LID - (TECH_L + 0.5)  # bottom of the lid's corner pillars
+# pry notch: middle of the bottom wall between the left corner pillar and the J3 opening (LED2's window is right of J3)
+PRY_X = (CORNER + JACKS[1][0] - JACK_W / 2) / 2
+PRY_W, PRY_D = 3.5, 0.8
+assert CORNER + 0.5 < PRY_X - PRY_W / 2 and PRY_X + PRY_W / 2 < JACKS[1][0] - JACK_W / 2 - 0.5
+assert all(abs(x - PRY_X) > PRY_W / 2 + LED_HOLE_W / 2 + 0.5 for x, y in LEDS if y > CI_H / 2)
 
 
 def kuip():
@@ -137,10 +142,11 @@ def kuip():
         yc = WALL / 2 if side == "top" else CI_H - WALL / 2
         body = body.cut(cq.Workplane("XY").workplane(offset=GAP + PCB_T - 0.3).center(*P(x, yc))
                         .rect(JACK_W, WALL + 2).extrude(Z_TOP))
-    # light windows for the side-looking LEDs in the top wall
+    # light windows for the side-looking LEDs, in the top or bottom wall next to their RJ12 socket
     for (x, y) in LEDS:
         z = GAP + PCB_T + LED_LENS_Z
-        body = body.cut(cq.Workplane("XY").workplane(offset=z - LED_HOLE_H / 2).center(*P(x, WALL / 2))
+        yw = WALL / 2 if y < CI_H / 2 else CI_H - WALL / 2
+        body = body.cut(cq.Workplane("XY").workplane(offset=z - LED_HOLE_H / 2).center(*P(x, yw))
                         .rect(LED_HOLE_W, WALL + 1.0).extrude(LED_HOLE_H))
     # snap-fit grooves for the lid's bumps (inner face of the two long walls)
     zb = Z_TOP - LIP_H / 2
@@ -148,9 +154,10 @@ def kuip():
         for y in SNAP_Y:
             body = body.cut(cq.Workplane("XY").workplane(offset=zb - SNAP_R - 0.15).center(*P(x, y))
                             .rect(GROOVE_D + 0.02, SNAP_L + 1.0).extrude(2 * SNAP_R + 0.3))
-    # pry notch in the top of the bottom wall, to lift the lid off
-    body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 0.8).center(*P(24.0, CI_H - WALL / 2))
-                    .rect(6.0, WALL + 1.0).extrude(1.0))
+    # pry notch in the top of the bottom wall, to lift the lid off: in the piece of wall between the corner pillar
+    # and the J3 opening (the opening itself is closed by the lid's tongue)
+    body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - PRY_D).center(*P(PRY_X, CI_H - WALL / 2))
+                    .rect(PRY_W, WALL + 1.0).extrude(PRY_D + 0.2))
     return body
 
 
@@ -193,8 +200,9 @@ def lid():
     body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(*BUS)).rect(BUS_W + 0.5, BUS_H + 0.5)
                     .extrude(LID_T + 3))
     # orientation mark on the outside: arrow pointing to the meter edge (top), between the two top LEGO holes
+    ARROW = 6.0  # circumscribed diameter of the triangle; large enough to see and to feel
     body = body.cut(cq.Workplane("XY").workplane(offset=Z_LID - 0.4).center(*P(CI_W / 2, 4.0))
-                    .transformed(rotate=(0, 0, 90)).polygon(3, 3.0).extrude(0.5))
+                    .transformed(rotate=(0, 0, 90)).polygon(3, ARROW).extrude(0.5))
     return body
 
 

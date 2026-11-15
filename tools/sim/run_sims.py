@@ -97,6 +97,11 @@ Cg13 g13 0 6p
 R7 v5 led1a 2.2k
 DLED led1a splitdrv DLEDM
 .model DLEDM D(Is=1e-20 N=1.8 Rs=10)
+* LED2 + R20 via Q11 on the same output, worst case: the reader requests (EXT_REQ_G at 3.6 V)
+R20 v5 led2a 2.2k
+DLED2 led2a led2k DLEDM
+M11 led2k vreqg splitdrv N2N7002
+Vreqg vreqg 0 3.6
 * splitter
 M2 extfet splitdrv 0 N2N7002
 R5 extfet extout 47
@@ -171,9 +176,6 @@ C3 v5 0 1u
 Rload_v5 v5 0 20k
 M3 metreq reqgate v5 PAO3401
 R10 reqgate v5 100k
-R20 v5 led2a 3.3k
-DL2 led2a reqgate DLEDM
-.model DLEDM D(Is=1e-20 N=1.8 Rs=10)
 M4 reqgate reqen 0 N2N7002
 Vg26 g26 0 {g26}
 R11 g26 reqen 1k
@@ -272,7 +274,7 @@ R3 p1data v5 1k
 
 
 def sim_led_dimmer():
-    """LED dimmer (U5 PCA9633 LED0 -> Q10 -> Q9 -> VLED) at the 190 Hz group PWM, three LEDs lit."""
+    """LED dimmer (U5 PCA9633 LED0 -> Q10 -> Q9 -> VLED) at the 190 Hz group PWM, both LEDs lit."""
     period = 1 / 190.0
     res = []
     fig, ax = plt.subplots(2, 1, figsize=(9, 5), sharex=True)
@@ -286,7 +288,6 @@ def sim_led_dimmer():
         net = f"""* LED dimmer, duty {duty}
 {MODELS}
 .model DLEDG D(Is=1e-20 N=1.8 Rs=10)
-.model DLEDR D(Is=1e-22 N=1.7 Rs=10)
 V5 v5 0 5
 V3 v3led 0 3.3
 * U5 LED0, totem pole (OUTDRV = 1, INVRT = 1: high = LEDs on)
@@ -296,13 +297,11 @@ R34 v3led led_dim 100k
 M10 vled_g led_dim 0 N2N7002
 R33 v5 vled_g 100k
 M9 vled vled_g v5 PAO3401
-* LED1 green (R7 2k2), LED2 yellow (R20 3k3), LED3 red (R31 2k2), each switched on by its own circuit
+* LED1 green (R7 2k2, next to J2) and LED2 green (R20 2k2, next to J3), each switched on by its own circuit
 R7 vled a1 2.2k
 D1 a1 0 DLEDG
-R20 vled a2 3.3k
+R20 vled a2 2.2k
 D2 a2 0 DLEDG
-R31 vled a3 2.2k
-D3 a3 0 DLEDR
 """
         d = ngspice.run(net, f"tran 2u {2 * period}")
         t = d["time"]

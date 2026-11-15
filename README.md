@@ -10,7 +10,7 @@ This repository contains the open hardware design files for the NeedForHeat P1-B
 
 <img src="./docs/images/p1-base-v3-side-top-edge.png" width="560" />
 
-*Top edge: smart-meter socket `J2` and the three LEDs (green, yellow, red) that show through windows in the top wall of the tray.*
+*Top edge: smart-meter socket `J2` with its green LED, which shows through a window in the top wall of the tray. The lower socket `J3` has its own green LED in the bottom wall.*
 
 ## Table of contents <!-- omit in toc -->
 - [General info](#general-info)
@@ -57,7 +57,7 @@ Schematic and layout printouts: [docs/needforheat-p1-base-hardware-sch.pdf](docs
 
 ### Enclosure
 
-The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery script) and exported STEP/STL files in [enclosure/fabrication](./enclosure/fabrication): a tray (*kuip*) that holds the PCB and centres the CoreInk with nocks in its LEGO-compatible holes, and a lid. Optional pockets take 8 x 1 mm steel discs opposite the CoreInk's built-in magnets. Print with PETG or let a 3D printing service make them (SLA resin or MJF nylon).
+The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery script) and exported STEP/STL files in [enclosure/fabrication](./enclosure/fabrication): a tray (*kuip*) that holds the PCB and a lid that clicks onto it (snap fit, no screws). The outside is exactly the CoreInk's outline (40 x 56 mm), so any BASE that fits a bare CoreInk also fits behind the P1-BASE. Four posts with crush ribs centre the module in the CoreInk's LEGO-compatible holes; the lid repeats those holes as LEGO Technic holes and has the bus socket flush with its surface, like the CoreInk's back. Each socket's LED shows through a window in the wall next to it; an arrow on the lid points to the meter edge. Each module fits a letterbox parcel on its own (at most 27 mm thick). Print with PETG or let a 3D printing service make them (SLA resin or MJF nylon).
 
 ## Deploying
 
@@ -77,7 +77,7 @@ Indicative, per module, November 2026, excluding VAT and shipping. A JLCPCB quot
 
 The CoreInk and the P1-BASE are shipped separately (each fits a letterbox parcel) and clicked together at home.
 
-1. Hold the CoreInk with its screen facing you and the HAT connector (top edge) up. Push the P1-BASE onto its back so that the *smart meter* socket is at the top; it only fits this way round.
+1. Hold the CoreInk with its screen facing you and the HAT connector (top edge) up. Push the P1-BASE onto its back so that the *smart meter* socket is at the top (the arrow on the lid points up); it only fits this way round.
 2. Unplug an existing P1 reader (if any) from the smart meter.
 3. Plug the supplied **straight (1:1)** RJ12 cable into the *smart meter* socket and into the P1 port of the smart meter. Do not use a telephone cable: those are crossed. A crossed cable does no damage, but nothing works; the screen will say so.
 4. Plug the existing P1 reader into the lower *other P1 reader* socket.
@@ -86,11 +86,16 @@ With a DSMR 2 or 3 meter (no power on the P1 port), also connect the USB power a
 
 ### Indicators
 
-| LED | Meaning |
-|---|---|
-| green | blinks with the data from the meter |
-| yellow | data is being requested from the meter |
-| red | the CoreInk battery is being charged from the P1 port |
+Each socket has a green light next to it: **it blinks when data goes over that cable.**
+
+| Green light next to | Blinks | Stays dark: check |
+|---|---|---|
+| *smart meter* socket (top) | the meter sends data | the cable to the meter; whether the meter's P1 port is enabled |
+| *other P1 reader* socket (bottom) | the existing P1 reader asks for data and gets it | whether a reader is plugged in and powered; its cable |
+
+Charging the CoreInk battery from the P1 port (DSMR 5 meters) is shown on the screen.
+
+Firmware can dim both LEDs together or switch them off (I²C LED driver, see [LED dimmer](docs/design-v3.md#47-led-dimmer)); the hardware still decides when each LED is on. The driver is powered by the meter, so the setting survives while the CoreInk sleeps or is off; until firmware sets it (and after the meter's power was lost), the LEDs light at full brightness.
 
 ## Developing
 
@@ -113,9 +118,9 @@ Ready (in the design, not yet verified on hardware):
 - [x] Data request by firmware and by the existing reader (hardware OR); read-back of the reader's request.
 - [x] Charging the CoreInk battery from DSMR 5 meters at 60/120 mA with soft start.
 - [x] Protection against crossed cables and ESD; meter voltage measurement for diagnosis.
-- [x] Three low-power indicator LEDs, test points.
+- [x] A green LED next to each socket that blinks when data goes over that cable; dimmable by firmware (one common level); test points.
 - [x] All parts on the top side; full assembly by JLCPCB.
-- [x] Enclosure that holds and centres the CoreInk.
+- [x] Enclosure flush with the CoreInk outline, so other CoreInk BASEs still stack behind it; snap-fit lid with LEGO Technic holes.
 
 To-do:
 

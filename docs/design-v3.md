@@ -52,7 +52,7 @@ From the [NeedForHeat DataGear paper](https://doi.org/10.48550/arXiv.2509.06927)
 | Data request | 3 DIP switches, OR via Schottky diodes (~4.3 V left) | PMOS high-side switch (~4.7 V), switched by G26 and/or by the existing reader; passive diode path as fallback; firmware can read whether the reader requests |
 | Power | CoreInk only on USB | Firmware-controlled 60/120 mA charging of the CoreInk battery from the meter (TP4056), soft start |
 | Protection | none | Reverse-polarity PMOS, TVS on meter 5 V, ESD diodes and series resistors on all P1 signal lines |
-| Monitoring | none | ADC on meter 5 V (G36), digital/ADC read-back of the external request (G34), three LEDs visible at the top edge and dimmable from firmware, test points |
+| Monitoring | none | ADC on meter 5 V (G36), digital/ADC read-back of the external request (G34), one green LED next to each RJ12 socket (data from the meter, data to the existing reader), dimmable from firmware, test points |
 | Mechanics | 2x8 header on the bottom (hand soldering), board 51 x 36 mm | Stacking header from the top (JLC THT), board 40 x 56 mm like the CoreInk, enclosure (*kuip*) that keys the CoreInk |
 
 ## 3. Architecture
@@ -97,7 +97,8 @@ The splitter and the request OR run from the meter's own 5 V, so the existing re
 * **U1** also drives **Q2 (2N7002)**, an open-drain output to J3 pin 5. Two inversions: J3 pin 5 follows the meter's line exactly, as an open collector, as DSMR prescribes. The existing reader supplies its own pull-up (DSMR).
 * A 2N7002 switches in tens of nanoseconds; at 115 200 Bd a bit lasts 8.7 µs. The edges at J3 are set by the reader's own pull-up and cable.
 * **R6 (10 kΩ, not fitted)** is a pull-up for readers that do not have one.
-* **LED1 (green)** blinks with the data on the splitter path, so data activity is visible without the CoreInk.
+* **LED1 (green, next to J2)** blinks with the data from the meter (cathode on `SPLIT_DRV`), so data activity is visible without the CoreInk.
+* **LED2 (green, next to J3)** blinks while the existing reader gets data: its cathode goes through **Q11 (2N7002)** to `SPLIT_DRV`, and Q11's gate is `EXT_REQ_G`, the reader's own request (also the gate of Q5). So LED2 lights only when the reader requests *and* U1 drives a data bit; a request by the CoreInk alone (G26) does not light it, because D7 blocks towards `EXT_REQ`. With the reader's request at ≥ 4 V, Q11 sees ≥ 3.6 V gate-source; when `SPLIT_DRV` is high, Q11's body diode keeps LED2 reverse-biased by less than 1 V. U1 sinks both LED currents (≈ 2.6 mA).
 
 ### 4.4 Data request
 
@@ -105,7 +106,7 @@ The splitter and the request OR run from the meter's own 5 V, so the existing re
 * **D7 (1N5819WS)** passes the reader's request straight to the meter. This path needs no power on the BASE at all, which matters for DSMR 2/3 meters with the CoreInk off. It costs one Schottky drop (≈ 0.35 V): a reader with a stiff 5 V request output still delivers ≈ 4.6 V; a reader whose request output has ≈ 1 kΩ source resistance ends up at ≈ 3.2 V (simulated), below the 4.0 V DSMR asks for. With the CoreInk on, the active path (Q5 → Q3) restores the full level, so this only matters for DSMR 2/3 meters with the CoreInk switched off.
 * **G34** reads, through a 47k/68k divider, whether the existing reader requests data. Because D7 blocks in the other direction, our own request never shows up here.
 * **Always-on request**: firmware can keep G26 high (also in deep sleep, with GPIO hold). **R15 (0 Ω, not fitted)** forces it in hardware; this is an assembly variant, not a solder job.
-* **LED2 (yellow)** sits between V5 and the gate of Q3, so it lights exactly when Q3 drives the request line. It is never connected to the cable, so a crossed cable cannot reverse-bias it (LEDs only withstand ≈ 5 V reverse).
+* No LED shows the request itself: LED1 blinking means the meter sends (so someone requests), LED2 blinking means the reader is among the requesters (§ 4.6).
 
 ### 4.5 Power from the P1 port
 
@@ -116,32 +117,34 @@ DSMR limits: DSMR 2/3 no supply; DSMR 4.x 100 mA; DSMR 5.x 250 mA continuous, fo
 * **Q6 (AO3401A)** switches the charger on (**G25** high via Q7). C7 (22 nF, gate to drain) and R24 (47 kΩ) form a Miller soft start: the output rises at ≈ 3–4 V/ms, so the 10 µF input capacitor draws only ≈ 35 mA extra. Simulated peak from the meter: 152 mA (limit 260 mA). An earlier gate-source RC gave 382 mA and was replaced.
 * Default after reset: off (pull-downs on G25 and G14). Suggested firmware policy: only enable after the P1 telegram shows DSMR ≥ 5; start at 60 mA; go to 120 mA only when `VMETER` stays above 4.75 V; back off when it sags.
 * The TP4056 blocks reverse current (< 2 µA from the battery when the meter supply is absent), so the BASE never feeds the meter. When USB is connected, the CoreInk's own charger and the TP4056 both regulate to 4.2 V; that is harmless.
-* **LED3 (red)** is on while the TP4056 charges.
+* No charge LED: the TP4056's `CHRG` output is left open. The firmware switches charging on (G25), so it knows when the battery is charged from the meter and shows that on the e-paper screen, which keeps its image while the CoreInk sleeps.
 
 ### 4.6 Indicators and test points
 
-| LED | Colour | On when | Current (full brightness) |
-|---|---|---|---|
-| LED1 | green | data bits on the P1 line | ≈ 1 mA while blinking |
-| LED2 | yellow | data request active | ≈ 0.8 mA |
-| LED3 | red | battery being charged from the P1 port | ≈ 1.3 mA |
+One rule for the user: **each socket has a green light; it blinks when data goes over that cable.**
 
-The LEDs are side-looking parts (Lite-On LTST-S220KGKT / KSKT / KRKT, one package for all three colours) on the top
-edge of the board, left of the meter socket (seen from the back). They shine through three windows in the top wall of the
-tray, so they are visible from above, also when a BatteryBASE covers the lid. All three anode resistors are fed from
-`VLED`, the dimmed supply (§ 4.7); the circuits above still decide *when* each LED is on.
+| LED | Where | Blinks when | If it stays dark | Current (full brightness) |
+|---|---|---|---|---|
+| LED1 | next to J2 (meter) | the meter sends data | cable to the meter, or the meter's P1 port | ≈ 1.3 mA while blinking |
+| LED2 | next to J3 (existing reader) | the existing reader requests and gets data | no reader, or the reader does not request (no power, crossed cable) | ≈ 1.3 mA while blinking |
+
+The LEDs are side-looking parts (Lite-On LTST-S220KGKT, green) at the board edge beside their socket: LED1 at the top
+edge left of J2, LED2 at the bottom edge right of J3 (both seen from the back; left of J3 is the charger). They shine
+through a window in the tray's top and bottom wall, so they are visible next to the plug, also when a BatteryBASE
+covers the lid. Both anode resistors (R7, R20, 2.2 kΩ) are fed from `VLED`, the dimmed supply (§ 4.7); the circuits
+above still decide *when* each LED is on. Charging from the meter is shown on the screen (§ 4.5).
 
 Test points: TP1 `VMETER`, TP2 `V5`, TP3 `P1_DATA`, TP4 `METER_REQ`, TP5 `EXT_DATA_OUT` (splitter output), TP6 `CHG_IN`, TP7 GND.
 
 ### 4.7 LED dimmer
 
-A blinking LED can disturb people when the meter is not in a closed meter cupboard, so the firmware can dim the three LEDs
+A blinking LED can disturb people when the meter is not in a closed meter cupboard, so the firmware can dim the two LEDs
 or switch them off (one setting for all three).
 
 * **No free GPIO** is left on the CoreInk bus (G18/G23 are the e-paper SPI lines), so the dimmer sits on the **I²C bus
   G21/G22**, which the CoreInk shares with its RTC (BM8563 at 0x51).
 * **U5 (PCA9633DP1, C88381)** is a 4-channel I²C LED driver (8-pin version: fixed address 0x62). Only LED0 is used, with
-  its **group PWM at 190 Hz**; LED1–LED3 are not connected.
+  its **group PWM at 190 Hz**; U5's outputs LED1–LED3 are not connected (not to be confused with the board's LED1/LED2).
 * **U6 (XC6206P332MR, C5446)** powers U5 with 3.3 V from `V5`. The NeedForHeat firmware switches the CoreInk off
   completely between measurements (RTC wake-up), which also removes its 3V3; powered from the meter side, U5 keeps its
   setting. 3.3 V also matches the CoreInk's I²C levels (U5's input high is 0.7 × VDD). U6 draws ≈ 1 µA.
@@ -208,7 +211,7 @@ Diagnosis the firmware can show on the e-ink screen:
 * **Pull-up and edges.** R3 = 1 kΩ, line capacitance ≈ 1 nF (1 m cable plus inputs): τ ≈ 1 µs, well below the 8.7 µs bit time.
 * **Request level.** V5 = 5.0 V − 0.3 V (BAT54C) = 4.7 V; Q3 drops < 10 mV at 1 mA → 4.7 V ≥ 4.0 V (DSMR). Via D7 only: reader's 5 V − 0.35 V.
 * **ADC.** 5.5 V × 0.405 = 2.23 V, within the 11 dB range (≈ 2.45 V) of ADC1.
-* **Current budget at the meter (DSMR 5, worst case).** Pull-up 5 mA + LEDs 3 mA + logic < 1 mA + charging 120 mA = 129 mA, leaving ≥ 120 mA for the existing reader. With 60 mA charging: ≥ 180 mA left. The LED dimmer adds < 0.1 mA (U5 idle, U6, R33 while the LEDs are on).
+* **Current budget at the meter (DSMR 5, worst case).** Pull-up 5 mA + LEDs 3 mA (2 × 1.3 mA) + logic < 1 mA + charging 120 mA = 129 mA, leaving ≥ 120 mA for the existing reader. With 60 mA charging: ≥ 180 mA left. The LED dimmer adds < 0.1 mA (U5 idle, U6, R33 while the LEDs are on).
 * **Charger dissipation.** (5.0 − 3.6 V) × 0.12 A = 0.17 W in the ESOP-8 TP4056: fine without a heat sink.
 * **Simulation.** See [simulation/README.md](simulation/README.md): data path at 115 200 Bd (bit-width error ≤ 0.6 % with a normal meter output; a slow, current-limited output adds edge distortion of ≈ 20 % of a bit, set by the meter itself), request levels in all combinations, charger inrush and the crossed-cable case (1.8 mA from the meter, no node outside its ratings except G34, which sees −2.9 V through 47 kΩ: ≈ 50 µA into its clamp diode).
 * **Energy balance.** A CoreInk that measures every 10 minutes and sleeps in between averages far below 60 mA; so 60 mA continuous charging is enough on DSMR 5, and the battery covers the Wi-Fi peaks (up to ~500 mA). *Verify* with a power profiler.
@@ -233,17 +236,17 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
   lid top to the tips of its LEGO posts, which leaves ≥ 5 mm for the box and padding; `enclosure/kuip.py` asserts
   this (P1-BASE: 24.7 mm). The posts are longer than the J1 pins, so a loose module rests on its posts. Cells
   (BatteryBASE) are never shipped in the parcel; the user clicks the modules together.
-* **LED windows and lid:** three 2.0 x 1.4 mm windows in the tray's top wall, in front of the side-looking LEDs. The lid
+* **LED windows and lid:** a 2.0 x 1.4 mm window in front of each side-looking LED: LED1 in the top wall, LED2 in the bottom wall. The lid
   clicks onto the tray: a thin lip (1.0 mm) with two half-round bumps on each long side snaps into grooves in the long
-  walls; a notch in the top of the bottom wall lets a fingernail or a coin lift it off again. No screws.
-* **Enclosure (*kuip*):** see [`enclosure/`](../enclosure) and its README (with callout renders). Tray + click-on lid, outside flush with the CoreInk outline, no skirt: four LEGO posts with crush ribs and the 16 bus contacts hold the module on the CoreInk. Three board pegs (H1–H3, top-right, bottom-left, bottom-right) key the PCB; the top-left corner has none, the LEDs need that room. The lid's four corner pillars carry LEGO Technic holes (counterbore, snap groove at 7.8 mm, LEGO standard values to verify) at the CoreInk's positions.
+  walls; a notch in the top of the bottom wall (between the left corner pillar and the J3 opening) lets a fingernail or a coin lift it off again. No screws.
+* **Enclosure (*kuip*):** see [`enclosure/`](../enclosure) and its README (with callout renders). Tray + click-on lid, outside flush with the CoreInk outline, no skirt: four LEGO posts with crush ribs and the 16 bus contacts hold the module on the CoreInk. Three board pegs (H1–H3, top-right, bottom-left, bottom-right) key the PCB; the top-left corner has none, so the PCB fits one way only. The lid's four corner pillars carry LEGO Technic holes (counterbore, snap groove at 7.8 mm, LEGO standard values to verify) at the CoreInk's positions.
 * The two RJ12 sockets are 14.5 mm tall (LCSC data for C77859): BASE + CoreInk stacked are ≈ 36 mm, so they ship separately in a letterbox parcel and are clicked together at home.
 
 ## 8. Production
 
 * Two-layer board, 1.6 mm, JLCPCB standard capabilities (track/space ≥ 0.2 mm, via 0.6/0.3 mm).
 * All parts on the top side; SMD plus three THT parts (J1–J3) that JLC solders.
-* Basic parts: all resistors and capacitors, AO3401A, 2N7002, 1N5819WS, XC6206P332MR. Extended parts (each adds a one-off loading fee per order): TP4056, 74LVC1G14, 74LVC1G17, BAT54C, SMF6.0A, PESD5V0S1BB, PCA9633DP1, the three side-looking LEDs, RJ12 jacks, stacking header.
+* Basic parts: all resistors and capacitors, AO3401A, 2N7002, 1N5819WS, XC6206P332MR. Extended parts (each adds a one-off loading fee per order): TP4056, 74LVC1G14, 74LVC1G17, BAT54C, SMF6.0A, PESD5V0S1BB, PCA9633DP1, the two side-looking LEDs (one part number), RJ12 jacks, stacking header.
 * Assembly variants: R6 (pull-up on the splitter output) and R15 (always request) are not fitted by default.
 * JLCPCB *Economic* assembly needs a HASL finish (it is not offered with OSP); LeadFree HASL is fine.
 * JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23, SOT-23-3 and SOT-23-5 +180°, SOIC-8 and TSSOP-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
@@ -263,9 +266,10 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 | D7 | Stacking header from the top | Standard header on the bottom (v2.7) | JLC can assemble it without a second side; the bus stays reachable |
 | D8 | Keying by the enclosure rim, not by the header | LEGO pins on adjacent corners; screws | Robust; no loose parts; the header is not designed to take force |
 | D9 | ~~Steel-disc pockets optional~~ dropped (§ 9a) | Magnets in the BASE; nothing | The CoreInk's magnets are only in the top half, so steel discs add holding force and a second key; empty by default |
-| D10 | One dimmer for all three LEDs (I²C driver switching their supply), powered from the meter side | Per-LED control by firmware (LEDs on the driver's outputs); PWM from an ESP32 pin | Keeps the LEDs showing real hardware states, also without a CoreInk; one setting is enough against disturbing light; the ESP32 has no free pin and is off most of the time |
-| D11 | Side-looking LEDs at the top edge | Light holes in the lid; light pipes | The lid is covered by a BatteryBASE in a stack; the device is seen from above |
+| D10 | One dimmer for both LEDs (I²C driver switching their supply), powered from the meter side | Per-LED control by firmware (LEDs on the driver's outputs); PWM from an ESP32 pin | Keeps the LEDs showing real hardware states, also without a CoreInk; one setting is enough against disturbing light; the ESP32 has no free pin and is off most of the time |
+| D11 | Side-looking LEDs at the board edge | Light holes in the lid; light pipes | The lid is covered by a BatteryBASE in a stack; the LEDs are seen next to the plugs |
 | D12 | Lid clicks onto the tray | Loose lid; M2 screws | Same click-together principle as the rest of the stack; no tools |
+| D13 | One green LED per socket: "blinks = data over this cable" (LED1 at J2, LED2 at J3); no request LED, no charge LED | Three LEDs at the top edge: green data, yellow request, red charging | One rule a user can remember; the position says which cable; the request is implied by the blinking; charging is known to the firmware and shown on the screen; one part fewer, one LED colour |
 
 ## 9a. Redesign in progress
 
@@ -299,6 +303,7 @@ board is redone):
    cables pull. This moves most parts, so the board is placed and routed again.
 
 9. **LEDs visible at the top, dimmable, lid clicks on** (November 2026): § 4.6, § 4.7, § 7; decisions D10–D12.
+10. **One green LED per socket** (15 November 2026): LED1 next to J2 (data from the meter), LED2 next to J3 (data to the existing reader, via Q11); the yellow request LED and the red charge LED are gone; § 4.3–4.6, decision D13. Board placed again, to be routed.
 
 How to redo the board (on a machine with ≈ 5 GB free memory): `tools/gen_pcb.py` (placement, Freerouting,
 stitching, island vias; `P1BASE_VARIANT=<n>` rotates the packing order of block 3 if a GND pad ends up boxed in),

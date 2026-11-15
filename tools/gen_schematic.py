@@ -218,8 +218,11 @@ PARTS = [
     PMOS("Q3", "REQ_GATE", "METER_REQ", "V5"),
     R("R10", "100k", "REQ_GATE", "V5"),
     R("R15", "0R", "REQ_GATE", "GND", dnp=True),
-    R("R20", "3k3", "VLED", "LED2_A"),
-    LED("LED2", "yellow", "LED2_A", "REQ_GATE"),
+    # LED2 (green, next to J3): on while the reader requests (Q11 gate = EXT_REQ_G) AND U1 drives a data bit
+    # (SPLIT_DRV low), i.e. it blinks while the existing reader gets data
+    R("R20", "2k2", "VLED", "LED2_A"),
+    LED("LED2", "green", "LED2_A", "LED2_K"),
+    NMOS("Q11", "EXT_REQ_G", "LED2_K", "SPLIT_DRV"),
     NMOS("Q4", "REQ_EN", "REQ_GATE", "GND"),
     R("R11", "1k", "G26_REQ", "REQ_EN"),
     R("R12", "100k", "REQ_EN", "GND"),
@@ -241,11 +244,9 @@ PARTS = [
     R("R25", "1k", "G25_CHG", "CHG_EN"),
     R("R26", "100k", "CHG_EN", "GND"),
     C("C8", "10u", "CHG_IN", "GND"),
-    R("R31", "2k2", "VLED", "LED3_A"),
-    LED("LED3", "red", "LED3_A", "CHRG_N"),
     dict(ref="U3", lib="p1base:TP4056", value="TP4056", fp="Package_SO:SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm",
          lcsc="C16581", nets={"4": "CHG_IN", "8": "CHG_IN", "2": "PROG", "1": "GND", "5": "COREINK_BAT",
-                              "7": "CHRG_N", "6": None, "3": "GND", "9": "GND"}),
+                              "7": None, "6": None, "3": "GND", "9": "GND"}),
     R("R27", "20k", "PROG", "GND"),
     R("R28", "20k", "PROG", "PROG_HI"),
     NMOS("Q8", "CHG_HI", "PROG_HI", "GND"),
@@ -687,7 +688,7 @@ def draw(s):
     s.power("V5", (398.78, 81.28))
     s.wire("Q9.3", (398.78, 101.6))
     s.label("VLED", (398.78, 101.6), "d")
-    s.note("Q9 switches VLED, the supply of LED1-3; U5 (address 0x62) dims it at 190 Hz.", 327.66, 114.3)
+    s.note("Q9 switches VLED, the supply of LED1-2; U5 (address 0x62) dims it at 190 Hz.", 327.66, 114.3)
     s.note("U5 not set up (after power-up): LEDs at full brightness. See design-v3.md.", 327.66, 116.84)
 
     # 4 ---------------------------------------------------------------------
@@ -698,8 +699,9 @@ def draw(s):
     s.place("Q3", 63.5, 167.64, rot=180, side="left")
     s.place("R10", 73.66, 160.02, rot=180)
     s.place("R15", 81.28, 173.99, side="left")
-    s.place("R20", 99.06, 149.86)
-    s.place("LED2", 99.06, 160.02, rot=90)
+    s.place("R20", 157.48, 137.16)
+    s.place("LED2", 157.48, 147.32, rot=90)
+    s.place("Q11", 160.02, 160.02, mirror="y", side="top_r")
     s.place("Q4", 88.9, 185.42, side="top")
     s.place("R11", 73.66, 185.42, rot=90)
     s.place("R12", 78.74, 191.77)
@@ -720,13 +722,16 @@ def draw(s):
     s.wire((48.26, 177.8), "R9.1")
     s.power("GND", "R9.2")
     s.power("V5", "Q3.2")
-    s.wire("Q3.1", (73.66, 167.64), (81.28, 167.64), (91.44, 167.64), (99.06, 167.64), (109.22, 167.64))
+    s.wire("Q3.1", (73.66, 167.64), (81.28, 167.64), (91.44, 167.64), (109.22, 167.64))
     s.label("REQ_GATE", (81.28, 167.64), "r", 1.0)
     s.wire("R10.1", (73.66, 167.64))
     s.power("V5", "R10.2")
     s.wire((81.28, 167.64), "R15.1")
     s.power("GND", "R15.2")
-    s.wire("LED2.1", (99.06, 167.64))
+    s.wire("LED2.1", "Q11.3")
+    s.label("LED2_K", "Q11.3", "l", 1.0)
+    s.stub("Q11.1", "EXT_REQ_G", 2.54, "r")
+    s.stub("Q11.2", "SPLIT_DRV", 2.54, "d")
     s.wire("LED2.2", "R20.2")
     s.label("LED2_A", "R20.2", "l", 1.0)
     s.label("VLED", "R20.1", "u", 1.0)
@@ -761,7 +766,8 @@ def draw(s):
     s.note("The meter sends when its request pin (J2 pin 2) is >= 4 V. Q3 pulls it to V5 when REQ_GATE is low:", 12.7, 218.44)
     s.note("Q4 when the CoreInk requests (G26 high), Q5 when the existing reader requests. D7 passes the reader's", 12.7, 220.98)
     s.note("own request on when V5 is absent (DSMR 2/3 meter with the CoreInk off). G34 tells the firmware that", 12.7, 223.52)
-    s.note("the reader requests. R15 (not fitted): always request. LED2 (yellow): data requested.", 12.7, 226.06)
+    s.note("the reader requests. R15 (not fitted): always request.", 12.7, 226.06)
+    s.note("LED2 (green, next to J3) via Q11: blinks while the reader requests AND the meter sends (SPLIT_DRV low).", 12.7, 228.6)
 
     # 5 ---------------------------------------------------------------------
     s.block("5  P1 charging of the CoreInk battery", 195.58, 124.46, 320.04, 241.3)
@@ -773,8 +779,6 @@ def draw(s):
     s.place("R26", 254.0, 168.91)
     s.place("R25", 261.62, 162.56, rot=270)
     s.place("C8", 220.98, 199.39)
-    s.place("R31", 236.22, 201.93)
-    s.place("LED3", 236.22, 209.55, rot=90)
     s.place("U3", 276.86, 198.12)
     s.place("R27", 256.54, 207.01)
     s.place("R28", 248.92, 207.01)
@@ -802,10 +806,6 @@ def draw(s):
     s.label("CHG_IN", (236.22, 195.58), "r", 1.0)
     s.wire((220.98, 195.58), "C8.1")
     s.power("GND", "C8.2")
-    s.label("VLED", "R31.1", "r", 1.0)
-    s.wire("R31.2", "LED3.2")
-    s.label("LED3_A", "R31.2", "l", 1.0)
-    s.stub("LED3.1", "CHRG_N", 5.08, "l")
     s.wire("U3.8", (264.16, 198.12), (264.16, 195.58))
     s.wire("U3.1", (264.16, 203.2), (264.16, 210.82))
     s.power("GND", (264.16, 210.82))
@@ -826,14 +826,13 @@ def draw(s):
     x3, y3 = s.pin("U3.3")
     s.wire("U3.3", (x3, y3 + 2.54), "U3.9", first="h")
     s.power("GND", (x3, y3 + 2.54))
-    s.label("CHRG_N", "U3.7")
     s.wire("U3.5", (297.18, 195.58), (302.26, 195.58))
     s.wire((297.18, 195.58), "C9.1")
     s.power("GND", "C9.2")
     s.label("COREINK_BAT", (302.26, 195.58))
     s.note("G25 high: Q7 pulls the gate of Q6 down through R24; C7 slows the turn-on (soft start, inrush < 260 mA).", 198.12, 233.68)
     s.note("TP4056 charges the CoreInk battery: 60 mA (R27), 120 mA with G14 high (R27 || R28).", 198.12, 236.22)
-    s.note("LED3 (red): charging.", 198.12, 238.76)
+    s.note("CHRG (pin 7) unused: firmware switches charging (G25) and shows it on the e-paper screen.", 198.12, 238.76)
 
     # 6 ---------------------------------------------------------------------
     s.block("6  CoreInk bus (back connector)", 325.12, 124.46, 405.13, 241.3)
@@ -894,7 +893,7 @@ def draw(s):
     s.note("2.7  2024-06  Windesheim: optocoupler splitter, DIP switches for the data request.", 193.04, 255.27)
     s.note("3.0  2026-11  Active splitter, firmware-managed data request, P1 charging, all parts top side.", 193.04, 257.81)
     s.note("Design rationale, calculations and simulations: docs/design-v3.md.", 193.04, 262.89)
-    s.note("     2026-11  LED dimmer (I2C), side-looking LEDs at the top edge.", 193.04, 260.35)
+    s.note("     2026-11  LED dimmer (I2C); one green LED per socket (data from the meter, data to the reader).", 193.04, 260.35)
     s.note("DNP = not fitted (R6, R15).", 193.04, 265.43)
 
 
