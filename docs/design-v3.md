@@ -282,7 +282,9 @@ board is redone):
 
 How to redo the board (on a machine with ≈ 5 GB free memory): `tools/gen_pcb.py` (placement, Freerouting,
 stitching, island vias; `P1BASE_VARIANT=<n>` rotates the packing order of block 3 if a GND pad ends up boxed in),
-then `tools/pcb_cleanup.py`, then `kicad-cli pcb drc --schematic-parity --refill-zones --save-board`, then
+then `tools/pcb_cleanup.py`, then `kicad-cli pcb drc --schematic-parity --refill-zones --save-board`; if DRC reports
+an unconnected GND zone, `tools/pcb_bridge_gnd.py` adds a via that ties the boxed-in GND island to the pour, and DRC
+runs again; then
 `tools/export_fab.py`, `enclosure/kuip.py` and `tools/checks/run_checks.py`.
 
 ## 10. Open points to verify

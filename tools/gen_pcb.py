@@ -50,10 +50,12 @@ FIXED = {
     # CoreInk MI-BUS: centre 6.03 mm from the right edge, 36.87 mm from the top edge
     "J1": (40.0 - 6.03, 36.87, 0),
     # side-looking LEDs at the top edge, left of the meter jack: they shine through the kuip's top wall.
-    # Pads 0.3 mm from the board edge (copper-to-edge minimum); clear of the corner arc and the peg hole
-    "LED3": (5.6, 0.85, 0),
-    "LED2": (8.8, 0.85, 0),
-    "LED1": (12.0, 0.85, 0),
+    # Pads 0.7 mm from the board edge, clear of the 0.6 mm no-track strip along the edge (Freerouting cannot reach
+    # pads that touch it), of the corner arc and of the peg hole
+    # pitch 3.5 mm: courtyards 0.3 mm apart, LED1 clear of J2's courtyard, LED3 clear of the corner arc
+    "LED3": (4.7, 1.2, 0),
+    "LED2": (8.2, 1.2, 0),
+    "LED1": (11.7, 1.2, 0),
 }
 # kuip pegs (NPTH) at three of the four LEGO-hole axes: also keys the PCB in the enclosure
 PEGS = [(4.0, 4.0), (36.0, 4.0), (4.0, 52.0)]
@@ -62,12 +64,15 @@ BLOCKS = [
     ((27.4, 8.5, 39.2, 25.5), ["Q1", "R1", "D1", "C1", "C2", "D2", "C3", "R21", "R22", "C6", "TP1", "TP2", "C12", "Q9", "R33"]),
     ((0.8, 8.5, 13.1, 31.0), ["D5", "R8", "R9", "Q3", "R10", "Q4", "R11", "R12", "Q5", "R13", "R14", "R15", "D7",
                               "R20", "TP4", "D6", "R16", "R18", "R19"]),
-    ((13.6, 20.6, 26.6, 35.4), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "R7", "U4", "C10",
+    ((13.6, 20.6, 26.6, 35.4), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "U4", "C10",
                                 "U5", "R34", "Q10"]),
-    # LED dimmer supply and switch: the free strip right of the meter jack
+    # LED resistors right under the LEDs (between the peg hole H1 and the meter jack), so only
+    # VLED and the three cathode signals run to the LEDs from further away
+    ((6.8, 2.3, 13.1, 8.4), ["R31", "R20", "R7"]),
+    # LED dimmer supply: the free strip right of the meter jack
     ((25.9, 0.7, 32.2, 8.4), ["U6", "C11"]),
     ((0.8, 31.0, 13.1, 55.2), ["Q6", "R23", "C7", "R24", "Q7", "R25", "R26", "C8", "U3", "R27", "R28", "Q8",
-                               "R29", "R30", "C9", "R31"]),
+                               "R29", "R30", "C9"]),
     ((27.4, 26.0, 30.4, 51.0), ["TP3", "TP5", "TP6", "TP7"]),
 ]
 
