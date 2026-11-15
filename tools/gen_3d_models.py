@@ -3,7 +3,7 @@
 - RJ12 (6P6C) right-angle jack for the Connector_RJ:RJ25_Wayconn_MJEA-660X1_Horizontal
   footprint (KiCad ships the footprint but no model). Envelope of the CONNFLY
   DS1133-S60BPX (C77859) from LCSC data: 14.6 x 13 x 14.5 mm.
-- 2x8 2.54 mm stacking female header (C72555): 8.5 mm body above the board, long
+- 2x8 2.54 mm elevated socket (Samtec ESQ-108-24-G-D): 13.59 mm body standing on the board, long
   pins through the board into the CoreInk socket.
 - Lite-On LTST-S220 side-looking LED (the three indicator LEDs at the top edge).
 
@@ -72,14 +72,15 @@ def rj12_5301():
 
 
 def stacking_header():
-    """Samtec ESQ-108-24-G-D (raised 2x8 socket): socket body 8.51 mm with its top 13.59 mm above the board,
-    tail 9.65 mm below the board's top surface (Samtec table 1: C = .535, B = .38)."""
-    p, rows, cols, h, top, tail = 2.54, 8, 2, 8.51, 13.59, 9.65
-    body = cq.Workplane("XY").box(cols * p, rows * p, h, centered=(True, True, False)).translate((0, 0, top - h))
+    """Samtec ESQ-108-24-G-D (elevated 2x8 socket): one tall insulator that sits on the board, its top 13.59 mm above
+    the board and 8.51 mm deep sockets at the top; tail 9.65 mm below the board's top surface
+    (Samtec table 1: C = .535, B = .38)."""
+    p, rows, cols, depth, top, tail = 2.54, 8, 2, 8.51, 13.59, 9.65
+    body = cq.Workplane("XY").box(cols * p, rows * p, top, centered=(True, True, False))
     pts = [((c - 0.5) * p, (r - 3.5) * p) for c in range(cols) for r in range(rows)]
-    holes = cq.Workplane("XY").pushPoints(pts).rect(1.0, 1.0).extrude(6.0).translate((0, 0, top - 6.0))
+    holes = cq.Workplane("XY").pushPoints(pts).rect(1.0, 1.0).extrude(depth).translate((0, 0, top - depth))
     body = body.cut(holes)
-    pins = cq.Workplane("XY").pushPoints(pts).rect(0.64, 0.64).extrude(-(tail + top - h)).translate((0, 0, top - h))
+    pins = cq.Workplane("XY").pushPoints(pts).rect(0.64, 0.64).extrude(-tail)
     asm = cq.Assembly(name="ESQ_108_24_G_D")
     asm.add(body, name="body", color=BLACK)
     asm.add(pins, name="pins", color=GOLD)
