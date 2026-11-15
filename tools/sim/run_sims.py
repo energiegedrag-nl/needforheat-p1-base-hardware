@@ -341,10 +341,18 @@ def main():
         lines.append(f"| {k} | {v['min_low_P1_V']:.2f} | {v['G13_high_V']:.2f} | {v.get('G13_max_bit_error_pct', v.get('G13'))} | "
                      f"{v.get('reader_max_bit_error_pct', v.get('reader'))} |")
     rq = sim_request()
-    lines += ["", "## 2. Data request levels (DC)", "", "DSMR: the request must be ≥ 4.0 V to make the meter send.", "",
-              "| Case | Request at meter (J2 pin 2) [V] | G34 [V] | G36 [V] |", "|---|---:|---:|---:|"]
+    lines += ["", "## 2. Data request levels (DC)", "",
+              "DSMR: the request must be ≥ 4.0 V to make the meter send. The existing reader is modelled as 5 V behind "
+              "1 kΩ (a weak request output) and the meter's request input as 1 mA at 5 V (4.7 kΩ).", "",
+              "| Case | Request at meter (J2 pin 2) [V] | ≥ 4.0 V? | G34 [V] | G36 [V] |", "|---|---:|:---:|---:|---:|"]
     for label, vreq, g34, g36 in rq:
-        lines.append(f"| {label} | {vreq:.2f} | {g34:.2f} | {g36:.2f} |")
+        ok = "– (idle)" if "nobody" in label else ("yes" if vreq >= 4.0 else "**no** (see note)")
+        lines.append(f"| {label} | {vreq:.2f} | {ok} | {g34:.2f} | {g36:.2f} |")
+    lines += ["", "Note: with a DSMR 2/3 meter and the CoreInk off the BASE has no supply, so the reader's request only "
+              "reaches the meter through D7 (passive path). With the weak 1 kΩ reader modelled here that gives ≈ 3.2 V, "
+              "below 4.0 V; a reader with a stiff 5 V output gives ≈ 4.6 V. With the CoreInk on, the active path "
+              "(Q5 → Q3) restores the full level. Known limitation, see design-v3.md § 4.4 (D7); to be measured with "
+              "real readers and DSMR 2/3 meters (design-v3.md § 10, items 6 and 7)."]
     ipk = sim_softstart()
     lines += ["", "## 3. Switching on P1 charging", "", "![soft start](charger-soft-start.png)", "",
               f"Peak current drawn from the meter: **{ipk:.0f} mA** (DSMR 5 fold-back starts at 260 mA; "
