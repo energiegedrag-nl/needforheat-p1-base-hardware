@@ -16,6 +16,9 @@ for row in csv.DictReader(open(bomf, encoding="utf8")):
     if not os.path.exists(p):
         json.dump(api.get_cad_data_of_component(lcsc_id=lc), open(p, "w"))
     d = json.load(open(p))
+    if not d or "dataStr" not in d:  # no EasyEDA CAD data (e.g. a pre-order part): nothing to compare against
+        print("no LCSC CAD data for", lc, row.get("Designator", ""), "- skipped")
+        continue
     s, f = EasyedaSymbolImporter(d).get_symbol(), EasyedaFootprintImporter(d).get_footprint()
     pads = {}
     for q in f.pads:  # easyeda2kicad already converts to mm

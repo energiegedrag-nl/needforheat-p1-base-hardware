@@ -32,6 +32,8 @@ JLC_CORR = {
     # pin 1 on the opposite side / a quarter turn in the JLCPCB library
     "SOT-23": (0.0, 0.0, 180.0),
     "SOT-23-5": (0.0, 0.0, 180.0),
+    "SOT-23-3": (0.0, 0.0, 180.0),
+    "TSSOP-8_3x3mm_P0.65mm": (0.0, 0.0, 270.0),
     "SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.29x3mm": (0.0, 0.0, 270.0),
 }
 

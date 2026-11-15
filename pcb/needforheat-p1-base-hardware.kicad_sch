@@ -11452,7 +11452,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify left)))
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "p1base:PegHole_2.2mm_NPTH"
 			(at 22.86 276.86 0)
 			(effects
 				(font
@@ -11490,7 +11490,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify left)))
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "p1base:PegHole_2.2mm_NPTH"
 			(at 45.72 276.86 0)
 			(effects
 				(font
@@ -11528,7 +11528,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify left)))
-		(property "Footprint" "MountingHole:MountingHole_2.2mm_M2"
+		(property "Footprint" "p1base:PegHole_2.2mm_NPTH"
 			(at 68.58 276.86 0)
 			(effects
 				(font

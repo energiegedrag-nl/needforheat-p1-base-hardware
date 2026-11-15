@@ -271,7 +271,7 @@ PARTS = [
     # 8. test points, peg holes
     TP("TP1", "VMETER"), TP("TP2", "V5"), TP("TP3", "P1_DATA"), TP("TP4", "METER_REQ"),
     TP("TP5", "EXT_DATA_OUT"), TP("TP6", "CHG_IN"), TP("TP7", "GND"),
-] + [dict(ref=f"H{i}", lib="Mechanical:MountingHole", value="Peg hole 2.2 mm", fp="MountingHole:MountingHole_2.2mm_M2",
+] + [dict(ref=f"H{i}", lib="Mechanical:MountingHole", value="Peg hole 2.2 mm", fp="p1base:PegHole_2.2mm_NPTH",
           lcsc="", nets={}, bom=False) for i in (1, 2, 3)]
 
 

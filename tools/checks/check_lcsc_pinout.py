@@ -16,6 +16,9 @@ for fp in sorted(b.GetFootprints(), key=lambda f: f.GetReference()):
         continue
     r = cpl[ref]
     X, Y, a = float(r["Mid X"][:-2]), -float(r["Mid Y"][:-2]), math.radians(float(r["Rotation"]))
+    if lc not in parts:
+        print(f"\n{ref} {fp.GetValue()} {lc}: no LCSC CAD data, not checked (check the JLCPCB placement preview by hand)")
+        continue
     P = parts[lc]
     rows, used = [], {}
     for num, lst in P["pads"].items():

@@ -228,7 +228,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * Basic parts: all resistors and capacitors, AO3401A, 2N7002, 1N5819WS, XC6206P332MR. Extended parts (each adds a one-off loading fee per order): TP4056, 74LVC1G14, BAT54C, SMF6.0A, PESD5V0S1BB, PCA9633DP1, the three side-looking LEDs, RJ12 jacks, stacking header.
 * Assembly variants: R6 (pull-up on the splitter output) and R15 (always request) are not fitted by default.
 * JLCPCB *Economic* assembly needs a HASL finish (it is not offered with OSP); LeadFree HASL is fine.
-* JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23 and SOT-23-5 +180°, SOIC-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
+* JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23, SOT-23-3 and SOT-23-5 +180°, SOIC-8 and TSSOP-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
 * JLCPCB quote (November 2026, 5 boards, Economic, LeadFree HASL, without shipping and VAT): PCB € 4.71, assembly € 38.97 (setup € 7.46, stencil € 1.40, parts € 8.68, extended-part fees € 14.00, SMT € 1.24, hand soldering € 3.27, manual assembly € 2.09, nitrogen reflow € 0.82); total € 43.68, about € 8.70 per board. (Before the LED dimmer and the side-looking LEDs: about two more extended-part fees.)
 
 ## 9. Design decisions
@@ -285,7 +285,10 @@ stitching, island vias; `P1BASE_VARIANT=<n>` rotates the packing order of block 
 then `tools/pcb_cleanup.py`, then `kicad-cli pcb drc --schematic-parity --refill-zones --save-board`; if DRC reports
 an unconnected GND zone, `tools/pcb_bridge_gnd.py` adds a via that ties the boxed-in GND island to the pour, and DRC
 runs again; then
-`tools/export_fab.py`, `enclosure/kuip.py` and `tools/checks/run_checks.py`.
+`tools/export_fab.py`. The committed board (November 2026, default variant) needed one hand-added route: Freerouting
+left PROG (U3 pin 2 to R27) open; it now runs on B.Cu above C8 and down the left edge on F.Cu. Freerouting does not
+give the same result on every run, so a re-route may need a different fix. Then
+`enclosure/kuip.py` and `tools/checks/run_checks.py`.
 
 ## 10. Open points to verify
 
