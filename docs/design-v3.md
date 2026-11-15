@@ -248,6 +248,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * JLCPCB *Economic* assembly needs a HASL finish (it is not offered with OSP); LeadFree HASL is fine.
 * JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23, SOT-23-3 and SOT-23-5 +180°, SOIC-8 and TSSOP-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
 * JLCPCB quote (November 2026, 5 boards, Economic, LeadFree HASL, without shipping and VAT): PCB € 4.71, assembly € 38.97 (setup € 7.46, stencil € 1.40, parts € 8.68, extended-part fees € 14.00, SMT € 1.24, hand soldering € 3.27, manual assembly € 2.09, nitrogen reflow € 0.82); total € 43.68, about € 8.70 per board (with C72555 as J1, before the LED dimmer). Quote of 15 November 2026 for the board with the LED dimmer, same options, **without J1** (the ESQ is a pre-order part, JLCPCB cannot select it yet): PCB € 4.71, assembly € 57.26 (setup € 7.46, stencil € 1.40, parts € 22.38, extended-part fees € 19.59, SMT € 1.42, hand soldering € 3.27, manual assembly € 0.90, nitrogen reflow € 0.82); total € 61.97. The PCA9633DP1 alone costs € 13.92 for five (€ 2.78 each). J1 (ESQ-108-24-G-D) adds about € 18.32 for five plus one extended-part fee and its pre-order handling: roughly € 85 in total, about € 17 per board.
+* Prototype order (15 November 2026): the routed board with U4 = 74LVC1G17 quotes at € 65.93 without J1 (PCB € 4.71, assembly € 61.22). Five J1 were pre-ordered through JLCPCB's parts manager, so JLCPCB solders J1 too (no soldering by the user); the PCBA order with J1 follows once the parts are in stock. Fallback if they arrive too late: order without J1 and have J1 fitted by hand. Placement preview checked by hand: the three side-looking LEDs have their lens towards the top edge and their cathode (pad 1) on the left, as in KiCad. Enclosures go in the same shipment: MJF PA12 black, 5 sets, P1-BASE tray + lid $ 19.40 and BatteryBASE tray + lid (fit check) $ 18.70.
 
 ## 9. Design decisions
 
@@ -305,7 +306,10 @@ then `tools/pcb_cleanup.py`, then `kicad-cli pcb drc --schematic-parity --refill
 an unconnected GND zone, `tools/pcb_bridge_gnd.py` adds a via that ties the boxed-in GND island to the pour, and DRC
 runs again; then
 `tools/export_fab.py`. The committed board (November 2026, default variant) needed one hand-added route: Freerouting
-left PROG (U3 pin 2 to R27) open; it now runs on B.Cu above C8 and down the left edge on F.Cu. Freerouting does not
+left PROG (U3 pin 2 to R27) open; it now runs on B.Cu above C8 and down the left edge on F.Cu. The re-route with
+U4 = 74LVC1G17 (15 November 2026) needed a different hand fix: a /CHG_IN loop around Q7 boxed in Q7 pin 2 (GND) on
+both layers, so `pcb_bridge_gnd.py` found no room; the lower F.Cu leg of that loop (y = 136.5 mm) was moved to B.Cu
+with a via at (109.9, 137.3) next to U3 pin 8, which opens the pour to the GND via below Q7. Freerouting does not
 give the same result on every run, so a re-route may need a different fix. Then
 `enclosure/kuip.py` and `tools/checks/run_checks.py`.
 
