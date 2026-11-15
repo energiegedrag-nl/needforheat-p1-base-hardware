@@ -226,7 +226,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 | Magnets (inside, only in the top half) | ≈ (12, 11) and ≈ (28, 17) – *verify* |
 | Recess behind the HAT header | x 9–31, y 0–8.5 |
 
-* **Board:** 40 x 56 mm, the CoreInk outline. The meter socket J2 sits at the top edge (opening up): the device hangs from a short cable under the P1 port with the screen upright. The socket for the existing reader J3 is at the bottom edge (opening down).
+* **Board:** 36.3 x 52.3 mm, corner radius 1.15: the CoreInk outline minus the enclosure wall (1.6 mm) and 0.25 mm clearance on every side, so the enclosure's outside is exactly the CoreInk outline (decision of 15 November 2026: every module's back equals the CoreInk's back, so any BASE that fits a bare CoreInk also fits behind a P1-BASE; see TODO.md). Coordinates stay CoreInk-relative. The meter socket J2 sits at the top edge (opening up): the device hangs from a short cable under the P1 port with the screen upright. The socket for the existing reader J3 is at the bottom edge (opening down).
 * **CoreInk connection** (*being redesigned, see § 9a*): a 2x8 stackable female header (long pins) is inserted from the top and soldered by JLC like any THT part. Its pins pass through the board into the CoreInk socket; the female body on top keeps the MI-BUS available for measurements. Gap board–CoreInk: 3.5 mm, enough for the RJ12 leads and pegs.
 * **Shipping by letterbox post:** a PostNL letterbox parcel is at most 38 × 26.5 × 3.2 cm. The modules ship loose,
   side by side, not stacked (CoreInk + P1-BASE stacked is ≈ 34 mm). Each module must stay ≤ 27 mm thick from the
@@ -236,7 +236,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * **LED windows and lid:** three 2.0 x 1.4 mm windows in the tray's top wall, in front of the side-looking LEDs. The lid
   clicks onto the tray: a thin lip (1.0 mm) with two half-round bumps on each long side snaps into grooves in the long
   walls; a notch in the top of the bottom wall lets a fingernail or a coin lift it off again. No screws.
-* **Enclosure (*kuip*)** (*steel discs and nocks replaced by LEGO posts, see § 9a*): see [`enclosure/`](../enclosure). The tray has a rim that holds the CoreInk with cut-outs that only fit the right way round (asymmetric side features). Tapered pegs in the LEGO holes centre it. Three board pegs (H1–H3) key the PCB in the tray. Optional pockets for 8 x 1 mm steel discs sit opposite the two magnets; they hold the CoreInk and only attract in the right orientation.
+* **Enclosure (*kuip*):** see [`enclosure/`](../enclosure) and its README (with callout renders). Tray + click-on lid, outside flush with the CoreInk outline, no skirt: four LEGO posts with crush ribs and the 16 bus contacts hold the module on the CoreInk. Three board pegs (H1–H3, top-right, bottom-left, bottom-right) key the PCB; the top-left corner has none, the LEDs need that room. The lid's four corner pillars carry LEGO Technic holes (counterbore, snap groove at 7.8 mm, LEGO standard values to verify) at the CoreInk's positions.
 * The two RJ12 sockets are 14.5 mm tall (LCSC data for C77859): BASE + CoreInk stacked are ≈ 36 mm, so they ship separately in a letterbox parcel and are clicked together at home.
 
 ## 8. Production

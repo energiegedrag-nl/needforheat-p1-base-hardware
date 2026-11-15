@@ -32,7 +32,9 @@ JAVA = os.environ.get("JAVA", os.path.expandvars(r"%LOCALAPPDATA%\freerouting\jr
 FREEROUTING = os.environ.get("FREEROUTING", os.path.expandvars(r"%LOCALAPPDATA%\freerouting\freerouting.jar"))
 
 X0, Y0 = 100.0, 100.0
-W, H = 40.0, 56.0
+W, H = 40.0, 56.0  # CoreInk outline: the enclosure's outside, flush with the CoreInk
+INSET = 1.85  # enclosure wall 1.6 + clearance 0.25: the PCB sits inside the walls
+R_PCB = 3.0 - INSET  # CoreInk corner radius 3.0 minus the inset
 MM = pcbnew.FromMM
 
 
@@ -45,33 +47,36 @@ def P(x, y):
 FIXED = {
     # RJ12 jacks (EVERCOM 5301, 11.45 mm) centred on the long axis so the device hangs straight; plug openings
     # 0.5 mm past the board edge: meter at the top (opening up), existing reader at the bottom (opening down)
-    "J2": (20.0, 15.62 - 0.5, 270),
-    "J3": (20.0, 56.0 - 15.62 + 0.5, 90),
+    "J2": (20.0, INSET + 15.62 - 0.5, 270),
+    "J3": (20.0, H - INSET - 15.62 + 0.5, 90),
     # CoreInk MI-BUS: centre 6.03 mm from the right edge, 36.87 mm from the top edge
     "J1": (40.0 - 6.03, 36.87, 0),
     # side-looking LEDs at the top edge, left of the meter jack: they shine through the kuip's top wall.
     # Pads 0.7 mm from the board edge, clear of the 0.6 mm no-track strip along the edge (Freerouting cannot reach
     # pads that touch it), of the corner arc and of the peg hole
-    # pitch 3.5 mm: courtyards 0.3 mm apart, LED1 clear of J2's courtyard, LED3 clear of the corner arc
-    "LED3": (4.7, 1.2, 0),
-    "LED2": (8.2, 1.2, 0),
-    "LED1": (11.7, 1.2, 0),
+    # pitch 3.5 mm: courtyards 0.3 mm apart, LED1 clear of J2's courtyard, LED3 clear of the corner arc;
+    # the top-left corner has no peg, so the LEDs can sit there
+    "LED3": (4.7, INSET + 1.2, 0),
+    "LED2": (8.2, INSET + 1.2, 0),
+    "LED1": (11.7, INSET + 1.2, 0),
 }
-# kuip pegs (NPTH) at three of the four LEGO-hole axes: also keys the PCB in the enclosure
-PEGS = [(4.0, 4.0), (36.0, 4.0), (4.0, 52.0)]
+# kuip pegs (NPTH) at three of the four LEGO-hole axes: also keys the PCB in the enclosure. The top-left corner
+# has none: the LEDs need that room at the top edge
+PEGS = [(36.0, 4.0), (4.0, 52.0), (36.0, 52.0)]
+CORNERS = [(4.0, 4.0), (36.0, 4.0), (4.0, 52.0), (36.0, 52.0)]  # LEGO-hole axes: kuip corner blocks below the PCB
 # Blocks for the SMD parts: rectangle (x1, y1, x2, y2) and the parts, packed in rows
 BLOCKS = [
-    ((27.4, 8.5, 39.2, 25.5), ["Q1", "R1", "D1", "C1", "C2", "D2", "C3", "R21", "R22", "C6", "TP1", "TP2", "C12", "Q9", "R33"]),
-    ((0.8, 8.5, 13.1, 31.0), ["D5", "R8", "R9", "Q3", "R10", "Q4", "R11", "R12", "Q5", "R13", "R14", "R15", "D7",
+    ((27.4, 8.5, 37.35, 25.5), ["Q1", "R1", "D1", "C1", "C2", "D2", "C3", "R21", "R22", "C6", "TP1", "TP2", "C12", "Q9", "R33"]),
+    ((2.65, 10.0, 13.1, 31.0), ["D5", "R8", "R9", "Q3", "R10", "Q4", "R11", "R12", "Q5", "R13", "R14", "R15", "D7",
                               "R20", "TP4", "D6", "R16", "R18", "R19"]),
-    ((13.6, 20.6, 26.6, 35.4), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "U4", "C10",
+    ((13.6, 17.0, 26.6, 39.0), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "U4", "C10",
                                 "U5", "R34", "Q10"]),
     # LED resistors right under the LEDs (between the peg hole H1 and the meter jack), so only
     # VLED and the three cathode signals run to the LEDs from further away
-    ((6.8, 2.3, 13.1, 8.4), ["R31", "R20", "R7"]),
+    ((2.65, 4.15, 13.1, 9.8), ["R31", "R20", "R7"]),
     # LED dimmer supply: the free strip right of the meter jack
-    ((25.9, 0.7, 32.2, 8.4), ["U6", "C11"]),
-    ((0.8, 31.0, 13.1, 55.2), ["Q6", "R23", "C7", "R24", "Q7", "R25", "R26", "C8", "U3", "R27", "R28", "Q8",
+    ((25.9, 2.55, 32.2, 8.4), ["U6", "C11"]),
+    ((2.65, 26.0, 13.1, 53.35), ["Q6", "R23", "C7", "R24", "Q7", "R25", "R26", "C8", "U3", "R27", "R28", "Q8",
                                "R29", "R30", "C9"]),
     ((27.4, 26.0, 30.4, 51.0), ["TP3", "TP5", "TP6", "TP7"]),
 ]
@@ -121,15 +126,15 @@ def load_fp(libid):
 
 
 def add_outline(b):
-    r = 3.0
-    pts = [(r, 0), (W - r, 0), (W, r), (W, H - r), (W - r, H), (r, H), (0, H - r), (0, r)]
+    r, a0, xa, ya = R_PCB, INSET, W - INSET, H - INSET
+    pts = [(a0 + r, a0), (xa - r, a0), (xa, a0 + r), (xa, ya - r), (xa - r, ya), (a0 + r, ya), (a0, ya - r), (a0, a0 + r)]
     segs = [(pts[0], pts[1]), (pts[2], pts[3]), (pts[4], pts[5]), (pts[6], pts[7])]
     for a, c in segs:
         s = pcbnew.PCB_SHAPE(b, pcbnew.SHAPE_T_SEGMENT)
         s.SetStart(P(*a)); s.SetEnd(P(*c)); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(MM(0.1)); b.Add(s)
     k = r * (1 - 0.5 ** 0.5)  # offset of the arc midpoint from the corner
-    corners = [((0, r), (k, k), (r, 0)), ((W - r, 0), (W - k, k), (W, r)),
-               ((W, H - r), (W - k, H - k), (W - r, H)), ((r, H), (k, H - k), (0, H - r))]
+    corners = [((a0, a0 + r), (a0 + k, a0 + k), (a0 + r, a0)), ((xa - r, a0), (xa - k, a0 + k), (xa, a0 + r)),
+               ((xa, ya - r), (xa - k, ya - k), (xa - r, ya)), ((a0 + r, ya), (a0 + k, ya - k), (a0, ya - r))]
     for s, m, e in corners:
         a = pcbnew.PCB_SHAPE(b, pcbnew.SHAPE_T_ARC)
         a.SetArcGeometry(P(*s), P(*m), P(*e))
@@ -187,7 +192,8 @@ def add_text(b, text, x, y, size=0.8, layer=pcbnew.F_SilkS, angle=0, bold=False)
 
 def add_edge_keepout(b, w=0.6):
     """Rule area along the board edge: no tracks or vias (Freerouting honours it)."""
-    for x1, y1, x2, y2 in [(0, 0, W, w), (0, H - w, W, H), (0, 0, w, H), (W - w, 0, W, H)]:
+    a0, xa, ya = INSET, W - INSET, H - INSET
+    for x1, y1, x2, y2 in [(a0, a0, xa, a0 + w), (a0, ya - w, xa, ya), (a0, a0, a0 + w, ya), (xa - w, a0, xa, ya)]:
         z = pcbnew.ZONE(b)
         z.SetIsRuleArea(True)
         z.SetDoNotAllowTracks(True); z.SetDoNotAllowVias(True)
@@ -204,7 +210,7 @@ def add_zone(b, net, layer):
     z = pcbnew.ZONE(b)
     z.SetLayer(layer); z.SetNet(net)
     o = z.Outline(); o.NewOutline()
-    for x, y in [(0, 0), (W, 0), (W, H), (0, H)]:
+    for x, y in [(INSET, INSET), (W - INSET, INSET), (W - INSET, H - INSET), (INSET, H - INSET)]:
         o.Append(MM(X0 + x), MM(Y0 + y))
     z.SetLocalClearance(MM(0.25)); z.SetMinThickness(MM(0.2))
     z.SetPadConnection(pcbnew.ZONE_CONNECTION_THT_THERMAL)
@@ -258,10 +264,7 @@ def build(route=True):
         h = fps[f"H{i + 1}"]
         h.SetPosition(P(x, y))
         h.SetExcludedFromBOM(True); h.SetExcludedFromPosFiles(True)
-        obstacles.append((x - 4.0, y - 4.0, x + 4.0, y + 4.0))  # kuip corner block and peg; lid tube above
-    obstacles.append((36.0 - 4.0, 52.0 - 4.0, 36.0 + 4.0, 52.0 + 4.0))  # 4th corner: lid tube above
-    obstacles.append((13.6, 17.9, 26.6, 20.4))  # silkscreen "smart meter"
-    obstacles.append((13.6, 35.6, 26.6, 38.1))  # silkscreen "other P1 reader"
+        obstacles.append((x - 2.0, y - 2.0, x + 2.0, y + 2.0))  # peg hole (the lid tube above leaves > 6 mm for parts)
     placed = set(FIXED) | {f"H{i + 1}" for i in range(len(PEGS))}
     for bi, (rect, refs) in enumerate(BLOCKS):
         if bi == 2 and VARIANT:
@@ -285,10 +288,17 @@ def build(route=True):
                 if pad.GetNumber() == pin:
                     pad.SetNet(ni)
     # silkscreen
-    add_text(b, "smart meter", 20.0, 19.2, 0.8, bold=True)
-    add_text(b, "other P1 reader", 20.0, 36.9, 0.8, bold=True)
-    add_text(b, "NeedForHeat P1-BASE v3.0", 20.0, 53.8, 1.0, layer=pcbnew.B_SilkS, bold=True)
-    add_text(b, "energiegedrag.nl - CERN-OHL-P v2", 20.0, 51.8, 0.8, layer=pcbnew.B_SilkS)
+    # the jack labels moved to the back: the top side is hidden in the enclosure and its middle is full
+    add_text(b, "J2 top: meter - J3 bottom: reader", 20.0, 44.3, 0.8, layer=pcbnew.B_SilkS)
+    # J1's pin labels: one falls outside the narrower board; mirror such labels to the other side of the socket
+    j1 = fps["J1"]
+    jx = pcbnew.ToMM(j1.GetPosition().x)
+    for it in j1.GraphicalItems():
+        if isinstance(it, pcbnew.PCB_TEXT) and pcbnew.ToMM(it.GetPosition().x) > X0 + W - INSET - 0.4:
+            q = it.GetPosition()
+            it.SetPosition(pcbnew.VECTOR2I(MM(2 * jx - pcbnew.ToMM(q.x)), q.y))
+    add_text(b, "NeedForHeat P1-BASE v3.0", 20.0, 51.95, 1.0, layer=pcbnew.B_SilkS, bold=True)
+    add_text(b, "energiegedrag.nl - CERN-OHL-P v2", 20.0, 49.95, 0.8, layer=pcbnew.B_SilkS)
     for t in b.GetDrawings():
         if isinstance(t, pcbnew.PCB_TEXT) and t.GetLayer() == pcbnew.B_SilkS:
             t.SetMirrored(True)
@@ -365,11 +375,11 @@ def fanout_gnd(b, via_d=0.56, drill=0.3, width=0.3, clr=0.3, ep_area=2.0):
         return not any(s.Collide(sg, MM(clr)) for _, s in other)
 
     def via_ok(q, own):
-        if not (X0 + 1.0 <= q[0] <= X0 + W - 1.0 and Y0 + 1.0 <= q[1] <= Y0 + H - 1.0):
+        if not (X0 + INSET + 1.0 <= q[0] <= X0 + W - INSET - 1.0 and Y0 + INSET + 1.0 <= q[1] <= Y0 + H - INSET - 1.0):
             return False
         if any(k[0] - 0.5 <= q[0] <= k[2] + 0.5 and k[1] - 0.5 <= q[1] <= k[3] + 0.5 for k in keep):
             return False
-        if any(math.hypot(q[0] - X0 - x, q[1] - Y0 - y) < 3.2 for x, y in PEGS):
+        if any(math.hypot(q[0] - X0 - x, q[1] - Y0 - y) < 3.2 for x, y in CORNERS):
             return False
         if any(math.hypot(q[0] - v[0], q[1] - v[1]) < via_d + 0.5 for v in vias):
             return False
@@ -471,13 +481,13 @@ def stitch(b, pitch=1.5, via_d=0.6, drill=0.3, clr=0.25):
             # connectors: keep vias out of their whole footprint
             obst.append(("r", (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
                                pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())), 0.0))
-    for (x, y) in PEGS:
+    for (x, y) in CORNERS:
         obst.append(("c", (X0 + x, Y0 + y), 3.2))  # keep the kuip corner posts' area free
     n = 0
-    y = 1.5
-    while y <= H - 1.5:
-        x = 1.5
-        while x <= W - 1.5:
+    y = INSET + 1.5
+    while y <= H - INSET - 1.5:
+        x = INSET + 1.5
+        while x <= W - INSET - 1.5:
             px, py = X0 + x, Y0 + y
             ok = True
             for kind, g, hw in obst:
