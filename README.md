@@ -63,12 +63,12 @@ The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery sc
 
 ### Cost
 
-Indicative, per module, November 2026, excluding VAT and shipping. A JLCPCB quote for 5 assembled boards came to € 43.68 (€ 8.70 per board); shipping to the Netherlands adds about € 20–25 per order.
+Indicative, per module, November 2026, excluding VAT and shipping. A JLCPCB quote (15 November 2026) for 5 assembled boards came to € 59.26 without the stacking header J1, plus € 18.32 for five J1 (Samtec, an extended part): about € 15.50 per board. The PCA9633 LED dimmer (U5) is the single most expensive part at € 2.78. MJF nylon prints of tray and lid cost $ 15.90 for 5 sets. Shipping to the Netherlands adds about € 20–25 per order.
 
 | Item | Approx. price |
 |---|---:|
-| P1-BASE PCB, assembled (JLCPCB) | € 8–12 |
-| Enclosure (3D printed) | € 3–6 |
+| P1-BASE PCB, assembled (JLCPCB) | € 15–16 |
+| Enclosure (3D printed, MJF nylon) | € 3 |
 | M5Stack CoreInk | € 36 |
 | RJ12 cable 6P6C, straight (1:1), ≤ 0.5 m | € 3–6 |
 | USB power adapter (only for DSMR 2/3 meters) | € 10–15 |
