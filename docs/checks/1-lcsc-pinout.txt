@@ -159,7 +159,13 @@ U3 TP4056 C16581 ('TP4056', LCSC footprint ESOP-8_L4.9-W3.9-P1.27-LS6.0-BL-EP, C
    LCSC   7 CHRG#    -> pad     7              CHRG_N
    LCSC   8 CE       -> pad     8              CHG_IN
    LCSC   9 EP       -> pad     9              GND
-U4    C7835     same mapping as U1
+
+U4 74LVC1G17 C7836 ('SN74LVC1G17DBVR', LCSC footprint SOT-23-5_L3.0-W1.7-P0.95-LS2.8-BR, CPL rotation 180.0)
+   LCSC   1 N.C      -> pad     1              unconnected-(U4-NC-Pad1)
+   LCSC   2 A        -> pad     2              SPLIT_DRV
+   LCSC   3 GND      -> pad     3              GND
+   LCSC   4 Y        -> pad     4              G13_RX
+   LCSC   5 VCC      -> pad     5              COREINK_3V3
 
 U5 PCA9633DP1 C88381 ('PCA9633DP1,118', LCSC footprint TSSOP-8_L3.0-W3.0-P0.65-LS4.9-BL, CPL rotation 270.0)
    LCSC   1 LED0     -> pad     1              LED_DIM
