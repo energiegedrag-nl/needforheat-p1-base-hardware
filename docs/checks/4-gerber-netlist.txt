@@ -1,4 +1,4 @@
-gerber primitives F 2146, B 482; copper islands F 116, B 62; plated holes 260
+gerber primitives F 2183, B 577; copper islands F 131, B 77; plated holes 229
 pads not on any copper: none
 pads in board but not in schematic netlist: none
 schematic nets checked: 55; derived copper nets: 55

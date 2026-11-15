@@ -347,8 +347,9 @@ def main():
     for label, vreq, g34, g36 in rq:
         ok = "– (idle)" if "nobody" in label else ("yes" if vreq >= 4.0 else "**no** (see note)")
         lines.append(f"| {label} | {vreq:.2f} | {ok} | {g34:.2f} | {g36:.2f} |")
+    v_off = next(v for label, v, _, _ in rq if "CoreInk off" in label)
     lines += ["", "Note: with a DSMR 2/3 meter and the CoreInk off the BASE has no supply, so the reader's request only "
-              "reaches the meter through D7 (passive path). With the weak 1 kΩ reader modelled here that gives ≈ 3.2 V, "
+              f"reaches the meter through D7 (passive path). With the weak 1 kΩ reader modelled here that gives ≈ {v_off:.1f} V, "
               "below 4.0 V; a reader with a stiff 5 V output gives ≈ 4.6 V. With the CoreInk on, the active path "
               "(Q5 → Q3) restores the full level. Known limitation, see design-v3.md § 4.4 (D7); to be measured with "
               "real readers and DSMR 2/3 meters (design-v3.md § 10, items 6 and 7)."]
