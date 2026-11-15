@@ -122,8 +122,10 @@ def renders():
         "-o", os.path.join(IMG, "p1-base-v3-bottom.png"), PCB)
     cli("pcb", "render", "--rotate", "-45,0,30", "--width", "1400", "--height", "1000", "--quality", "high",
         "--zoom", "0.9", "-o", os.path.join(IMG, "p1-base-v3-3d.png"), PCB)
-    cli("pcb", "render", "--side", "front", "--width", "1400", "--height", "700", "--quality", "high",
-        "--zoom", "1.2", "-o", os.path.join(IMG, "p1-base-v3-side.png"), PCB)
+    # both long edges: "back" looks at the top edge (LEDs, J2 smart meter), "front" at the bottom edge (J3)
+    for side, name in (("back", "p1-base-v3-side-top-edge.png"), ("front", "p1-base-v3-side-bottom-edge.png")):
+        cli("pcb", "render", "--side", side, "--width", "1400", "--height", "700", "--quality", "high",
+            "--zoom", "1.8", "-o", os.path.join(IMG, name), PCB)
     cli("pcb", "export", "step", "--subst-models", "--force", "-o", os.path.join(ROOT, "enclosure", "p1-base-v3-pcb.step"), PCB)
     print("wrote renders and STEP")
 

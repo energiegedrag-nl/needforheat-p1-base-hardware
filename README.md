@@ -8,6 +8,10 @@ This repository contains the open hardware design files for the NeedForHeat P1-B
 
 <img src="./docs/images/p1-base-v3-top.png" width="400" />
 
+<img src="./docs/images/p1-base-v3-side-top-edge.png" width="560" />
+
+*Top edge: smart-meter socket `J2` and the three LEDs (green, yellow, red) that show through windows in the top wall of the tray.*
+
 ## Table of contents <!-- omit in toc -->
 - [General info](#general-info)
 - [Producing](#producing)
