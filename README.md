@@ -65,16 +65,27 @@ The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery sc
 
 Indicative, November 2026, excluding VAT and shipping. JLCPCB quotes (LeadFree HASL, top side, no panelisation;
 5 pieces on 15 November, the rest on 16 November 2026) for the same quantities as the
-[BatteryBASE](https://github.com/energiegedrag-nl/needforheat-battery-base-hardware#cost). The stacking header J1
-(Samtec ESQ-108-24-G-D) is a pre-order part that JLCPCB cannot place yet: it is priced separately at JLCPCB's part
-price (its extended-part fee not included).
+[BatteryBASE](https://github.com/energiegedrag-nl/needforheat-battery-base-hardware#cost). Everything is assembled
+by JLCPCB, the through-hole parts included: the quotes contain the hand-soldering fee (€ 3.27 per order) and the
+per-joint manual assembly of the RJ12 jacks. The stacking header J1 (Samtec ESQ-108-24-G-D, C21241050) is not in
+JLCPCB's stock: it is bought through JLCPCB's *Global Sourcing* into the account's parts library (9–15 days or more;
+the prototype's seven arrive on 8 December 2026) and then assembled like any other part (wave soldering, Economic
+and Standard PCBA). The J1 column adds its Global Sourcing price (€ 6.28 each, the price of the prototype's order),
+its extended-part loading fee (€ 3.16 per order) and the soldering of its 16 joints (about € 0.26 per board,
+JLCPCB's [per-joint rate](https://jlcpcb.com/help/article/PCB-assembly-faqs) of $ 0.0173); to be confirmed by the
+quote with J1 once it is in the parts library.
 
-| Quantity | PCBA type | PCB + PCBA without J1 | J1 | Per board | Enclosure (tray, lid) per set |
+| Quantity | PCBA type | PCB + PCBA without J1 | J1 (part, fee, soldering) | Per board | Enclosure (tray, lid) per set |
 |---:|---|---:|---:|---:|---:|
-| 5 | Economic | € 59.28 | € 18.32 | € 15.52 | $ 3.18 |
-| 10 | Economic | € 79.26 | € 36.65 | € 11.59 | $ 3.18 |
-| 30 | Economic | € 157.92 | € 109.96 | € 8.93 | $ 3.18 |
-| 100 | Standard (Economic not offered) | € 274.37 + U5 € 185.94 | € 366.53 | € 8.27 | $ 3.18 |
+| 5 | Economic | € 59.28 | € 35.84 | € 19.02 | $ 3.18 |
+| 10 | Economic | € 79.26 | € 68.52 | € 14.78 | $ 3.18 |
+| 30 | Economic | € 157.92 | € 199.24 | € 11.91 | $ 3.18 |
+| 100 | Standard (Economic not offered) | € 274.37 + U5 € 185.94 | € 656.76 | € 11.17 | $ 3.18 |
+
+J1 is the most expensive part by far. For larger series it is worth buying it cheaper: Samtec lists $ 4.10 each at
+25 and $ 3.39 at 100, and JLCPCB's pre-order price is € 3.67 when a pre-order goes through (the prototype's
+pre-order of 15 November 2026 was cancelled and refunded). Global Sourcing has to be ordered at least 10 pieces at a
+time in the parts cart (the prototype's order of seven went through at checkout).
 
 At 100 pieces JLCPCB had only 62 PCA9633 LED dimmers (U5) in stock: the € 274.37 is without U5, which adds about
 € 1.86 per board at JLCPCB's part price once it is in stock again. The PCA9633 is also the most expensive part at
@@ -84,7 +95,7 @@ order.
 
 | Item | Approx. price |
 |---|---:|
-| P1-BASE PCB, assembled (JLCPCB) | € 8–16 (see above) |
+| P1-BASE PCB, assembled (JLCPCB), J1 included | € 11–19 (see above) |
 | Enclosure (3D printed, MJF nylon) | € 3 |
 | M5Stack CoreInk | € 36 |
 | RJ12 cable 6P6C, straight (1:1), ≤ 0.5 m | € 3–6 |
