@@ -63,11 +63,28 @@ The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery sc
 
 ### Cost
 
-Indicative, per module, November 2026, excluding VAT and shipping. A JLCPCB quote (15 November 2026) for 5 assembled boards came to € 59.26 without the stacking header J1, plus € 18.32 for five J1 (Samtec, an extended part): about € 15.50 per board. The PCA9633 LED dimmer (U5) is the single most expensive part at € 2.78. MJF nylon prints of tray and lid cost $ 15.90 for 5 sets. Shipping to the Netherlands adds about € 20–25 per order.
+Indicative, November 2026, excluding VAT and shipping. JLCPCB quotes (LeadFree HASL, top side, no panelisation;
+5 pieces on 15 November, the rest on 16 November 2026) for the same quantities as the
+[BatteryBASE](https://github.com/energiegedrag-nl/needforheat-battery-base-hardware#cost). The stacking header J1
+(Samtec ESQ-108-24-G-D) is a pre-order part that JLCPCB cannot place yet: it is priced separately at JLCPCB's part
+price (its extended-part fee not included).
+
+| Quantity | PCBA type | PCB + PCBA without J1 | J1 | Per board | Enclosure (tray, lid) per set |
+|---:|---|---:|---:|---:|---:|
+| 5 | Economic | € 59.28 | € 18.32 | € 15.52 | $ 3.18 |
+| 10 | Economic | € 79.26 | € 36.65 | € 11.59 | $ 3.18 |
+| 30 | Economic | € 157.92 | € 109.96 | € 8.93 | $ 3.18 |
+| 100 | Standard (Economic not offered) | € 274.37 + U5 € 185.94 | € 366.53 | € 8.27 | $ 3.18 |
+
+At 100 pieces JLCPCB had only 62 PCA9633 LED dimmers (U5) in stock: the € 274.37 is without U5, which adds about
+€ 1.86 per board at JLCPCB's part price once it is in stock again. The PCA9633 is also the most expensive part at
+small quantities (€ 2.78 at 5, € 2.36 at 10). Enclosure: MJF nylon prints (PA12, dyed black), which JLC3DP prices
+per piece, so the price per set does not depend on the quantity. Shipping to the Netherlands adds about € 20–25 per
+order.
 
 | Item | Approx. price |
 |---|---:|
-| P1-BASE PCB, assembled (JLCPCB) | € 15–16 |
+| P1-BASE PCB, assembled (JLCPCB) | € 8–16 (see above) |
 | Enclosure (3D printed, MJF nylon) | € 3 |
 | M5Stack CoreInk | € 36 |
 | RJ12 cable 6P6C, straight (1:1), ≤ 0.5 m | € 3–6 |
