@@ -56,8 +56,8 @@ FIXED = {
     # right of J3 (left of it is the charger). Pads 0.7 mm from the board edge, clear of the 0.6 mm no-track strip
     # along the edge (Freerouting cannot reach pads that touch it); 8.3 mm from the jack axis keeps the courtyards
     # clear of the jacks and of the corner pillars
-    "LED1": (11.7, INSET + 1.2, 0),
-    "LED2": (28.3, H - INSET - 1.2, 180),
+    "LED1": (11.2, INSET + 1.2, 0),  # 0.7 mm from J2 (design review 16 Nov 2026)
+    "LED2": (28.8, H - INSET - 1.2, 180),  # 0.7 mm from J3
 }
 # kuip pegs (NPTH) at three of the four LEGO-hole axes: also keys the PCB in the enclosure. The top-left corner
 # has none, so the PCB fits one way only
