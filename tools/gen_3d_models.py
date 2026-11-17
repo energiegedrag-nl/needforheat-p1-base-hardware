@@ -58,17 +58,51 @@ def rj12_5301():
     below the seating plane; two snap-in posts for Ø3.2 holes, 10.16 mm apart, 8.00 mm behind the front face; posts
     3.6 mm long (LCSC 3D model)."""
     x0, x1, y0, y1, h = -15.62, 2.43, -6.65, 6.65, 11.45
-    body = cq.Workplane("XY").box(x1 - x0, y1 - y0, h, centered=False).translate((x0, y0, 0))
-    hole = cq.Workplane("XY").box(10.0, 6.9, 7.2, centered=(False, True, False)).translate((x0, 0, 2.2))
-    latch = cq.Workplane("XY").box(10.0, 3.4, 1.4, centered=(False, True, False)).translate((x0, 0, 0.8))
-    body = body.cut(hole).cut(latch)
+    # plug cavity: 6P6C plug 9.65 x 6.6 mm (check 5 inserts one with its centre 6.6 mm above the board), latch down
+    cav_w, cav_z0, cav_z1, cav_d = 9.9, 3.2, 10.0, 13.0
+    slot_w, slot_z0 = 3.9, 0.9
+    body = (cq.Workplane("XY").box(x1 - x0, y1 - y0, h, centered=False).translate((x0, y0, 0))
+            .edges("|Z").chamfer(0.3).faces(">Z").edges().chamfer(0.3))
+    # underside: shallow recess, the body stands on a 1.2 mm rim
+    body = body.cut(cq.Workplane("XY").box(x1 - x0 - 2.4, y1 - y0 - 2.4, 0.3, centered=False)
+                    .translate((x0 + 1.2, y0 + 1.2, -0.01)))
+    cavity = cq.Workplane("XY").box(cav_d, cav_w, cav_z1 - cav_z0, centered=(False, True, False)).translate((x0 - 0.01, 0, cav_z0))
+    slot = cq.Workplane("XY").box(cav_d, slot_w, cav_z0 - slot_z0 + 0.01, centered=(False, True, False)).translate((x0 - 0.01, 0, slot_z0))
+    # lead-in: the opening widens 0.4 mm over the first 0.6 mm
+    lead_in = (cq.Workplane("YZ", origin=(x0 - 0.01, 0, 0)).center(0, (cav_z0 + cav_z1) / 2).rect(cav_w + 0.8, cav_z1 - cav_z0 + 0.8)
+               .workplane(offset=0.6).rect(cav_w, cav_z1 - cav_z0).loft())
+    body = body.cut(cavity).cut(slot).cut(lead_in)
+    # comb between the contacts at the back of the cavity ceiling (the contacts run in its slots)
+    comb = cq.Workplane("XY")
+    for i in range(7):
+        y = (i - 3) * 1.02
+        comb = comb.union(cq.Workplane("XY").box(4.0, 0.4, 1.2, centered=(False, True, False))
+                          .translate((x0 + cav_d - 4.0, y, cav_z1 - 1.2)))
+    body = body.union(comb.intersect(cavity))
     asm = cq.Assembly(name="RJ12_5301")
     asm.add(body.mirror("XZ"), name="body", color=BEIGE)
-    legs = cq.Workplane("XY")
-    for (x, y) in [(1.27, -3.18), (-1.27, -1.91), (1.27, -0.64), (-1.27, 0.63), (1.27, 1.90), (-1.27, 3.17)]:
-        legs = legs.union(cq.Workplane("XY").box(0.46, 0.46, 3.0 + 2.0, centered=(True, True, False)).translate((x, y, -3.0)))
-    asm.add(legs.mirror("XZ"), name="legs", color=METAL)
-    posts = cq.Workplane("XY").pushPoints([(-7.62, 5.08), (-7.62, -5.08)]).circle(1.55).extrude(-3.6)
+    # six spring contacts (Ø0.46, 1.02 mm pitch): from the cavity ceiling at the back, sloping down towards the
+    # opening (relaxed position; a plug pushes them up), then down through the body to the round leads
+    pins = [(1.27, -3.18), (-1.27, -1.91), (1.27, -0.64), (-1.27, 0.63), (1.27, 1.90), (-1.27, 3.17)]
+    contacts = cq.Workplane("XY")
+    r = 0.23
+    for i, (px, py) in enumerate(pins):
+        yc = (i - 2.5) * 1.02
+        a = cq.Vector(x0 + cav_d - 0.5, yc, cav_z1 - 0.3)
+        b = cq.Vector(x0 + 4.0, yc, cav_z1 - 2.0)
+        for p, q in ((a, b), (cq.Vector(px, py, -3.0), cq.Vector(px, py, 1.0))):
+            d = q - p
+            contacts = contacts.union(cq.Workplane("XY").add(cq.Solid.makeCylinder(r, d.Length, p, d.normalized())))
+        contacts = contacts.union(cq.Workplane("XY").add(cq.Solid.makeSphere(r, b)))
+    asm.add(contacts.mirror("XZ"), name="contacts", color=GOLD)
+    # two split snap-in posts for the Ø3.2 holes: barb near the tip, slit across
+    posts = cq.Workplane("XY")
+    for py in (5.08, -5.08):
+        shank = cq.Workplane("XY").center(-7.62, py).circle(1.45).extrude(-3.6)
+        barb = (cq.Workplane("XY").workplane(offset=-2.6).center(-7.62, py).circle(1.75)
+                .workplane(offset=-0.7).circle(1.2).loft())
+        slit = cq.Workplane("XY").box(0.7, 4.0, 3.0, centered=(True, True, False)).translate((-7.62, py, -3.7))
+        posts = posts.union(shank.union(barb).cut(slit))
     asm.add(posts.mirror("XZ"), name="posts", color=BEIGE)
     return asm
 
