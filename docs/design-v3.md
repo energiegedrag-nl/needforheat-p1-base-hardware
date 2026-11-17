@@ -354,7 +354,8 @@ give the same result on every run, so a re-route may need a different fix. Then
     thresholds, still nothing into a switched-off CoreInk. One more extended part (≈ € 2.80 per order). Simulated: bit-width
     error on G13 with the slow meter output back to ≈ 21 % (same as the splitter output), fast outputs 0.6 %.
 12. D7 leakage (no reader in J3): pulse G26, warm D7 to about 60 °C, check that TP4 (`METER_REQ`) drops.
-13. J1 on arrival: the gold tails must enter a 2.54 mm socket freely (not tinned, not trimmed); J1 holes are 1.1 mm for the 0.64 mm square tails (0.905 mm diagonal).
+13. J1 on arrival: the gold tails must enter a 2.54 mm socket freely (not tinned, not trimmed); J1 holes are 1.1 mm for the 0.64 mm square tails (0.905 mm diagonal); Samtec's recommended layout (ESQ-SDT)
+    gives 1.02 mm, 1.1 mm leaves room for JLCPCB's hole tolerance with 16 pins at once.
 
 ## 11. Out of scope
 

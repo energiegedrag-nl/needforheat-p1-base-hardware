@@ -11785,7 +11785,7 @@
 			(uuid "70099b51-6bfd-4bfc-a82d-6f8579573fa6")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/p1base.3dshapes/StackingHeader_2x08_P2.54mm_approx.step"
+		(model "${KIPRJMOD}/p1base.3dshapes/Samtec_ESQ-108-24-G-D.step"
 			(offset
 				(xyz 0 0 0)
 			)

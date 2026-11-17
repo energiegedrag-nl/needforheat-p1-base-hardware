@@ -104,8 +104,7 @@ print("closest approach < 0.5 mm (part, printed part):", sorted(mind) or "none")
 print(f"J1 header pins end at z = {pins_z:.2f} (CoreInk back = 0): engagement {max(0, -pins_z):.1f} mm of the {SOCK_D} mm socket"
       f" -> pin length below the PCB = {GAP - pins_z:.1f} mm")
 print(f"lowest other parts under the PCB (z, ref): {lowest}  (CoreInk back z=0, magnet pads up to z=1.6)")
-print("note: J1 is modelled as the Samtec ESQ-108-24-G-D (tools/gen_3d_models.py: tail 9.65 mm below the board's top"
-      " surface, from the Samtec table); VERIFY on the Samtec drawing and a sample.")
+print("note: J1 is Samtec's own 3D model of the ESQ-108-24-G-D (tools/import_samtec_j1.py); check the fit on a sample.")
 
 # --- lid keying: turned 180 deg, how far above its seat does the lid stop? -----------------------------------
 def standoff(obstacles, lid_shape):

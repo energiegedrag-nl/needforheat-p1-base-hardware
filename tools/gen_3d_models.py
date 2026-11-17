@@ -54,7 +54,9 @@ def rj12():
 
 def rj12_5301():
     """EVERCOM 5301-6P6C (C3097716): 18.05 x 13.3 mm, 11.45 mm high, plug opening at x = -15.62 (footprint frame).
-    Leads 3.1 mm and posts 3.6 mm below the seating plane (LCSC 3D model)."""
+    EVERCOM drawing 5301-660XXX rev. A (2025-09-23, chinarj45.com; no 3D model is published): leads Ø0.46, 3.0 mm
+    below the seating plane; two snap-in posts for Ø3.2 holes, 10.16 mm apart, 8.00 mm behind the front face; posts
+    3.6 mm long (LCSC 3D model)."""
     x0, x1, y0, y1, h = -15.62, 2.43, -6.65, 6.65, 11.45
     body = cq.Workplane("XY").box(x1 - x0, y1 - y0, h, centered=False).translate((x0, y0, 0))
     hole = cq.Workplane("XY").box(10.0, 6.9, 7.2, centered=(False, True, False)).translate((x0, 0, 2.2))
@@ -64,27 +66,12 @@ def rj12_5301():
     asm.add(body.mirror("XZ"), name="body", color=BEIGE)
     legs = cq.Workplane("XY")
     for (x, y) in [(1.27, -3.18), (-1.27, -1.91), (1.27, -0.64), (-1.27, 0.63), (1.27, 1.90), (-1.27, 3.17)]:
-        legs = legs.union(cq.Workplane("XY").box(0.46, 0.46, 3.1 + 2.0, centered=(True, True, False)).translate((x, y, -3.1)))
+        legs = legs.union(cq.Workplane("XY").box(0.46, 0.46, 3.0 + 2.0, centered=(True, True, False)).translate((x, y, -3.0)))
     asm.add(legs.mirror("XZ"), name="legs", color=METAL)
     posts = cq.Workplane("XY").pushPoints([(-7.62, 5.08), (-7.62, -5.08)]).circle(1.55).extrude(-3.6)
     asm.add(posts.mirror("XZ"), name="posts", color=BEIGE)
     return asm
 
-
-def stacking_header():
-    """Samtec ESQ-108-24-G-D (elevated 2x8 socket): one tall insulator, 4.95 x 20.83 mm (Samtec ESQ catalogue: 2.54 x positions + 0.51 long), that sits on the board, its top 13.59 mm above
-    the board and 8.51 mm deep sockets at the top; tail 9.65 mm below the board's top surface
-    (Samtec table 1: C = .535, B = .38)."""
-    p, rows, cols, depth, top, tail = 2.54, 8, 2, 8.51, 13.59, 9.65
-    body = cq.Workplane("XY").box(4.95, rows * p + 0.51, top, centered=(True, True, False))
-    pts = [((c - 0.5) * p, (r - 3.5) * p) for c in range(cols) for r in range(rows)]
-    holes = cq.Workplane("XY").pushPoints(pts).rect(1.0, 1.0).extrude(depth).translate((0, 0, top - depth))
-    body = body.cut(holes)
-    pins = cq.Workplane("XY").pushPoints(pts).rect(0.64, 0.64).extrude(-tail)
-    asm = cq.Assembly(name="ESQ_108_24_G_D")
-    asm.add(body, name="body", color=BLACK)
-    asm.add(pins, name="pins", color=GOLD)
-    return asm
 
 def side_led():
     """Lite-On LTST-S220 side-looking LED: about 2.2 x 1.0 x 0.9 mm, lens on the -y face (VERIFY)."""
@@ -101,7 +88,6 @@ def side_led():
 def main():
     os.makedirs(OUT, exist_ok=True)
     for name, asm in (("RJ12_6P6C_Horizontal_approx", rj12()), ("RJ12_EVERCOM_5301_approx", rj12_5301()),
-                      ("StackingHeader_2x08_P2.54mm_approx", stacking_header()),
                       ("LED_LiteOn_LTST-S220_approx", side_led())):
         path = os.path.join(OUT, name + ".step")
         asm.save(path, exportType="STEP")
