@@ -64,7 +64,8 @@ The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery sc
 ### Cost
 
 Indicative, November 2026, excluding VAT and shipping. JLCPCB quotes (LeadFree HASL, top side, no panelisation;
-5 pieces on 15 November, the rest on 16 November 2026) for the same quantities as the
+5 pieces on 17 November after the design review, the rest on 16 November 2026; the review changed only resistor
+values and J1's drill, which hardly changes the price) for the same quantities as the
 [BatteryBASE](https://github.com/energiegedrag-nl/needforheat-battery-base-hardware#cost). Everything is assembled
 by JLCPCB, the through-hole parts included: the quotes contain the hand-soldering fee (€ 3.27 per order) and the
 per-joint manual assembly of the RJ12 jacks. The stacking header J1 (Samtec ESQ-108-24-G-D, C21241050) is not in
@@ -77,10 +78,10 @@ quote with J1 once it is in the parts library.
 
 | Quantity | PCBA type | PCB + PCBA without J1 | J1 (part, fee, soldering) | Per board | Enclosure (tray, lid) per set |
 |---:|---|---:|---:|---:|---:|
-| 5 | Economic | € 59.28 | € 35.84 | € 19.02 | $ 3.18 |
-| 10 | Economic | € 79.26 | € 68.52 | € 14.78 | $ 3.18 |
-| 30 | Economic | € 157.92 | € 199.24 | € 11.91 | $ 3.18 |
-| 100 | Standard (Economic not offered) | € 274.37 + U5 € 185.94 | € 656.76 | € 11.17 | $ 3.18 |
+| 5 | Economic | € 59.50 | € 35.84 | € 19.07 | $ 3.32 |
+| 10 | Economic | € 79.26 | € 68.52 | € 14.78 | $ 3.32 |
+| 30 | Economic | € 157.92 | € 199.24 | € 11.91 | $ 3.32 |
+| 100 | Standard (Economic not offered) | € 274.37 + U5 € 185.94 | € 656.76 | € 11.17 | $ 3.32 |
 
 J1 is the most expensive part by far. For larger series it is worth buying it cheaper: Samtec lists $ 4.10 each at
 25 and $ 3.39 at 100, and JLCPCB's pre-order price is € 3.67 when a pre-order goes through (the prototype's
@@ -90,7 +91,8 @@ time in the parts cart (the prototype's order of seven went through at checkout)
 At 100 pieces JLCPCB had only 62 PCA9633 LED dimmers (U5) in stock: the € 274.37 is without U5, which adds about
 € 1.86 per board at JLCPCB's part price once it is in stock again. The PCA9633 is also the most expensive part at
 small quantities (€ 2.78 at 5, € 2.36 at 10). Enclosure: MJF nylon prints (PA12, dyed black), which JLC3DP prices
-per piece, so the price per set does not depend on the quantity. Shipping to the Netherlands adds about € 20–25 per
+per piece, so the price per set does not depend on the quantity (17 November 2026: tray $ 1.62, lid $ 1.70; the
+prototype order adds a second lid with a firmer snap fit, $ 1.70). Shipping to the Netherlands adds about € 20–25 per
 order.
 
 | Item | Approx. price |
