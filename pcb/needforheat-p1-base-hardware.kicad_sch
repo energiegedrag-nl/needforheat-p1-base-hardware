@@ -7290,7 +7290,7 @@
 			(effects
 				(font
 					(size 1.27 1.27))))
-		(property "Value" "100R"
+		(property "Value" "47R"
 			(at 46.99 180.98 90)
 			(effects
 				(font
@@ -7307,7 +7307,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C22775"
+		(property "LCSC" "C23182"
 			(at 46.99 177.8 0)
 			(effects
 				(font
@@ -7873,7 +7873,7 @@
 				(font
 					(size 1.27 1.27))
 				(justify left)))
-		(property "Value" "100k"
+		(property "Value" "20k"
 			(at 132.08 193.68 0)
 			(effects
 				(font
@@ -7891,7 +7891,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C25803"
+		(property "LCSC" "C4184"
 			(at 129.54 191.77 0)
 			(effects
 				(font
@@ -7920,7 +7920,7 @@
 			(effects
 				(font
 					(size 1.27 1.27))))
-		(property "Value" "10k"
+		(property "Value" "2k2"
 			(at 137.16 183.51 90)
 			(effects
 				(font
@@ -7937,7 +7937,7 @@
 				(font
 					(size 1.27 1.27))
 				(hide yes)))
-		(property "LCSC" "C25804"
+		(property "LCSC" "C4190"
 			(at 137.16 185.42 0)
 			(effects
 				(font

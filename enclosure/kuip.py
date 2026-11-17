@@ -26,7 +26,8 @@ CI_W, CI_H, CI_R = 40.0, 56.0, 3.0
 LEGO_HOLES = [(4, 4), (36, 4), (4, 52), (36, 52)]  # through holes; a LEGO Technic pin fits (measured)
 LEGO_D = 4.85  # hole diameter
 BUS = (33.97, 36.87)  # centre of the 2x8 bus (MI-BUS), from the official model and a photo
-BUS_W, BUS_H = 5.08, 20.32  # 2 x 8 at 2.54 mm
+BUS_W, BUS_H = 4.95, 20.83  # J1 body (Samtec ESQ: 4.95 wide double row, 2.54 x 8 + 0.51 long)
+BUS_CLR = 0.4  # per side between J1 and the lid's cut-out (MJF and placement tolerance)
 
 # --- P1-BASE board -------------------------------------------------------
 GAP = 2.5  # CoreInk back -> PCB bottom (RJ12 leads are 3.2 ± 0.3 mm below the seating plane: ≤ 1.9 mm below the PCB)
@@ -53,7 +54,7 @@ WALL = 1.6
 POST = 6.0  # corner posts under the PCB, square
 POST_D, POST_L = 4.6, 7.0  # LEGO posts: core diameter, length (pins of the bus header stick out 6 mm)
 RIB_D, RIB_W = 4.95, 0.45  # three crush ribs: light friction in the 4.85 mm hole, independent of print accuracy
-PEG_D = 2.0
+PEG_D = 1.8  # in the Ø2.2 PCB holes: the pegs only key the board, the walls locate it
 CORNER = 7.8  # corner pillars of the lid: square from the outline corner, around the LEGO hole (hole axis at 4, 4)
 # LEGO Technic hole in the lid, so a real Technic pin clicks in like on the CoreInk (LEGO standard values, VERIFY on a
 # test print): Ø4.8 bore (we keep the measured 4.85), Ø6.2 x 0.8 counterbore at the entry, and a Ø6.2 groove where
@@ -63,14 +64,18 @@ TECH_L = 7.8
 # snap fit: bumps on the lid's lip click into grooves in the long walls
 LIP_H, LIP_T = 1.8, 1.0  # lip height below the lid, thickness (thin enough to flex)
 SNAP_R, SNAP_P = 0.6, 0.35  # bump radius and how far it sticks out past the lip
+SNAP_VARIANTS = {"p1-base-lid": 0.35, "p1-base-lid-snap050": 0.5}  # prototype: two lids, firmer snap to compare
 SNAP_L = 7.0  # bump length
 SNAP_Y = [16.0, 40.0]  # bump centres along the long walls (clear of the key at the top-left corner)
 GROOVE_D = 0.55  # groove depth in the wall: the bump sits in it with 0.2 mm to spare
 LID_T = 1.4
 SOCKET_H = 13.59  # J1 Samtec ESQ-108-24-G-D: socket top above the board ("C", Samtec table 1)
-# the lid's outer face is flush with the top of the raised socket, like the CoreInk's back
-Z_TOP = GAP + PCB_T + SOCKET_H - LID_T
-TOP_CLR = Z_TOP - (GAP + PCB_T + JACK_H)  # 0.74 mm above the RJ12 jacks
+# the lid's outer face is LID_RAISE above the top of the raised socket: with print and soldering tolerances the socket
+# must never stand proud, or the next module rests on J1 instead of on the lid; the next module's 6.0 mm bus pins then
+# go 5.7 mm into J1, inside Samtec's insertion range (3.68 to 6.35 mm)
+LID_RAISE = 0.3
+Z_TOP = GAP + PCB_T + SOCKET_H + LID_RAISE - LID_T
+TOP_CLR = Z_TOP - (GAP + PCB_T + JACK_H)  # 1.04 mm above the RJ12 jacks
 assert TOP_CLR >= 0.5
 # shipping: each module goes loose (not stacked) in a letterbox parcel (PostNL brievenbuspakje, max. 32 mm thick);
 # 27 mm leaves ≥ 5 mm for the box and padding. Thickness = lid top to the tips of the LEGO posts.
@@ -108,15 +113,18 @@ def lego_post(x, y, z0, length=POST_L):
     return post
 
 
-def corner_box(x, y, z0, z1):
-    """Square region from the outline corner nearest to (x, y) to just past the LEGO hole, between z0 and z1."""
-    x0, x1 = (0.0, CORNER) if x < CI_W / 2 else (CI_W - CORNER, CI_W)
-    y0, y1 = (0.0, CORNER) if y < CI_H / 2 else (CI_H - CORNER, CI_H)
+def corner_box(x, y, z0, z1, grow=0.0):
+    """Square region from the outline corner nearest to (x, y) to just past the LEGO hole, between z0 and z1.
+    `grow` moves the two inner faces further from the corner (clearance for the tray's cut)."""
+    c = CORNER + grow
+    x0, x1 = (-1.0, c) if x < CI_W / 2 else (CI_W - c, CI_W + 1.0)
+    y0, y1 = (-1.0, c) if y < CI_H / 2 else (CI_H - c, CI_H + 1.0)
     return cq.Workplane("XY").workplane(offset=z0).center(*P((x0 + x1) / 2, (y0 + y1) / 2)).rect(x1 - x0, y1 - y0).extrude(z1 - z0)
 
 
 Z_LID = Z_TOP + LID_T  # outer face of the lid
 Z_CORNER = Z_LID - (TECH_L + 0.5)  # bottom of the lid's corner pillars
+FOOT_R, FOOT_GAP = 2.6, 0.1  # feet under three pillars: radius around the peg axis, gap above the PCB
 
 # Key against fitting the lid the wrong way round (turned 180 deg; flipped is impossible because of the lip): the
 # top-left corner pillar (meter edge, the corner without a PCB peg) is an L, KEY_L longer along both walls it meets,
@@ -124,6 +132,7 @@ Z_CORNER = Z_LID - (TECH_L + 0.5)  # bottom of the lid's corner pillars
 # bottom-right corner: it stops on the rim at first contact, ~8 mm before the lid would close. The L is part of the
 # pillar over its full height (wall thickness + lip), not a separate tab that can break off.
 KEY_L, KEY_CLR = 2.5, 0.2
+PILLAR_CLR = 0.2  # the tray's corner cut-outs are this much larger than the lid's pillars, along both walls
 KEY_T = WALL + 0.15 + LIP_T  # strip thickness in the lid: wall + gap + lip, so it fuses with the lip as well
 KEY_STRIPS = [(CORNER, CORNER + KEY_L, 0.0, KEY_T), (0.0, KEY_T, CORNER, CORNER + KEY_L)]  # x0, x1, y0, y1 (board frame)
 
@@ -155,7 +164,7 @@ def key_box(x0, x1, y0, y1, z0, z1):
 # pry notch: middle of the bottom wall between the left corner pillar and the J3 opening (LED2's window is right of J3)
 PRY_X = (CORNER + JACKS[1][0] - JACK_W / 2) / 2
 PRY_W, PRY_D = 3.5, 0.8
-assert CORNER + 0.5 < PRY_X - PRY_W / 2 and PRY_X + PRY_W / 2 < JACKS[1][0] - JACK_W / 2 - 0.5
+assert CORNER + PILLAR_CLR + 0.5 < PRY_X - PRY_W / 2 and PRY_X + PRY_W / 2 < JACKS[1][0] - JACK_W / 2 - 0.5
 assert all(abs(x - PRY_X) > PRY_W / 2 + LED_HOLE_W / 2 + 0.5 for x, y in LEDS if y > CI_H / 2)
 
 
@@ -170,23 +179,28 @@ def kuip():
         if (x, y) in PEGS:
             body = body.union(cq.Workplane("XY").workplane(offset=GAP).center(*P(x, y)).circle(PEG_D / 2).extrude(PCB_T - 0.2))
         # the lid's corner pillar takes over the top of the corner
-        body = body.cut(corner_box(x, y, Z_CORNER - 0.2, Z_TOP + 1))
+        body = body.cut(corner_box(x, y, Z_CORNER - 0.2, Z_TOP + 1, PILLAR_CLR))
     # the key: the top-left corner is cut away KEY_L (+ clearance) further along both walls
     (ax0, ax1, ay0, ay1), (bx0, bx1, by0, by1) = KEY_STRIPS
     body = body.cut(key_box(ax0, ax1 + KEY_CLR, -1.0, WALL + 0.3, Z_CORNER - 0.2, Z_TOP + 1))
     body = body.cut(key_box(-1.0, WALL + 0.3, by0, by1 + KEY_CLR, Z_CORNER - 0.2, Z_TOP + 1))
+    # (the key strips are KEY_T thick, more than the wall: the strip's inner side faces the open tray, no wall there)
     # RJ12 openings through the top and bottom walls, from 0.3 mm below the PCB top surface up (the lid closes them);
     # the jack front sticks out 0.5 mm past the board edge into the wall
     for (x, side) in JACKS:
         yc = WALL / 2 if side == "top" else CI_H - WALL / 2
         body = body.cut(cq.Workplane("XY").workplane(offset=GAP + PCB_T - 0.3).center(*P(x, yc))
                         .rect(JACK_W, WALL + 2).extrude(Z_TOP))
-    # light windows for the side-looking LEDs, in the top or bottom wall next to their RJ12 socket
+    # light windows for the side-looking LEDs, in the top or bottom wall next to their RJ12 socket; each window runs on
+    # into the jack opening (an L-shaped opening), so no thin web stays between them (MJF minimum wall ~0.8 mm)
     for (x, y) in LEDS:
         z = GAP + PCB_T + LED_LENS_Z
         yw = WALL / 2 if y < CI_H / 2 else CI_H - WALL / 2
-        body = body.cut(cq.Workplane("XY").workplane(offset=z - LED_HOLE_H / 2).center(*P(x, yw))
-                        .rect(LED_HOLE_W, WALL + 1.0).extrude(LED_HOLE_H))
+        jx = next(jx for jx, side in JACKS if (side == "top") == (y < CI_H / 2))
+        xo = x - LED_HOLE_W / 2 if x < jx else x + LED_HOLE_W / 2  # outer edge of the window
+        xj = jx - JACK_W / 2 + 0.5 if x < jx else jx + JACK_W / 2 - 0.5  # 0.5 mm into the jack opening
+        body = body.cut(cq.Workplane("XY").workplane(offset=z - LED_HOLE_H / 2).center(*P((xo + xj) / 2, yw))
+                        .rect(abs(xj - xo), WALL + 1.0).extrude(LED_HOLE_H))
     # snap-fit grooves for the lid's bumps (inner face of the two long walls)
     zb = Z_TOP - LIP_H / 2
     for x in (WALL - GROOVE_D / 2, CI_W - WALL + GROOVE_D / 2):
@@ -208,7 +222,7 @@ def technic_hole(x, y):
     return h.union(cq.Workplane("XY").workplane(offset=Z_LID - TECH_L).center(*c).circle(TECH_CB_D / 2).extrude(TECH_CB_T))
 
 
-def lid():
+def lid(snap_p=SNAP_P):
     body = slab(CI_W, CI_H, CI_R, Z_TOP, Z_LID)
     # lip inside the tray walls, with snap bumps on its outside along the long sides
     off = -(WALL + 0.15)
@@ -216,7 +230,7 @@ def lid():
     zb = Z_TOP - LIP_H / 2
     for x, sgn in ((WALL + 0.15, -1), (CI_W - WALL - 0.15, 1)):
         for y in SNAP_Y:
-            cx = x + sgn * (SNAP_P - SNAP_R)
+            cx = x + sgn * (snap_p - SNAP_R)
             lip = lip.union(cq.Workplane("XY").add(cq.Solid.makeCylinder(
                 SNAP_R, SNAP_L, cq.Vector(cx, -y - SNAP_L / 2, zb), cq.Vector(0, 1, 0))))
     # notch the lip above the RJ12 jacks, which reach the board edge
@@ -236,10 +250,17 @@ def lid():
     # the key: the top-left pillar is an L, KEY_L longer along both walls
     for strip in KEY_STRIPS:
         body = body.union(key_box(*strip, Z_CORNER, Z_LID).intersect(outline))
+    # feet under the pillars of the three peg corners, down to FOOT_GAP above the PCB: the lid holds the PCB down, so
+    # pushing the module on by its lid presses on the PCB, not on the jacks, and a module pulled off J1 lifts the PCB
+    # only FOOT_GAP. The PCB is free of parts within FOOT_R of these corners (not at the top-left corner: R7)
+    for (x, y) in PEGS:
+        foot = (cq.Workplane("XY").workplane(offset=GAP + PCB_T + FOOT_GAP).center(*P(x, y)).circle(FOOT_R)
+                .extrude(Z_CORNER + 0.5 - (GAP + PCB_T + FOOT_GAP)))
+        body = body.union(foot.intersect(slab(CI_W, CI_H, CI_R, 0, Z_LID, -(WALL + 0.2))))
     for (x, y) in LEGO_HOLES:
         body = body.cut(technic_hole(x, y))
-    # cut-out for the raised bus socket, whose top is flush with the lid (VERIFY against the chosen part)
-    body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(*BUS)).rect(BUS_W + 0.5, BUS_H + 0.5)
+    # cut-out for the raised bus socket, whose top is LID_RAISE below the lid's outer face
+    body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(*BUS)).rect(BUS_W + 2 * BUS_CLR, BUS_H + 2 * BUS_CLR)
                     .extrude(LID_T + 3))
     # orientation mark on the outside: arrow pointing to the meter edge (top), between the two top LEGO holes
     ARROW = 6.0  # circumscribed diameter of the triangle; large enough to see and to feel
@@ -250,8 +271,8 @@ def lid():
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    k, l = kuip(), lid()
-    for name, part in (("p1-base-kuip", k), ("p1-base-lid", l)):
+    parts = [("p1-base-kuip", kuip())] + [(name, lid(p)) for name, p in SNAP_VARIANTS.items()]
+    for name, part in parts:
         cq.exporters.export(part, os.path.join(OUT, name + ".step"))
         cq.exporters.export(part, os.path.join(OUT, name + ".stl"), tolerance=0.02, angularTolerance=0.1)
         print("wrote", name)

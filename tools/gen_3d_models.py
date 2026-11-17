@@ -72,11 +72,11 @@ def rj12_5301():
 
 
 def stacking_header():
-    """Samtec ESQ-108-24-G-D (elevated 2x8 socket): one tall insulator that sits on the board, its top 13.59 mm above
+    """Samtec ESQ-108-24-G-D (elevated 2x8 socket): one tall insulator, 4.95 x 20.83 mm (Samtec ESQ catalogue: 2.54 x positions + 0.51 long), that sits on the board, its top 13.59 mm above
     the board and 8.51 mm deep sockets at the top; tail 9.65 mm below the board's top surface
     (Samtec table 1: C = .535, B = .38)."""
     p, rows, cols, depth, top, tail = 2.54, 8, 2, 8.51, 13.59, 9.65
-    body = cq.Workplane("XY").box(cols * p, rows * p, top, centered=(True, True, False))
+    body = cq.Workplane("XY").box(4.95, rows * p + 0.51, top, centered=(True, True, False))
     pts = [((c - 0.5) * p, (r - 3.5) * p) for c in range(cols) for r in range(rows)]
     holes = cq.Workplane("XY").pushPoints(pts).rect(1.0, 1.0).extrude(depth).translate((0, 0, top - depth))
     body = body.cut(holes)

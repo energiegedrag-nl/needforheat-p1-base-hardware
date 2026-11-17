@@ -89,8 +89,14 @@ R11 1k C21190 ('0603WAF1001T5E', LCSC footprint R0603, CPL rotation 0.0)
    LCSC   1 1        -> pad     1              G26_REQ
    LCSC   2 2        -> pad     2              REQ_EN
 R12   C25803    same mapping as R10
-R13   C25804    same mapping as R1
-R14   C25803    same mapping as R10
+
+R13 2k2 C4190 ('0603WAF2201T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              EXT_REQ
+   LCSC   2 2        -> pad     2              EXT_REQ_G
+
+R14 20k C4184 ('0603WAF2002T5E', LCSC footprint R0603, CPL rotation 0.0)
+   LCSC   1 1        -> pad     1              EXT_REQ_G
+   LCSC   2 2        -> pad     2              GND
 
 R16 100R C22775 ('0603WAF1000T5E', LCSC footprint R0603, CPL rotation 0.0)
    LCSC   1 1        -> pad     1              EXT_REQ_RAW
@@ -104,21 +110,15 @@ R19 68k C23231 ('0603WAF6802T5E', LCSC footprint R0603, CPL rotation 0.0)
    LCSC   1 1        -> pad     1              G34_EXTREQ
    LCSC   2 2        -> pad     2              GND
 R2    C22775    same mapping as R16
-
-R20 2k2 C4190 ('0603WAF2201T5E', LCSC footprint R0603, CPL rotation 0.0)
-   LCSC   1 1        -> pad     1              VLED
-   LCSC   2 2        -> pad     2              LED2_A
+R20   C4190     same mapping as R13
 R21   C25803    same mapping as R10
 R22   C23231    same mapping as R19
 R23   C25803    same mapping as R10
 R24   C25819    same mapping as R18
 R25   C21190    same mapping as R11
 R26   C25803    same mapping as R10
-
-R27 20k C4184 ('0603WAF2002T5E', LCSC footprint R0603, CPL rotation 0.0)
-   LCSC   1 1        -> pad     1              PROG
-   LCSC   2 2        -> pad     2              GND
-R28   C4184     same mapping as R27
+R27   C4184     same mapping as R14
+R28   C4184     same mapping as R14
 R29   C21190    same mapping as R11
 R3    C21190    same mapping as R11
 R30   C25803    same mapping as R10
@@ -128,8 +128,8 @@ R34   C25803    same mapping as R10
 R5 47R C23182 ('0603WAF470JT5E', LCSC footprint R0603, CPL rotation 0.0)
    LCSC   1 1        -> pad     1              EXT_DATA_FET
    LCSC   2 2        -> pad     2              EXT_DATA_OUT
-R7    C4190     same mapping as R20
-R8    C22775    same mapping as R16
+R7    C4190     same mapping as R13
+R8    C23182    same mapping as R5
 R9    C25803    same mapping as R10
 
 U1 74LVC1G14 C7835 ('SN74LVC1G14DBVR', LCSC footprint SOT-23-5_L3.0-W1.7-P0.95-LS2.8-BR, CPL rotation 180.0)

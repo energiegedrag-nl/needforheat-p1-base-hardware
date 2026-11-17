@@ -35,7 +35,7 @@ ZSILL = K.GAP + K.PCB_T - 0.3  # bottom edge of the RJ12 openings
 VIEWS = [
     ("tray-top-edge", "p1-base-kuip.stl", 28, 62, [
         ((K.JACKS[0][0], YW, ZSILL), "RJ12 opening for J2 (smart meter); the lid's tongue closes it above the jack"),
-        ((LED_TOP[0], YW, ZLED), "Light window for LED1 (green, side-looking):\nblinks with the data from the meter"),
+        ((LED_TOP[0], YW, ZLED), "Light window for LED1 (green, side-looking), open into\nthe J2 opening: blinks with the data from the meter"),
         ((XL + 0.5, -K.SNAP_Y[0], ZT - K.LIP_H / 2), "Snap-fit groove (2 per long wall) for the lid's bumps"),
         ((36.0, -4.0, K.GAP + K.PCB_T - 0.2), "Peg in a corner block: keys and holds the PCB;\nthe block carries it 2.5 mm above the CoreInk"),
         ((4.0, -4.0, K.GAP), "Corner block without a peg:\nthe PCB fits one way only"),
@@ -54,14 +54,15 @@ VIEWS = [
         ((XL + 1.6, -K.SNAP_Y[0], ZT - K.LIP_H / 2), "Snap bump on the flexible lip (2 per long side)"),
         ((20.0, YW, ZT - 0.3), "Tongue that closes the RJ12 opening above J2\n(same above J3)"),
         ((K.CORNER + K.KEY_L / 2, YW, K.Z_CORNER), "Key: this corner pillar is an L, 2.5 mm longer along\nboth walls; turned round it stops on the tray's wall"),
+        ((36.0, -6.0, K.GAP + K.PCB_T + K.FOOT_GAP), "Foot (3x, not at the key corner): holds the PCB\ndown, 0.1 mm above it"),
         ((36.0, -4.0, K.Z_CORNER), "Corner pillar (4x) with a LEGO Technic hole at the\nCoreInk's position: counterbore, bore and snap groove,\nso a Technic pin clicks in; also takes the next module's posts"),
-        ((K.BUS[0], -K.BUS[1], ZT), "Cut-out for the raised bus socket J1,\nflush with the lid like the CoreInk's back"),
+        ((K.BUS[0], -K.BUS[1], ZT), "Cut-out for the raised bus socket J1 (0.4 mm around it);\nthe socket top sits 0.3 mm below the lid's surface"),
         ((20.0, -(K.CI_H - K.WALL - 1.0), ZT - 1.0), "Lip notch above the RJ12 jacks"),
     ]),
     ("lid-outside", "p1-base-lid.stl", 55, 62, [
         ((20.0, -4.0, ZL), "Arrow: this edge goes to the meter (J2)"),
         ((36.0, -4.0, ZL), "LEGO Technic hole (4x), same positions as on the CoreInk"),
-        ((K.BUS[0], -K.BUS[1], ZL), "Bus socket J1 for the next module, flush with the lid"),
+        ((K.BUS[0], -K.BUS[1], ZL), "Bus socket J1 for the next module, 0.3 mm below the lid"),
     ]),
 ]
 

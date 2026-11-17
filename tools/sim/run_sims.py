@@ -183,20 +183,27 @@ R12 reqen 0 100k
 Vrd rdrsrc 0 {vreq}
 Rrd rdrsrc extreqraw 1k
 R16 extreqraw extreq 100
-R13 extreq extreqg 10k
-R14 extreqg 0 100k
+R13 extreq extreqg 2.2k
+R14 extreqg 0 20k
 M5 reqgate extreqg 0 N2N7002
 D7 extreq metreq D5819
 R18 extreq g34 47k
 R19 g34 0 68k
 R9 metreq 0 100k
-R8 metreq j2p2 100
+R8 metreq j2p2 47
 * meter request input: 1 mA at 5 V
 Rmeter j2p2 0 4.7k
 """
         d = ngspice.run(net, "op")
         rows.append((label, float(d["j2p2"][0]), float(d["g34"][0]), float(d["g36"][0])))
     return rows
+
+
+def d7_leak(leaks_uA=(10, 20, 40, 80), r13=2.2e3, r14=20e3, r18=47e3, r19=68e3):
+    """No reader on J3, our request high: D7's reverse leakage flows into EXT_REQ, which only R13+R14 and R18+R19 hold
+    low. Returns EXT_REQ_G for each leakage current (DC, linear; Q5 turns on above its threshold, 1.0 to 2.5 V)."""
+    r = 1 / (1 / (r13 + r14) + 1 / (r18 + r19))
+    return [(i, i * 1e-6 * r * r14 / (r13 + r14)) for i in leaks_uA]
 
 
 def sim_softstart():
@@ -258,7 +265,7 @@ R21 vmeter g36 100k
 R22 g36 0 68k
 Desd5a j2p2 e5 DTVS
 Desd5b 0 e5 DTVS
-R8 j2p2 metreq 100
+R8 j2p2 metreq 47
 R9 metreq 0 100k
 D7 extreq metreq D5819
 R18 extreq g34 47k
@@ -353,6 +360,16 @@ def main():
               "below 4.0 V; a reader with a stiff 5 V output gives ≈ 4.6 V. With the CoreInk on, the active path "
               "(Q5 → Q3) restores the full level. Known limitation, see design-v3.md § 4.4 (D7); to be measured with "
               "real readers and DSMR 2/3 meters (design-v3.md § 10, items 6 and 7)."]
+    lines += ["", "D7 leakage with no reader on J3 and our request high (reverse biased D7, about 4.7 V): the leakage "
+              "flows into EXT_REQ, held low only by R13+R14 and R18+R19. If EXT_REQ_G reaches Q5's threshold "
+              "(2N7002: 1.0 to 2.5 V), Q5 keeps Q3 on after G26 goes low and the request latches. R13 = 2.2 kΩ and "
+              "R14 = 20 kΩ keep EXT_REQ_G under 1.0 V up to about 60 µA (a 1N5819WS-class Schottky leaks a few µA "
+              "at 25 °C, doubling about every 10 °C). Test on the prototype: no reader, pulse G26, warm D7 to about "
+              "60 °C, check that TP4 (METER_REQ) drops.", "",
+              "| D7 leakage [µA] | EXT_REQ_G, R13 2.2k / R14 20k [V] | old values R13 10k / R14 100k [V] |",
+              "|---:|---:|---:|"]
+    for (i, v), (_, v_old) in zip(d7_leak(), d7_leak(r13=10e3, r14=100e3)):
+        lines.append(f"| {i} | {v:.2f} | {v_old:.2f} |")
     ipk = sim_softstart()
     lines += ["", "## 3. Switching on P1 charging", "", "![soft start](charger-soft-start.png)", "",
               f"Peak current drawn from the meter: **{ipk:.0f} mA** (DSMR 5 fold-back starts at 260 mA; "

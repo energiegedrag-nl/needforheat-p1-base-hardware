@@ -81,7 +81,7 @@ The splitter and the request OR run from the meter's own 5 V, so the existing re
 
 * **Q1 (AO3401A)**, a P-channel MOSFET in the supply line with its gate to GND, passes the meter's 5 V with almost no drop and blocks it when the cable is crossed (meter 5 V on our pin 6).
 * **D1 (SMF5.0A)** clamps transients on `VMETER`; it sits behind Q1 so it never conducts a reversed supply.
-* **D3, D4, D5, D6 (PESD5V0S1BB, bidirectional)** protect the four P1 signal lines; bidirectional because a crossed cable can pull a line below our ground. **100 Ω series resistors** (R2, R8, R16) limit the current in any fault.
+* **D3, D4, D5, D6 (PESD5V0S1BB, bidirectional)** protect the four P1 signal lines; bidirectional because a crossed cable can pull a line below our ground. **Series resistors** (R2 and R16 100 Ω, R8 47 Ω) limit the current in any fault. R8 is 47 Ω so that a meter whose request input draws more than the 1 mA assumed in the simulation (up to about 5 mA) still sees ≥ 4.0 V.
 * J3 pin 1 is fed from `VMETER` (after Q1), as with a passive splitter.
 
 ### 4.2 Data input
@@ -104,6 +104,7 @@ The splitter and the request OR run from the meter's own 5 V, so the existing re
 
 * **Q3 (AO3401A)** switches `V5` (≈ 4.7 V, DSMR requires ≥ 4.0 V) onto the meter's request line. Its gate is pulled low by **Q4** (firmware, G26 high) or **Q5** (the existing reader drives its request high). R9 (100 kΩ) keeps the line low when nobody requests; it is kept high-ohmic so it hardly loads the passive path below.
 * **D7 (1N5819WS)** passes the reader's request straight to the meter. This path needs no power on the BASE at all, which matters for DSMR 2/3 meters with the CoreInk off. It costs one Schottky drop (≈ 0.35 V): a reader with a stiff 5 V request output still delivers ≈ 4.6 V; a reader whose request output has ≈ 1 kΩ source resistance ends up at ≈ 3.6 V (simulated), below the 4.0 V DSMR asks for. With the CoreInk on, the active path (Q5 → Q3) restores the full level, so this only matters for DSMR 2/3 meters with the CoreInk switched off.
+* **R13 (2.2 kΩ) / R14 (20 kΩ)** drive Q5's gate from the reader's request (0.9 × its level). Together with R18 + R19 they hold `EXT_REQ` low at about 19 kΩ when no reader is plugged in, so D7's reverse leakage (while we request, D7 sees about 4.7 V) cannot lift Q5's gate to its threshold and latch the request on: below 1.0 V up to about 60 µA of leakage (design review of 16 November 2026; first values 10 k / 100 k held it only up to about 20 µA). See the [simulation results](simulation/README.md#2-data-request-levels-dc); to test on the prototype (§ 10).
 * **G34** reads, through a 47k/68k divider, whether the existing reader requests data. Because D7 blocks in the other direction, our own request never shows up here.
 * **Always-on request**: firmware can keep G26 high (also in deep sleep, with GPIO hold). **R15 (0 Ω, not fitted)** forces it in hardware; this is an assembly variant, not a solder job.
 * No LED shows the request itself: LED1 blinking means the meter sends (so someone requests), LED2 blinking means the reader is among the requesters (§ 4.6).
@@ -196,6 +197,16 @@ The first prototype order keeps U5, to learn whether dimming is wanted and wheth
 | G21 / G22 | I²C SDA / SCL | LED dimmer U5 at 0x62 (shared with the CoreInk's RTC at 0x51) | see § 4.7; LEDs at full brightness until set up |
 | GND, BAT, 5V_OUT | power | | 3V3 and 5V_IN are not used |
 
+Notes for the firmware (design review of 16 November 2026):
+
+* Set G14 before G25: G14 has an internal pull-up at reset (about 45 kΩ against R30 100 kΩ), so the charge current may read as 120 mA during boot. Harmless while G25 is low.
+* Charging only happens while G25 is held high, so not while the CoreInk is switched off between measurements; the energy balance in § 6 assumes continuous charging.
+* With the CoreInk drawing from the cell, the TP4056 may never terminate: switch G25 off above about 4.1 V.
+* USB plus P1-BASE plus BatteryBASE could charge at 200 + 120 + 60 mA into the 390 mAh cell: use 60 mA (G14 low) when another source charges too.
+* U5 (PCA9633) also answers at 0x70 (all-call) until MODE1 is written, and at the software-reset address 0x03.
+* A HAT on the CoreInk's top header shares G25, G26 and G36 with the P1-BASE.
+* With no cable in J2 and the CoreInk on, `P1_DATA` is pulled high (R3), so LED1 lights steadily and G13 sees a break; the same holds for a meter that releases its data line when nobody requests.
+
 Diagnosis the firmware can show on the e-ink screen:
 
 | VMETER (G36) | Data on G13 | Meaning / message |
@@ -236,7 +247,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
   lid top to the tips of its LEGO posts, which leaves ≥ 5 mm for the box and padding; `enclosure/kuip.py` asserts
   this (P1-BASE: 24.7 mm). The posts are longer than the J1 pins, so a loose module rests on its posts. Cells
   (BatteryBASE) are never shipped in the parcel; the user clicks the modules together.
-* **LED windows and lid:** a 2.0 x 1.4 mm window in front of each side-looking LED: LED1 in the top wall, LED2 in the bottom wall. The lid
+* **LED windows and lid:** a 2.0 x 1.4 mm window in front of each side-looking LED: LED1 in the top wall, LED2 in the bottom wall; each window runs on into its jack opening, so no thin web stays between them. The lid
   clicks onto the tray: a thin lip (1.0 mm) with two half-round bumps on each long side snaps into grooves in the long
   walls; a notch in the top of the bottom wall (between the left corner pillar and the J3 opening) lets a fingernail or a coin lift it off again. No screws.
 * **Enclosure (*kuip*):** see [`enclosure/`](../enclosure) and its README (with callout renders). Tray + click-on lid, outside flush with the CoreInk outline, no skirt: four LEGO posts with crush ribs and the 16 bus contacts hold the module on the CoreInk. Three board pegs (H1–H3, top-right, bottom-left, bottom-right) key the PCB; the top-left corner has none, so the PCB fits one way only. The lid fits one way only too: its top-left corner pillar is an L, 2.5 mm longer along both walls, and turned round it stops on the tray's rim 6.9 mm up (checked on the solids in check 5). The lid's four corner pillars carry LEGO Technic holes (counterbore, snap groove at 7.8 mm, LEGO standard values to verify) at the CoreInk's positions.
@@ -251,7 +262,7 @@ Measured from the official M5Stack CoreInk model and a photo of the back (coordi
 * JLCPCB *Economic* assembly needs a HASL finish (it is not offered with OSP); LeadFree HASL is fine.
 * JLCPCB places parts with the LCSC footprints, whose origin or rotation differs for some parts. `tools/export_fab.py` corrects the CPL (`JLC_CORR`: SOT-23, SOT-23-3 and SOT-23-5 +180°, SOIC-8 and TSSOP-8 +270°, RJ12 jack offset to the pin centre and +90°, CoreInk header +90°). Checked in the JLCPCB placement preview in November 2026: pin 1 and orientation of all parts match.
 * JLCPCB quote (November 2026, 5 boards, Economic, LeadFree HASL, without shipping and VAT): PCB € 4.71, assembly € 38.97 (setup € 7.46, stencil € 1.40, parts € 8.68, extended-part fees € 14.00, SMT € 1.24, hand soldering € 3.27, manual assembly € 2.09, nitrogen reflow € 0.82); total € 43.68, about € 8.70 per board (with C72555 as J1, before the LED dimmer). Quote of 15 November 2026 for the board with the LED dimmer, same options, **without J1** (the ESQ is a pre-order part, JLCPCB cannot select it yet): PCB € 4.71, assembly € 57.26 (setup € 7.46, stencil € 1.40, parts € 22.38, extended-part fees € 19.59, SMT € 1.42, hand soldering € 3.27, manual assembly € 0.90, nitrogen reflow € 0.82); total € 61.97. The PCA9633DP1 alone costs € 13.92 for five (€ 2.78 each). J1 (ESQ-108-24-G-D) adds about € 18.32 for five plus one extended-part fee and its pre-order handling: roughly € 85 in total, about € 17 per board.
-* Prototype order (15 November 2026): the routed board with U4 = 74LVC1G17 quotes at € 65.93 without J1 (PCB € 4.71, assembly € 61.22). Five J1 were pre-ordered through JLCPCB's parts manager; that pre-order was cancelled and refunded. Seven J1 were then bought through JLCPCB Global Sourcing (16 November 2026, $ 6.93 each, $ 49.48; expected in the parts library on 8 December 2026), so JLCPCB solders J1 too (wave soldering; Economic PCBA supports it; no soldering by the user). The PCBA order with J1 follows once the parts are in stock. Fallback if they arrive too late: order without J1 and have J1 fitted by hand (Samtec sells it directly, € 4.12 each). Placement preview checked by hand: the three side-looking LEDs have their lens towards the top edge and their cathode (pad 1) on the left, as in KiCad. Enclosures go in the same shipment: MJF PA12 black, 5 sets, P1-BASE tray + lid $ 19.40 and BatteryBASE tray + lid (fit check) $ 18.70.
+* Prototype order (15 November 2026): the routed board with U4 = 74LVC1G17 quotes at € 65.93 without J1 (PCB € 4.71, assembly € 61.22). Five J1 were pre-ordered through JLCPCB's parts manager; that pre-order was cancelled and refunded. Seven J1 were then bought through JLCPCB Global Sourcing (16 November 2026, $ 6.93 each, $ 49.48; expected in the parts library on 8 December 2026), so JLCPCB solders J1 too (no soldering by the user). Samtec rates the ESQ for lead wave soldering only and its gold tails are the pins that go into the CoreInk, so the PCBA order carries the remark: "J1: hand solder with an iron, no wave, no reflow; do not trim the pins; keep the pins below the board free of solder. Please put the process rails on the long edges (J2 and J3 overhang the short edges by 0.5 mm)." The PCBA order with J1 follows once the parts are in stock. Fallback if they arrive too late: order without J1 and have J1 fitted by hand (Samtec sells it directly, € 4.12 each). Placement preview checked by hand: the three side-looking LEDs have their lens towards the top edge and their cathode (pad 1) on the left, as in KiCad. Enclosures go in the same shipment: MJF PA12 black, 5 sets, P1-BASE tray + lid $ 19.40 and BatteryBASE tray + lid (fit check) $ 18.70.
 
 ## 9. Design decisions
 
@@ -285,11 +296,11 @@ board is redone):
    0.6 mm clearance. Done in `enclosure/kuip.py`.
 4. **No steel-disc pockets** in the tray: the friction of the pins and the tray hold the CoreInk.
 5. **Same back as the CoreInk, so one BatteryBASE fits both:** the P1-BASE's lid repeats the CoreInk's back. J1
-   becomes a **raised socket** whose top is flush with the lid (≈ 16.5 mm above the board, 8 mm deep) with pins long
+   becomes a **raised socket** whose top is 0.3 mm below the lid's surface (≈ 16.5 mm above the board, 8 mm deep) with pins long
    enough to go 6 mm into the CoreInk (≈ 8.5 mm below the board); part: **Samtec ESQ-108-24-G-D**
    (JLCPCB C21241050, pre-order): socket top 13.59 mm above the board ("C"), tail 9.65 mm below the board's top
    ("B"), 8.51 mm deep socket (Samtec ESQ table 1). With the 2.5 mm gap the pins go 5.5 mm into the CoreInk; the lid
-   is set flush with the socket top. ESQ-108-49 is the same with low-insertion-force contacts. Lower RJ12 jacks (10–11.5 mm) would make the P1-BASE thinner and the
+   is set 0.3 mm above the socket top, so the socket never stands proud. ESQ-108-49 is the same with low-insertion-force contacts. Lower RJ12 jacks (10–11.5 mm) would make the P1-BASE thinner and the
    raised socket 3–4.5 mm lower.
 6. **LEGO posts on every enclosure:** four posts underneath, at the CoreInk's LEGO holes (through holes; a LEGO
    Technic pin fits, measured), 7 mm long so they engage before the 6 mm pins and protect them in transport, with
@@ -333,7 +344,7 @@ give the same result on every run, so a re-route may need a different fix. Then
    all three LCSC footprints. Check in the JLCPCB placement preview that the lens faces the board edge (CPL rotation),
    and on the first board the lens height (the tray windows assume 0.5 mm above the board, 1.4 mm tall).
 9. I²C pull-ups on G21/G22 inside the CoreInk (they serve the RTC); the P1-BASE adds none.
-10. Snap fit of the lid (bump 0.35 mm, groove 0.55 mm deep): print a test and adjust `SNAP_P` in `enclosure/kuip.py`.
+10. Snap fit of the lid (bump 0.35 mm, groove 0.55 mm deep): the prototype order has two lids (`SNAP_P` 0.35 and 0.5 mm); compare them, also when pulling a BatteryBASE off, and set `SNAP_P` in `enclosure/kuip.py`.
 11. **G13 with a slow meter output (simulation, 15 November 2026).** U4 (74LVC1G14 at the CoreInk's 3.3 V) takes its
     input from `P1_DATA`, like U1. At 3.3 V its thresholds are lower (≈ 1.8 V / 1.1 V instead of ≈ 2.75 V / 1.65 V at
     5 V), so with a slow, current-limited meter output (opto, 4 mA) the slow falling edge crosses late: the bit-width
@@ -342,6 +353,8 @@ give the same result on every run, so a re-route may need a different fix. Then
     same pinout, 5 V tolerant input) fed from `SPLIT_DRV` (U1's clean 5 V output): same polarity at G13, U1's
     thresholds, still nothing into a switched-off CoreInk. One more extended part (≈ € 2.80 per order). Simulated: bit-width
     error on G13 with the slow meter output back to ≈ 21 % (same as the splitter output), fast outputs 0.6 %.
+12. D7 leakage (no reader in J3): pulse G26, warm D7 to about 60 °C, check that TP4 (`METER_REQ`) drops.
+13. J1 on arrival: the gold tails must enter a 2.54 mm socket freely (not tinned, not trimmed); J1 holes are 1.1 mm for the 0.64 mm square tails (0.905 mm diagonal).
 
 ## 11. Out of scope
 

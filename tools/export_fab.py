@@ -25,9 +25,8 @@ CLI = os.environ.get("KICAD_CLI", os.path.expandvars(r"%LOCALAPPDATA%\Programs\K
 # coordinates (mm, y down), drot = rotation to add (degrees, counter-clockwise).
 # Checked in the JLCPCB placement preview (November 2026).
 JLC_CORR = {
-    # CONNFLY DS1133-S60BPX (C77859): origin at the centre of the six pins, opening towards -x
-    "RJ25_Wayconn_MJEA-660X1_Horizontal": (-2.55, 1.27, 90.0),
-    # C72555: pins along x in the LCSC footprint, along y in ours
+    # J1: derived for C72555 (pins along x in the LCSC footprint, along y in ours). UNVERIFIED for the Samtec
+    # ESQ-108-24-G-D (C21241050), which has no CAD data at LCSC yet: check J1 in JLCPCB's placement preview
     "CoreInk_Bus_2x08_P2.54mm": (0.0, 0.0, 90.0),
     # pin 1 on the opposite side / a quarter turn in the JLCPCB library
     "SOT-23": (0.0, 0.0, 180.0),

@@ -57,7 +57,7 @@ Schematic and layout printouts: [docs/needforheat-p1-base-hardware-sch.pdf](docs
 
 ### Enclosure
 
-The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery script) and exported STEP/STL files in [enclosure/fabrication](./enclosure/fabrication): a tray (*kuip*) that holds the PCB and a lid that clicks onto it (snap fit, no screws). The outside is exactly the CoreInk's outline (40 x 56 mm), so any BASE that fits a bare CoreInk also fits behind the P1-BASE. Four posts with crush ribs centre the module in the CoreInk's LEGO-compatible holes; the lid repeats those holes as LEGO Technic holes and has the bus socket flush with its surface, like the CoreInk's back. Each socket's LED shows through a window in the wall next to it; an arrow on the lid points to the meter edge. Each module fits a letterbox parcel on its own (at most 27 mm thick). Print with PETG or let a 3D printing service make them (SLA resin or MJF nylon).
+The folder [enclosure](./enclosure) contains a parametric enclosure (CadQuery script) and exported STEP/STL files in [enclosure/fabrication](./enclosure/fabrication): a tray (*kuip*) that holds the PCB and a lid that clicks onto it (snap fit, no screws). The outside is exactly the CoreInk's outline (40 x 56 mm), so any BASE that fits a bare CoreInk also fits behind the P1-BASE. Four posts with crush ribs centre the module in the CoreInk's LEGO-compatible holes; the lid repeats those holes as LEGO Technic holes and has the bus socket just below its surface (0.3 mm), like the CoreInk's back; feet under the lid's corners hold the PCB down. Each socket's LED shows through a window in the wall next to it; an arrow on the lid points to the meter edge. Each module fits a letterbox parcel on its own (at most 27 mm thick). Print with PETG or let a 3D printing service make them (SLA resin or MJF nylon).
 
 ## Deploying
 
@@ -69,8 +69,8 @@ Indicative, November 2026, excluding VAT and shipping. JLCPCB quotes (LeadFree H
 by JLCPCB, the through-hole parts included: the quotes contain the hand-soldering fee (€ 3.27 per order) and the
 per-joint manual assembly of the RJ12 jacks. The stacking header J1 (Samtec ESQ-108-24-G-D, C21241050) is not in
 JLCPCB's stock: it is bought through JLCPCB's *Global Sourcing* into the account's parts library (9–15 days or more;
-the prototype's seven arrive on 8 December 2026) and then assembled like any other part (wave soldering, Economic
-and Standard PCBA). The J1 column adds its Global Sourcing price (€ 6.28 each, the price of the prototype's order),
+the prototype's seven arrive on 8 December 2026) and then assembled by JLCPCB (Samtec rates it for lead wave soldering only, so the order asks for hand
+soldering with the pins kept free of solder; Economic and Standard PCBA). The J1 column adds its Global Sourcing price (€ 6.28 each, the price of the prototype's order),
 its extended-part loading fee (€ 3.16 per order) and the soldering of its 16 joints (about € 0.26 per board,
 JLCPCB's [per-joint rate](https://jlcpcb.com/help/article/PCB-assembly-faqs) of $ 0.0173); to be confirmed by the
 quote with J1 once it is in the parts library.
@@ -116,9 +116,9 @@ With a DSMR 2 or 3 meter (no power on the P1 port), also connect the USB power a
 
 Each socket has a green light next to it: **it blinks when data goes over that cable.**
 
-| Green light next to | Blinks | Stays dark: check |
+| Green light next to | Blinks | Stays dark (or lights steadily): check |
 |---|---|---|
-| *smart meter* socket (top) | the meter sends data | the cable to the meter; whether the meter's P1 port is enabled |
+| *smart meter* socket (top) | the meter sends data | the cable to the meter; whether the meter's P1 port is enabled (with no cable, or a meter that is not asked for data, it can light steadily) |
 | *other P1 reader* socket (bottom) | the existing P1 reader asks for data and gets it | whether a reader is plugged in and powered; its cable |
 
 Charging the CoreInk battery from the P1 port (DSMR 5 meters) is shown on the screen.
