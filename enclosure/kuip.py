@@ -62,12 +62,19 @@ CORNER = 7.8  # corner pillars of the lid: square from the outline corner, aroun
 TECH_CB_D, TECH_CB_T = 6.2, 0.8
 TECH_L = 7.8
 # snap fit: bumps on the lid's lip click into grooves in the long walls
-LIP_H, LIP_T = 1.8, 1.0  # lip height below the lid, thickness (thin enough to flex)
+LIP_H, LIP_T = 2.4, 1.0  # lip height below the lid, thickness (thin enough to flex)
 SNAP_R, SNAP_P = 0.6, 0.35  # bump radius and how far it sticks out past the lip
 SNAP_VARIANTS = {"p1-base-lid": 0.35, "p1-base-lid-snap050": 0.5}  # prototype: two lids, firmer snap to compare
 SNAP_L = 7.0  # bump length
 SNAP_Y = [16.0, 40.0]  # bump centres along the long walls (clear of the key at the top-left corner)
 GROOVE_D = 0.55  # groove depth in the wall: the bump sits in it with 0.2 mm to spare
+GROOVE_CLR = 0.15  # groove height beyond the bump, above and below
+# bump axis below the lid's underside (= the tray's rim): the wall above the groove is the ledge that holds the lid
+# down, so it must stay printable (MJF PA12: >= 0.8 mm; JLC3DP flagged 0.15 mm with the bump at LIP_H / 2 of 1.8)
+SNAP_DZ = 1.6
+SNAP_LEDGE = SNAP_DZ - SNAP_R - GROOVE_CLR
+assert SNAP_LEDGE >= 0.8 - 1e-6, f"wall above the snap groove {SNAP_LEDGE:.2f} mm, too thin"
+assert LIP_H - (SNAP_DZ + SNAP_R) >= 0.2 - 1e-6, "snap bump runs off the bottom of the lip"
 LID_T = 1.4
 SOCKET_H = 13.59  # J1 Samtec ESQ-108-24-G-D: socket top above the board ("C", Samtec table 1)
 # the lid's outer face is LID_RAISE above the top of the raised socket: with print and soldering tolerances the socket
@@ -202,11 +209,11 @@ def kuip():
         body = body.cut(cq.Workplane("XY").workplane(offset=z - LED_HOLE_H / 2).center(*P((xo + xj) / 2, yw))
                         .rect(abs(xj - xo), WALL + 1.0).extrude(LED_HOLE_H))
     # snap-fit grooves for the lid's bumps (inner face of the two long walls)
-    zb = Z_TOP - LIP_H / 2
+    zb = Z_TOP - SNAP_DZ
     for x in (WALL - GROOVE_D / 2, CI_W - WALL + GROOVE_D / 2):
         for y in SNAP_Y:
-            body = body.cut(cq.Workplane("XY").workplane(offset=zb - SNAP_R - 0.15).center(*P(x, y))
-                            .rect(GROOVE_D + 0.02, SNAP_L + 1.0).extrude(2 * SNAP_R + 0.3))
+            body = body.cut(cq.Workplane("XY").workplane(offset=zb - SNAP_R - GROOVE_CLR).center(*P(x, y))
+                            .rect(GROOVE_D + 0.02, SNAP_L + 1.0).extrude(2 * (SNAP_R + GROOVE_CLR)))
     # pry notch in the top of the bottom wall, to lift the lid off: in the piece of wall between the corner pillar
     # and the J3 opening (the opening itself is closed by the lid's tongue)
     body = body.cut(cq.Workplane("XY").workplane(offset=Z_TOP - PRY_D).center(*P(PRY_X, CI_H - WALL / 2))
@@ -227,7 +234,7 @@ def lid(snap_p=SNAP_P):
     # lip inside the tray walls, with snap bumps on its outside along the long sides
     off = -(WALL + 0.15)
     lip = slab(CI_W, CI_H, CI_R, Z_TOP - LIP_H, Z_TOP, off).cut(slab(CI_W, CI_H, CI_R, Z_TOP - LIP_H - 0.5, Z_TOP + 1, off - LIP_T))
-    zb = Z_TOP - LIP_H / 2
+    zb = Z_TOP - SNAP_DZ
     for x, sgn in ((WALL + 0.15, -1), (CI_W - WALL - 0.15, 1)):
         for y in SNAP_Y:
             cx = x + sgn * (snap_p - SNAP_R)
@@ -236,7 +243,8 @@ def lid(snap_p=SNAP_P):
     # notch the lip above the RJ12 jacks, which reach the board edge
     for (x, side) in JACKS:
         y = 0.0 if side == "top" else CI_H
-        lip = lip.cut(cq.Workplane("XY").workplane(offset=Z_TOP - 2).center(*P(x, y)).rect(JACK_W + 0.4, 8).extrude(2))
+        lip = lip.cut(cq.Workplane("XY").workplane(offset=Z_TOP - LIP_H - 0.5).center(*P(x, y)).rect(JACK_W + 0.4, 8)
+                      .extrude(LIP_H + 0.5))
     body = body.union(lip)
     # tongues closing the RJ12 openings above the jacks
     for (x, side) in JACKS:
