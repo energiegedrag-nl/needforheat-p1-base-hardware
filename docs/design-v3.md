@@ -200,7 +200,7 @@ The first prototype order keeps U5, to learn whether dimming is wanted and wheth
 Notes for the firmware (design review of 16 November 2026):
 
 * Set G14 before G25: G14 has an internal pull-up at reset (about 45 kΩ against R30 100 kΩ), so the charge current may read as 120 mA during boot. Harmless while G25 is low.
-* Charging only happens while G25 is held high, so not while the CoreInk is switched off between measurements; the energy balance in § 6 assumes continuous charging.
+* Charging only happens while G25 is held high, so not while the CoreInk is switched off between measurements (the ESP32 is then unpowered, so `gpio_hold` cannot help). The P1 reader firmware therefore keeps the CoreInk on for a *charge window* after a read while the cell is low; see the energy balance in § 6.
 * With the CoreInk drawing from the cell, the TP4056 may never terminate: switch G25 off above about 4.1 V.
 * USB plus P1-BASE plus BatteryBASE could charge at 200 + 120 + 60 mA into the 390 mAh cell: use 60 mA (G14 low) when another source charges too.
 * U5 (PCA9633) also answers at 0x70 (all-call) until MODE1 is written, and at the software-reset address 0x03.
@@ -225,7 +225,7 @@ Diagnosis the firmware can show on the e-ink screen:
 * **Current budget at the meter (DSMR 5, worst case).** Pull-up 5 mA + LEDs 3 mA (2 × 1.3 mA) + logic < 1 mA + charging 120 mA = 129 mA, leaving ≥ 120 mA for the existing reader. With 60 mA charging: ≥ 180 mA left. The LED dimmer adds < 0.1 mA (U5 idle, U6, R33 while the LEDs are on).
 * **Charger dissipation.** (5.0 − 3.6 V) × 0.12 A = 0.17 W in the ESOP-8 TP4056: fine without a heat sink.
 * **Simulation.** See [simulation/README.md](simulation/README.md): data path at 115 200 Bd (bit-width error ≤ 0.6 % with a normal meter output; a slow, current-limited output adds edge distortion of ≈ 20 % of a bit, set by the meter itself), request levels in all combinations, charger inrush and the crossed-cable case (1.8 mA from the meter, no node outside its ratings except G34, which sees −2.9 V through 47 kΩ: ≈ 50 µA into its clamp diode).
-* **Energy balance.** A CoreInk that measures every 10 minutes and sleeps in between averages far below 60 mA; so 60 mA continuous charging is enough on DSMR 5, and the battery covers the Wi-Fi peaks (up to ~500 mA). *Verify* with a power profiler.
+* **Energy balance.** The CoreInk switches itself off between measurements, and charging stops with it (G25 has a pull-down). Charging only while it measures (≈ 15 s every 10 minutes, ≈ 100 mA on average with Wi-Fi) gives about 120 mA × 15 s ≈ 0.5 mAh in against ≈ 0.4 mAh used: no real gain. So the P1 reader firmware keeps the CoreInk on after a read, while the cell is below 4.0 V, until 70 s before the next read (cell 4.1 V or a sagging meter supply end it earlier). Waiting with Wi-Fi off draws an estimated 30–50 mA, so per 10-minute cycle the cell gains roughly (120 − 40) mA × 530 s ≈ 12 mAh at 120 mA, or ≈ 3 mAh at 60 mA, minus ≈ 0.5 mAh for the measurement and the extra boot. That is enough on DSMR 5, and the battery covers the Wi-Fi peaks (up to ~500 mA). *Verify* the idle current and the balance with a power profiler.
 
 ## 7. Mechanics
 
