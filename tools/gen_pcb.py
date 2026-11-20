@@ -1,0 +1,719 @@
+﻿"""Build the P1-BASE v3 board from the schematic netlist, then autoroute it.
+
+Run with KiCad's own Python (it needs the pcbnew module):
+  "<KiCad>/bin/python.exe" tools/gen_pcb.py [--no-route]
+
+Steps: export the netlist with kicad-cli, create the board outline and
+footprints, place every part (fixed positions for connectors, packed blocks
+for the rest), assign nets, add ground pours, then route with Freerouting
+(Specctra DSN/SES round trip) and run DRC.
+
+Coordinate frame: the top left corner of the CoreInk (seen from its back,
+HAT edge up) is at (X0, Y0); the board is 40 x 56 mm like the CoreInk.
+"""
+import math
+import os
+import re
+import subprocess
+import sys
+
+import pcbnew
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from sexpr import parse, find, first  # noqa: E402
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PCBDIR = os.path.join(ROOT, "pcb")
+NAME = "needforheat-p1-base-hardware"
+KICAD = os.path.dirname(os.path.dirname(sys.executable))
+CLI = os.path.join(KICAD, "bin", "kicad-cli.exe")
+FPDIR = os.path.join(KICAD, "share", "kicad", "footprints")
+JAVA = os.environ.get("JAVA", os.path.expandvars(r"%LOCALAPPDATA%\freerouting\jre25\jdk-25.0.5+8-jre\bin\java.exe"))
+FREEROUTING = os.environ.get("FREEROUTING", os.path.expandvars(r"%LOCALAPPDATA%\freerouting\freerouting.jar"))
+
+X0, Y0 = 100.0, 100.0
+W, H = 40.0, 56.0  # CoreInk outline: the enclosure's outside, flush with the CoreInk
+INSET = 1.85  # enclosure wall 1.6 + clearance 0.25: the PCB sits inside the walls
+R_PCB = 3.0 - INSET  # CoreInk corner radius 3.0 minus the inset
+MM = pcbnew.FromMM
+
+
+def P(x, y):
+    """Board position from CoreInk-relative mm."""
+    return pcbnew.VECTOR2I(MM(X0 + x), MM(Y0 + y))
+
+
+# Fixed placements (CoreInk-relative mm, rotation in degrees)
+FIXED = {
+    # RJ12 jacks (EVERCOM 5301, 11.45 mm) centred on the long axis so the device hangs straight; plug openings
+    # 0.5 mm past the board edge: meter at the top (opening up), existing reader at the bottom (opening down)
+    "J2": (20.0, INSET + 15.62 - 0.5, 270),
+    "J3": (20.0, H - INSET - 15.62 + 0.5, 90),
+    # CoreInk MI-BUS: centre 6.03 mm from the right edge, 36.87 mm from the top edge
+    "J1": (40.0 - 6.03, 36.87, 0),
+    # one side-looking green LED next to each RJ12 socket, shining through the kuip's wall beside the plug:
+    # LED1 (data from the meter) at the top edge left of J2, LED2 (data to the existing reader) at the bottom edge
+    # right of J3 (left of it is the charger). Pads 0.7 mm from the board edge, clear of the 0.6 mm no-track strip
+    # along the edge (Freerouting cannot reach pads that touch it); 8.3 mm from the jack axis keeps the courtyards
+    # clear of the jacks and of the corner pillars
+    "LED1": (11.2, INSET + 1.2, 0),  # 0.7 mm from J2 (design review 16 Nov 2026)
+    "LED2": (28.8, H - INSET - 1.2, 180),  # 0.7 mm from J3
+}
+# kuip pegs (NPTH) at three of the four LEGO-hole axes: also keys the PCB in the enclosure. The top-left corner
+# has none, so the PCB fits one way only
+PEGS = [(36.0, 4.0), (4.0, 52.0), (36.0, 52.0)]
+CORNERS = [(4.0, 4.0), (36.0, 4.0), (4.0, 52.0), (36.0, 52.0)]  # LEGO-hole axes: kuip corner blocks below the PCB
+# Blocks for the SMD parts: rectangle (x1, y1, x2, y2) and the parts, packed in rows
+BLOCKS = [
+    ((27.4, 8.5, 37.35, 25.5), ["Q1", "R1", "D1", "C1", "C2", "D2", "C3", "R21", "R22", "C6", "TP1", "TP2", "C12", "Q9", "R33"]),
+    ((2.65, 10.0, 13.1, 31.0), ["D5", "R8", "R9", "Q3", "R10", "Q4", "R11", "R12", "Q5", "R13", "R14", "R15", "D7",
+                              "TP4", "D6", "R16", "R18", "R19"]),
+    ((13.6, 17.0, 26.6, 39.0), ["D3", "R2", "R3", "U1", "C4", "Q2", "R5", "R6", "D4", "U4", "C10",
+                                "U5", "R34", "Q10", "Q11", "R20"]),
+    # LED1's resistor right under it (left of the meter jack)
+    ((2.65, 4.15, 13.1, 9.8), ["R7"]),
+    # LED dimmer supply: the free strip right of the meter jack
+    ((25.9, 2.55, 32.2, 8.4), ["U6", "C11"]),
+    ((2.65, 26.0, 13.1, 53.35), ["Q6", "R23", "C7", "R24", "Q7", "R25", "R26", "C8", "U3", "R27", "R28", "Q8",
+                               "R29", "R30", "C9"]),
+    ((27.4, 26.0, 30.4, 51.0), ["TP3", "TP5", "TP6", "TP7"]),
+]
+
+
+def netlist():
+    sch = os.path.join(PCBDIR, NAME + ".kicad_sch")
+    out = os.path.join(PCBDIR, NAME + ".net")
+    subprocess.run([CLI, "sch", "export", "netlist", "--format", "kicadsexpr", "-o", out, sch], check=True)
+    with open(out, encoding="utf8") as f:
+        n = parse(f.read())
+    os.remove(out)
+    comps = {}
+    for c in find(first(n, "components"), "comp"):
+        ref = first(c, "ref")[1]
+        fields = {}
+        fl = first(c, "fields")
+        if fl:
+            for fd in find(fl, "field"):
+                nm = first(fd, "name")[1]
+                fields[nm] = fd[2] if len(fd) > 2 and not isinstance(fd[2], list) else ""
+        props = {first(p, "name")[1]: (first(p, "value") or [None, ""])[1] for p in find(c, "property")}
+        comps[ref] = dict(value=first(c, "value")[1], fp=first(c, "footprint")[1], fields=fields, props=props)
+    nets = {}
+    for nt in find(first(n, "nets"), "net"):
+        name = first(nt, "name")[1]
+        for node in find(nt, "node"):
+            nets.setdefault(name, []).append((first(node, "ref")[1], first(node, "pin")[1]))
+    return comps, nets
+
+
+# generated by tools/gen_3d_models.py
+MODEL_OVERRIDE = {}
+
+
+def load_fp(libid):
+    lib, name = libid.split(":", 1)
+    path = os.path.join(PCBDIR, lib + ".pretty") if lib == "p1base" else os.path.join(FPDIR, lib + ".pretty")
+    fp = pcbnew.FootprintLoad(path, name)
+    if fp is None:
+        raise SystemExit("footprint not found: " + libid)
+    fp.SetFPID(pcbnew.LIB_ID(lib, name))
+    if name in MODEL_OVERRIDE:  # library footprint without a shipped 3D model
+        for m in fp.Models():
+            m.m_Filename = MODEL_OVERRIDE[name]
+    return fp
+
+
+def add_outline(b):
+    r, a0, xa, ya = R_PCB, INSET, W - INSET, H - INSET
+    pts = [(a0 + r, a0), (xa - r, a0), (xa, a0 + r), (xa, ya - r), (xa - r, ya), (a0 + r, ya), (a0, ya - r), (a0, a0 + r)]
+    segs = [(pts[0], pts[1]), (pts[2], pts[3]), (pts[4], pts[5]), (pts[6], pts[7])]
+    for a, c in segs:
+        s = pcbnew.PCB_SHAPE(b, pcbnew.SHAPE_T_SEGMENT)
+        s.SetStart(P(*a)); s.SetEnd(P(*c)); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(MM(0.1)); b.Add(s)
+    k = r * (1 - 0.5 ** 0.5)  # offset of the arc midpoint from the corner
+    corners = [((a0, a0 + r), (a0 + k, a0 + k), (a0 + r, a0)), ((xa - r, a0), (xa - k, a0 + k), (xa, a0 + r)),
+               ((xa, ya - r), (xa - k, ya - k), (xa - r, ya)), ((a0 + r, ya), (a0 + k, ya - k), (a0, ya - r))]
+    for s, m, e in corners:
+        a = pcbnew.PCB_SHAPE(b, pcbnew.SHAPE_T_ARC)
+        a.SetArcGeometry(P(*s), P(*m), P(*e))
+        a.SetLayer(pcbnew.Edge_Cuts); a.SetWidth(MM(0.1)); b.Add(a)
+
+
+def courtyard(fp):
+    bb = fp.GetCourtyard(pcbnew.F_CrtYd).BBox() if fp.GetCourtyard(pcbnew.F_CrtYd).OutlineCount() else fp.GetBoundingBox(False)
+    return pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight()), bb
+
+
+def rel_box(fp):
+    _, _, bb = courtyard(fp)
+    return (pcbnew.ToMM(bb.GetLeft()) - X0, pcbnew.ToMM(bb.GetTop()) - Y0,
+            pcbnew.ToMM(bb.GetRight()) - X0, pcbnew.ToMM(bb.GetBottom()) - Y0)
+
+
+def _hit(a, b, gap):
+    return not (a[2] + gap <= b[0] or b[2] + gap <= a[0] or a[3] + gap <= b[1] or b[3] + gap <= a[1])
+
+
+# U3 (TP4056) turned so pins 1-4 (GND, PROG, GND, CHG_IN) face the board interior and the two NC pins face the
+# edge: at 0 deg PROG sits between two GND pads next to the edge keepout and cannot escape
+BLOCK_ROT = {"U3": 180}
+
+
+def place_block(fps, rect, refs, obstacles, gap=0.3, step=0.25):
+    """Raster-scan placement: each part goes to the first free spot in the block."""
+    x1, y1, x2, y2 = rect
+    for ref in refs:
+        fp = fps[ref]
+        fp.SetOrientationDegrees(BLOCK_ROT.get(ref, 0))
+        fp.SetPosition(P(0, 0))
+        w, h, bb = courtyard(fp)
+        ox, oy = pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop())
+        spot = None
+        y = y1
+        while spot is None and y + h <= y2 + 1e-6:
+            x = x1
+            while x + w <= x2 + 1e-6:
+                box = (x, y, x + w, y + h)
+                if not any(_hit(box, o, gap) for o in obstacles):
+                    spot = box
+                    break
+                x += step
+            y += step
+        if spot is None:
+            raise SystemExit(f"block {rect} has no room for {ref}")
+        fp.Move(pcbnew.VECTOR2I(MM(X0 + spot[0] - ox), MM(Y0 + spot[1] - oy)))
+        obstacles.append(spot)
+
+
+def add_text(b, text, x, y, size=0.8, layer=pcbnew.F_SilkS, angle=0, bold=False):
+    t = pcbnew.PCB_TEXT(b)
+    t.SetText(text); t.SetPosition(P(x, y)); t.SetLayer(layer)
+    t.SetTextSize(pcbnew.VECTOR2I(MM(size), MM(size))); t.SetTextThickness(MM(max(0.16, size * (0.2 if bold else 0.15))))
+    t.SetTextAngleDegrees(angle)
+    b.Add(t)
+
+
+def add_edge_keepout(b, w=0.6):
+    """Rule area along the board edge: no tracks or vias (Freerouting honours it)."""
+    a0, xa, ya = INSET, W - INSET, H - INSET
+    for x1, y1, x2, y2 in [(a0, a0, xa, a0 + w), (a0, ya - w, xa, ya), (a0, a0, a0 + w, ya), (xa - w, a0, xa, ya)]:
+        z = pcbnew.ZONE(b)
+        z.SetIsRuleArea(True)
+        z.SetDoNotAllowTracks(True); z.SetDoNotAllowVias(True)
+        z.SetDoNotAllowPads(False); z.SetDoNotAllowFootprints(False); z.SetDoNotAllowZoneFills(False)
+        ls = pcbnew.LSET(); ls.AddLayer(pcbnew.F_Cu); ls.AddLayer(pcbnew.B_Cu)
+        z.SetLayerSet(ls)
+        o = z.Outline(); o.NewOutline()
+        for x, y in [(x1, y1), (x2, y1), (x2, y2), (x1, y2)]:
+            o.Append(MM(X0 + x), MM(Y0 + y))
+        b.Add(z)
+
+
+def add_zone(b, net, layer):
+    z = pcbnew.ZONE(b)
+    z.SetLayer(layer); z.SetNet(net)
+    o = z.Outline(); o.NewOutline()
+    for x, y in [(INSET, INSET), (W - INSET, INSET), (W - INSET, H - INSET), (INSET, H - INSET)]:
+        o.Append(MM(X0 + x), MM(Y0 + y))
+    z.SetLocalClearance(MM(0.25)); z.SetMinThickness(MM(0.2))
+    z.SetPadConnection(pcbnew.ZONE_CONNECTION_THT_THERMAL)
+    z.SetThermalReliefGap(MM(0.3)); z.SetThermalReliefSpokeWidth(MM(0.5))
+    b.Add(z)
+
+
+VARIANT = int(os.environ.get("P1BASE_VARIANT", "0"))  # rotates the packing order inside block 3
+# spacing in block 3 (logic under the meter jack); 0.45 mm (the most that fits) did not reduce the GND islands:
+# where they fall is mostly down to the router, so try P1BASE_VARIANT instead
+GAP3 = float(os.environ.get("P1BASE_GAP3", "0.3"))
+
+
+def build(route=True):
+    comps, nets = netlist()
+    b = pcbnew.BOARD()
+    ds = b.GetDesignSettings()
+    ds.SetCopperLayerCount(2)
+    ds.m_TrackMinWidth = MM(0.15)
+    ds.m_ViasMinSize = MM(0.5)
+    ds.m_MinThroughDrill = MM(0.3)
+    ds.m_MinClearance = MM(0.15)
+    ds.m_CopperEdgeClearance = MM(0.3)
+    ns = ds.m_NetSettings
+    dflt = ns.GetDefaultNetclass()
+    dflt.SetTrackWidth(MM(0.3)); dflt.SetClearance(MM(0.2)); dflt.SetViaDiameter(MM(0.6)); dflt.SetViaDrill(MM(0.3))
+    add_outline(b)
+    fps = {}
+    for ref, c in sorted(comps.items()):
+        fp = load_fp(c["fp"])
+        fp.SetReference(ref)
+        fp.SetValue(c["value"])
+        for k in ("LCSC",):
+            v = c["fields"].get(k) or c["props"].get(k)
+            if v:
+                fp.SetField(k, v)
+                fld = fp.GetField(k)
+                fld.SetVisible(False); fld.SetLayer(pcbnew.F_Fab)
+        if c["props"].get("dnp") is not None:
+            fp.SetDNP(True)
+            fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True)
+        if ref.startswith("TP"):
+            fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True)
+        fp.Reference().SetTextSize(pcbnew.VECTOR2I(MM(0.6), MM(0.6)))
+        fp.Reference().SetTextThickness(MM(0.1))
+        fp.Reference().SetVisible(False)  # too dense for silkscreen; see the assembly drawing (F.Fab)
+        b.Add(fp)
+        fps[ref] = fp
+    for ref, (x, y, rot) in FIXED.items():
+        fps[ref].SetPosition(P(x, y))
+        fps[ref].SetOrientationDegrees(rot)
+    obstacles = [rel_box(fps[r]) for r in FIXED]
+    for i, (x, y) in enumerate(PEGS):
+        h = fps[f"H{i + 1}"]
+        h.SetPosition(P(x, y))
+        h.SetExcludedFromBOM(True); h.SetExcludedFromPosFiles(True)
+        obstacles.append((x - 2.0, y - 2.0, x + 2.0, y + 2.0))  # peg hole (the lid tube above leaves > 6 mm for parts)
+    placed = set(FIXED) | {f"H{i + 1}" for i in range(len(PEGS))}
+    for bi, (rect, refs) in enumerate(BLOCKS):
+        if bi == 2 and VARIANT:
+            k = VARIANT % len(refs)
+            refs = refs[k:] + refs[:k]
+        place_block(fps, rect, refs, obstacles, gap=GAP3 if bi == 2 else 0.3)
+        placed.update(refs)
+    missing = set(fps) - placed
+    if missing:
+        raise SystemExit(f"unplaced: {sorted(missing)}")
+    # nets
+    netobj = {}
+    for name, nodes in sorted(nets.items()):
+        if len(nodes) < 1:
+            continue
+        ni = pcbnew.NETINFO_ITEM(b, name)
+        b.Add(ni)
+        netobj[name] = ni
+        for ref, pin in nodes:
+            for pad in fps[ref].Pads():
+                if pad.GetNumber() == pin:
+                    pad.SetNet(ni)
+    # silkscreen
+    # the jack labels moved to the back: the top side is hidden in the enclosure and its middle is full
+    add_text(b, "J2 top: meter - J3 bottom: reader", 20.0, 44.3, 0.8, layer=pcbnew.B_SilkS)
+    # J1's pin labels: one falls outside the narrower board; mirror such labels to the other side of the socket
+    j1 = fps["J1"]
+    jx = pcbnew.ToMM(j1.GetPosition().x)
+    for it in j1.GraphicalItems():
+        if isinstance(it, pcbnew.PCB_TEXT) and pcbnew.ToMM(it.GetPosition().x) > X0 + W - INSET - 0.4:
+            q = it.GetPosition()
+            it.SetPosition(pcbnew.VECTOR2I(MM(2 * jx - pcbnew.ToMM(q.x)), q.y))
+    add_text(b, "NeedForHeat P1-BASE v3.0", 20.0, 51.95, 1.0, layer=pcbnew.B_SilkS, bold=True)
+    add_text(b, "energiegedrag.nl - CERN-OHL-P v2", 20.0, 49.95, 0.8, layer=pcbnew.B_SilkS)
+    for t in b.GetDrawings():
+        if isinstance(t, pcbnew.PCB_TEXT) and t.GetLayer() == pcbnew.B_SilkS:
+            t.SetMirrored(True)
+    out = os.path.join(PCBDIR, NAME + ".kicad_pcb")
+    # features the enclosure needs (CoreInk-relative mm)
+    import json
+    feats = {"leds": {}, "jacks": {}}
+    for ref in ("LED1", "LED2"):
+        pos = fps[ref].GetPosition()
+        feats["leds"][ref] = [round(pcbnew.ToMM(pos.x) - X0, 2), round(pcbnew.ToMM(pos.y) - Y0, 2)]
+    for ref in ("J2", "J3"):
+        x1, y1, x2, y2 = rel_box(fps[ref])
+        feats["jacks"][ref] = [round((x1 + x2) / 2, 2), round(x2 - x1, 2)]
+    with open(os.path.join(ROOT, "enclosure", "pcb_features.json"), "w", encoding="utf8", newline=chr(10)) as f:
+        json.dump(feats, f, indent=1)
+    add_zone(b, netobj["GND"], pcbnew.F_Cu)
+    add_zone(b, netobj["GND"], pcbnew.B_Cu)
+    add_edge_keepout(b)
+    fanout_gnd(b)
+    b.BuildConnectivity()
+    pcbnew.SaveBoard(out, b)
+    print("placed board saved:", out)
+    if route:
+        autoroute(out)
+
+
+def _seg_dist(px, py, ax, ay, bx, by):
+    dx, dy = bx - ax, by - ay
+    L = dx * dx + dy * dy
+    t = 0.0 if L == 0 else max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / L))
+    return ((px - ax - t * dx) ** 2 + (py - ay - t * dy) ** 2) ** 0.5
+
+
+def fanout_gnd(b, via_d=0.56, drill=0.3, width=0.3, clr=0.3, ep_area=2.0):
+    """Before autorouting: give every SMD GND pad its own via next to it (a GND fanout), so the
+    router routes around it and no GND pad can end up in a pour fragment without a connection.
+    Clearances use the real pad shapes. Exposed pads get thermal vias inside the pad; a pad with no
+    room for a via gets a short track to a fanned-out GND pad of the same footprint.
+    All of it is locked, so Freerouting keeps it."""
+    T = pcbnew.ToMM
+    gnd = b.FindNet("GND")
+    g = gnd.GetNetCode()
+
+    def shape(pad):
+        return pad.GetEffectiveShape(pcbnew.F_Cu if pad.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu)
+
+    other = [(pad, shape(pad)) for fp in b.GetFootprints() for pad in fp.Pads() if pad.GetNetCode() != g]
+    gpads = [(pad, shape(pad)) for fp in b.GetFootprints() for pad in fp.Pads() if pad.GetNetCode() == g]
+    keep = []
+    for fp in b.GetFootprints():
+        if fp.GetReference().startswith("J"):
+            bb = fp.GetBoundingBox(False)
+            keep.append((T(bb.GetLeft()), T(bb.GetTop()), T(bb.GetRight()), T(bb.GetBottom())))
+    vias = []      # (x, y) mm
+    fanned = {}    # pad -> True for GND pads that got a via (or are linked)
+
+    def V(q):
+        return pcbnew.VECTOR2I(MM(q[0]), MM(q[1]))
+
+    def add_via(q):
+        v = pcbnew.PCB_VIA(b)
+        v.SetPosition(V(q)); v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd); v.SetLocked(True)
+        b.Add(v)
+        vias.append(q)
+
+    def add_track(a, e):
+        t = pcbnew.PCB_TRACK(b)
+        t.SetStart(V(a)); t.SetEnd(V(e))
+        t.SetWidth(MM(width)); t.SetLayer(pcbnew.F_Cu); t.SetNet(gnd); t.SetLocked(True)
+        b.Add(t)
+
+    def seg_clear(a, e):
+        sg = pcbnew.SHAPE_SEGMENT(V(a), V(e), MM(width))
+        return not any(s.Collide(sg, MM(clr)) for _, s in other)
+
+    def via_ok(q, own):
+        if not (X0 + INSET + 1.0 <= q[0] <= X0 + W - INSET - 1.0 and Y0 + INSET + 1.0 <= q[1] <= Y0 + H - INSET - 1.0):
+            return False
+        if any(k[0] - 0.5 <= q[0] <= k[2] + 0.5 and k[1] - 0.5 <= q[1] <= k[3] + 0.5 for k in keep):
+            return False
+        if any(math.hypot(q[0] - X0 - x, q[1] - Y0 - y) < 3.2 for x, y in CORNERS):
+            return False
+        if any(math.hypot(q[0] - v[0], q[1] - v[1]) < via_d + 0.5 for v in vias):
+            return False
+        c = pcbnew.SHAPE_CIRCLE(V(q), MM(via_d / 2))
+        if any(s.Collide(c, MM(clr)) for _, s in other):
+            return False
+        # keep the via off GND pads too (no via-in-pad on small pads)
+        return not any(s.Collide(c, MM(0.15)) for _, s in gpads)
+
+    n = 0
+    smd = [(fp, pad, s) for fp in sorted(b.GetFootprints(), key=lambda f: f.GetReference())
+           for pad, s in [(p, shape(p)) for p in fp.Pads()]
+           if pad.GetNetCode() == g and pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD]
+    # exposed pads: thermal vias inside the pad, along its long axis
+    for fp, pad, s in smd:
+        sz = pad.GetSize(pcbnew.F_Cu)
+        if T(sz.x) * T(sz.y) < ep_area:
+            continue
+        pc = (T(pad.GetPosition().x), T(pad.GetPosition().y))
+        bb = pad.GetBoundingBox()
+        vert = bb.GetHeight() >= bb.GetWidth()
+        for k in (-1, 1):
+            q = (pc[0], pc[1] + k * 0.75) if vert else (pc[0] + k * 0.75, pc[1])
+            add_via(q)
+            n += 1
+        fanned[pad.m_Uuid.AsString()] = pc
+    trapped = []
+    for fp, pad, s in smd:
+        if pad.m_Uuid.AsString() in fanned:
+            continue
+        pc = (T(pad.GetPosition().x), T(pad.GetPosition().y))
+        cands = sorted(((math.hypot(dx * 0.25, dy * 0.25), (pc[0] + dx * 0.25, pc[1] + dy * 0.25))
+                        for dx in range(-10, 11) for dy in range(-10, 11)), key=lambda t: t[0])
+        for d, q in cands:
+            if d < 0.5 or not via_ok(q, pad) or not seg_clear(pc, q):
+                continue
+            add_via(q)
+            add_track(pc, q)
+            fanned[pad.m_Uuid.AsString()] = pc
+            n += 1
+            break
+        else:
+            trapped.append((fp, pad, pc))
+    for fp, pad, pc in trapped:
+        done = False
+        for tp in fp.Pads():
+            tc = fanned.get(tp.m_Uuid.AsString())
+            if tc is None or tp is pad:
+                continue
+            for path in ([pc, tc], [pc, (tc[0], pc[1]), tc], [pc, (pc[0], tc[1]), tc]):
+                if all(seg_clear(a, e) for a, e in zip(path, path[1:])):
+                    for a, e in zip(path, path[1:]):
+                        if a != e:
+                            add_track(a, e)
+                    print("fanout: linked", fp.GetReference(), pad.GetNumber(), "to pad", tp.GetNumber())
+                    fanned[pad.m_Uuid.AsString()] = pc
+                    done = True
+                    break
+            if done:
+                break
+        if not done:
+            print("fanout: no room next to", fp.GetReference(), pad.GetNumber())
+    print("GND fanout vias:", n)
+
+
+HOLE_TO_HOLE = 0.5  # mm, edge to edge (board setup min_hole_to_hole)
+
+
+def stitch(b, pitch=1.5, via_d=0.6, drill=0.3, clr=0.25):
+    """Add GND vias on a grid wherever they clear all other copper, tying the two GND pours together."""
+    gnd = b.FindNet("GND")
+    obst = []  # (kind, geometry, half-width) in mm
+    for t in b.GetTracks():
+        if t.GetNetCode() == gnd.GetNetCode():
+            if isinstance(t, pcbnew.PCB_VIA):
+                # GND vias (fanout, router) may touch a stitching via's copper, but the drills must
+                # keep the board's hole-to-hole distance
+                p = t.GetPosition()
+                obst.append(("h", (pcbnew.ToMM(p.x), pcbnew.ToMM(p.y)), pcbnew.ToMM(t.GetDrillValue()) / 2))
+            continue
+        if isinstance(t, pcbnew.PCB_VIA):
+            p = t.GetPosition()
+            obst.append(("c", (pcbnew.ToMM(p.x), pcbnew.ToMM(p.y)), pcbnew.ToMM(t.GetWidth(pcbnew.F_Cu)) / 2))
+        else:
+            a, e = t.GetStart(), t.GetEnd()
+            obst.append(("s", (pcbnew.ToMM(a.x), pcbnew.ToMM(a.y), pcbnew.ToMM(e.x), pcbnew.ToMM(e.y)),
+                         pcbnew.ToMM(t.GetWidth()) / 2))
+    for fp in b.GetFootprints():
+        for pad in fp.Pads():
+            bb = pad.GetBoundingBox()
+            if pad.GetNetCode() == gnd.GetNetCode() and pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD:
+                continue
+            r = max(pcbnew.ToMM(bb.GetWidth()), pcbnew.ToMM(bb.GetHeight())) / 2
+            c = pad.GetPosition()
+            obst.append(("c", (pcbnew.ToMM(c.x), pcbnew.ToMM(c.y)), r + (0.2 if pad.GetNetCode() == gnd.GetNetCode() else 0)))
+        if fp.GetReference().startswith("J"):
+            bb = fp.GetBoundingBox(False)
+            cx, cy = pcbnew.ToMM(bb.GetCenter().x), pcbnew.ToMM(bb.GetCenter().y)
+            # connectors: keep vias out of their whole footprint
+            obst.append(("r", (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
+                               pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())), 0.0))
+    for t in b.GetDrawings():
+        # keep vias out of the silkscreen texts: a via (on either side) breaks up the letters
+        if isinstance(t, pcbnew.PCB_TEXT) and t.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+            bb = t.GetBoundingBox()
+            obst.append(("r", (pcbnew.ToMM(bb.GetLeft()), pcbnew.ToMM(bb.GetTop()),
+                               pcbnew.ToMM(bb.GetRight()), pcbnew.ToMM(bb.GetBottom())), 0.0))
+    for (x, y) in CORNERS:
+        obst.append(("c", (X0 + x, Y0 + y), 3.2))  # keep the kuip corner posts' area free
+    n = 0
+    y = INSET + 1.5
+    while y <= H - INSET - 1.5:
+        x = INSET + 1.5
+        while x <= W - INSET - 1.5:
+            px, py = X0 + x, Y0 + y
+            ok = True
+            for kind, g, hw in obst:
+                if kind == "r":
+                    if g[0] - 0.5 <= px <= g[2] + 0.5 and g[1] - 0.5 <= py <= g[3] + 0.5:
+                        ok = False
+                        break
+                    continue
+                if kind == "h":
+                    if ((px - g[0]) ** 2 + (py - g[1]) ** 2) ** 0.5 < hw + drill / 2 + HOLE_TO_HOLE:
+                        ok = False
+                        break
+                    continue
+                d = ((px - g[0]) ** 2 + (py - g[1]) ** 2) ** 0.5 if kind == "c" else _seg_dist(px, py, *g)
+                if d < hw + via_d / 2 + clr:
+                    ok = False
+                    break
+            if ok:
+                v = pcbnew.PCB_VIA(b)
+                v.SetPosition(pcbnew.VECTOR2I(MM(px), MM(py)))
+                v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd)
+                b.Add(v)
+                obst.append(("c", (px, py), via_d / 2))
+                n += 1
+            x += pitch
+        y += pitch
+    return n
+
+
+def autoroute(path):
+    b = pcbnew.LoadBoard(path)
+    dsn = path[:-10] + ".dsn"
+    ses = path[:-10] + ".ses"
+    if not pcbnew.ExportSpecctraDSN(b, dsn):
+        raise SystemExit("DSN export failed")
+    cmd = [JAVA, "-Xmx2g", "-jar", FREEROUTING, "-de", dsn, "-do", ses, "-mp", "30", "-mt", "0", "--gui.enabled=false"]
+    print(" ".join(cmd))
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=int(os.environ.get("P1BASE_ROUTE_TIMEOUT", "900")))
+    print(r.stdout[-3000:], r.stderr[-3000:])
+    if not os.path.exists(ses):
+        raise SystemExit("Freerouting produced no SES file")
+    if not pcbnew.ImportSpecctraSES(b, ses):
+        raise SystemExit("SES import failed")
+
+    filler = pcbnew.ZONE_FILLER(b)
+    filler.Fill(b.Zones())
+    n = stitch(b)
+    filler.Fill(b.Zones())
+    print("stitching vias:", n)
+    pcbnew.SaveBoard(path, b)
+    fix_islands(path)
+    for f in (dsn, ses):
+        os.remove(f)
+    print("routed board saved:", path)
+
+
+def _pt_seg(p, a, b):
+    """Distance from point p to segment ab (mm tuples)."""
+    ax, ay = a; bx, by = b; px, py = p
+    dx, dy = bx - ax, by - ay
+    L = dx * dx + dy * dy
+    t = 0.0 if L == 0 else max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / L))
+    return math.hypot(px - ax - t * dx, py - ay - t * dy)
+
+
+def _segs_dist(a, b, c, d):
+    """Minimum distance between segments ab and cd (no intersection test needed at these clearances
+    because an intersection gives distance 0 at an end-point projection in practice; check it anyway)."""
+    def cross(o, p, q):
+        return (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])
+    if (cross(a, b, c) * cross(a, b, d) < 0) and (cross(c, d, a) * cross(c, d, b) < 0):
+        return 0.0
+    return min(_pt_seg(a, c, d), _pt_seg(b, c, d), _pt_seg(c, a, b), _pt_seg(d, a, b))
+
+
+def link_trapped_pad(b, frag, i, other, gnd, clr=0.25, via_d=0.5, drill=0.25, width=0.25, reach=2.5):
+    """A GND fragment that has no room for a via: run a short F.Cu track from one of its GND pads to a
+    new via that lands in the other layer's GND pour, clear of all other copper. Returns True if done."""
+    T = pcbnew.ToMM
+    obst = []
+    for t in b.GetTracks():
+        if t.GetNetCode() == gnd.GetNetCode():
+            continue
+        if isinstance(t, pcbnew.PCB_VIA):
+            p = t.GetPosition(); r = T(t.GetWidth(pcbnew.F_Cu)) / 2
+            obst.append(((T(p.x), T(p.y)), (T(p.x), T(p.y)), r))
+        else:
+            obst.append(((T(t.GetStart().x), T(t.GetStart().y)), (T(t.GetEnd().x), T(t.GetEnd().y)), T(t.GetWidth()) / 2))
+    pads = []
+    for fp in b.GetFootprints():
+        for pad in fp.Pads():
+            c = pad.GetPosition(); bb = pad.GetBoundingBox()
+            r = max(T(bb.GetWidth()), T(bb.GetHeight())) / 2
+            if pad.GetNetCode() == gnd.GetNetCode():
+                # the fill keeps a thermal gap around the pad: look for the fragment just outside the pad
+                ring = [pcbnew.VECTOR2I(c.x + int(MM(r + 0.45) * math.cos(k * math.pi / 8)),
+                                        c.y + int(MM(r + 0.45) * math.sin(k * math.pi / 8))) for k in range(16)]
+                if pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD and pad.IsOnLayer(pcbnew.F_Cu) and                         any(frag.Contains(v, i) for v in ring):
+                    pads.append(pad)
+            else:
+                obst.append(((T(c.x), T(c.y)), (T(c.x), T(c.y)), r))
+    if not pads:
+        print("  fragment has no GND pad of its own")
+    for pad in pads:
+        print("  trying", pad.GetParentFootprint().GetReference(), pad.GetNumber())
+        pc = (T(pad.GetPosition().x), T(pad.GetPosition().y))
+        cands = []
+        n = int(reach / 0.25)
+        for ix in range(-n, n + 1):
+            for iy in range(-n, n + 1):
+                q = (pc[0] + ix * 0.25, pc[1] + iy * 0.25)
+                dd = math.hypot(q[0] - pc[0], q[1] - pc[1])
+                if 0.6 < dd <= reach:
+                    cands.append((dd, q))
+        for dd, q in sorted(cands):
+            if any(_segs_dist(q, q, a, e) < hw + via_d / 2 + clr for a, e, hw in obst):
+                continue
+            if any(_segs_dist(pc, q, a, e) < hw + width / 2 + clr for a, e, hw in obst):
+                continue
+            rr = MM(via_d / 2 + 0.02)
+            ring = [pcbnew.VECTOR2I(MM(q[0]) + int(rr * math.cos(k * math.pi / 8)), MM(q[1]) + int(rr * math.sin(k * math.pi / 8)))
+                    for k in range(16)] + [pcbnew.VECTOR2I(MM(q[0]), MM(q[1]))]
+            if not all(op.Contains(v) for op in other for v in ring):
+                continue
+            v = pcbnew.PCB_VIA(b)
+            v.SetPosition(pcbnew.VECTOR2I(MM(q[0]), MM(q[1]))); v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd)
+            b.Add(v)
+            tr = pcbnew.PCB_TRACK(b)
+            tr.SetStart(pad.GetPosition()); tr.SetEnd(pcbnew.VECTOR2I(MM(q[0]), MM(q[1])))
+            tr.SetWidth(MM(width)); tr.SetLayer(pcbnew.F_Cu); tr.SetNet(gnd)
+            b.Add(tr)
+            print("linked trapped GND pad", pad.GetParentFootprint().GetReference(), pad.GetNumber(),
+                  "to a via at", [round(x, 2) for x in q])
+            return True
+    return False
+
+
+def fix_islands(path, step=0.25):
+    """Give every GND pour fragment that has no via or through-hole pad at least one via."""
+    b = pcbnew.LoadBoard(path)
+    gnd = b.FindNet("GND")
+    filler = pcbnew.ZONE_FILLER(b)
+    filler.Fill(b.Zones())
+    anchors = [t.GetPosition() for t in b.GetTracks() if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == gnd.GetNetCode()]
+    anchors += [p.GetPosition() for f in b.GetFootprints() for p in f.Pads()
+                if p.GetNetCode() == gnd.GetNetCode() and p.GetAttribute() == pcbnew.PAD_ATTRIB_PTH]
+    added = 0
+    gzones = [z for z in b.Zones() if not z.GetIsRuleArea() and z.GetNetCode() == gnd.GetNetCode()]
+    for z in gzones:
+        polys = z.GetFilledPolysList(z.GetLayer())
+        # the via must also land in the GND pour of the other layer: that is where it connects to,
+        # and it keeps the via off the other layer's tracks
+        other = [o.GetFilledPolysList(o.GetLayer()) for o in gzones if o.GetLayer() != z.GetLayer()]
+        for i in range(polys.OutlineCount()):
+            if any(polys.Contains(a, i) for a in anchors):
+                continue
+            bb = polys.Outline(i).BBox()
+            done = False
+            # the fill already keeps 0.25 mm from other copper, so the via only has to lie inside it;
+            # try a normal via first, then a small one (0.56/0.3 mm: the board minimums, 0.3 mm drill and 0.13 mm ring)
+            for via_d, drill in ((0.6, 0.3), (0.56, 0.3)):
+                rr = MM(via_d / 2 + 0.02)
+                ring = [(int(rr * math.cos(k * math.pi / 8)), int(rr * math.sin(k * math.pi / 8))) for k in range(16)]
+                y = bb.GetTop()
+                while y <= bb.GetBottom() and not done:
+                    x = bb.GetLeft()
+                    while x <= bb.GetRight():
+                        pt = pcbnew.VECTOR2I(x, y)
+                        pts = [pt] + [pcbnew.VECTOR2I(x + dx, y + dy) for dx, dy in ring]
+                        if all(polys.Contains(q, i) for q in pts) and all(op.Contains(q) for op in other for q in pts)                                 and all((pt - a).EuclideanNorm() >= MM(0.3 + HOLE_TO_HOLE) for a in anchors):
+                            v = pcbnew.PCB_VIA(b)
+                            v.SetPosition(pt); v.SetWidth(MM(via_d)); v.SetDrill(MM(drill)); v.SetNet(gnd)
+                            b.Add(v)
+                            anchors.append(pt)
+                            added += 1
+                            done = True
+                            break
+                        x += MM(step / 2)
+                    y += MM(step / 2)
+                if done:
+                    break
+            if not done and z.GetLayer() == pcbnew.F_Cu:
+                done = link_trapped_pad(b, polys, i, other, gnd)
+                added += done
+            if not done:
+                print("no room for a via in a GND fragment on", z.GetLayerName(),
+                      [round(pcbnew.ToMM(v), 2) for v in (bb.GetLeft(), bb.GetTop(), bb.GetRight(), bb.GetBottom())])
+    filler.Fill(b.Zones())
+    pcbnew.SaveBoard(path, b)
+    print("island vias added:", added)
+
+
+def restitch(path):
+    """Remove the stitching vias (GND vias without tracks) and stitch again."""
+    b = pcbnew.LoadBoard(path)
+    gnd = b.FindNet("GND").GetNetCode()
+    ends = set()
+    for t in b.GetTracks():
+        if not isinstance(t, pcbnew.PCB_VIA):
+            ends.add((t.GetStart().x, t.GetStart().y)); ends.add((t.GetEnd().x, t.GetEnd().y))
+    for t in list(b.GetTracks()):
+        if isinstance(t, pcbnew.PCB_VIA) and t.GetNetCode() == gnd and (t.GetPosition().x, t.GetPosition().y) not in ends and not t.IsLocked():
+            b.Remove(t)
+    filler = pcbnew.ZONE_FILLER(b)
+    filler.Fill(b.Zones())
+    print("stitching vias:", stitch(b))
+    filler.Fill(b.Zones())
+    pcbnew.SaveBoard(path, b)
+
+
+if __name__ == "__main__":
+    if "--islands" in sys.argv:
+        fix_islands(os.path.join(PCBDIR, NAME + ".kicad_pcb"))
+    elif "--stitch" in sys.argv:
+        restitch(os.path.join(PCBDIR, NAME + ".kicad_pcb"))
+    else:
+        build(route="--no-route" not in sys.argv)

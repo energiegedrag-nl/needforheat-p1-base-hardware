@@ -1,0 +1,6 @@
+gerber primitives F 2180, B 572; copper islands F 131, B 77; plated holes 224
+pads not on any copper: none
+pads in board but not in schematic netlist: none
+schematic nets checked: 55; derived copper nets: 55
+OPENS: none
+SHORTS: none
