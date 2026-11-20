@@ -55,12 +55,15 @@ POST = 6.0  # corner posts under the PCB, square
 POST_D, POST_L = 4.6, 7.0  # LEGO posts: core diameter, length (pins of the bus header stick out 6 mm)
 RIB_D, RIB_W = 4.95, 0.45  # three crush ribs: light friction in the 4.85 mm hole, independent of print accuracy
 PEG_D = 1.8  # in the Ø2.2 PCB holes: the pegs only key the board, the walls locate it
-CORNER = 7.8  # corner pillars of the lid: square from the outline corner, around the LEGO hole (hole axis at 4, 4)
+CORNER = 8.2  # corner pillars of the lid: square from the outline corner, around the LEGO hole (hole axis at 4, 4);
+# 8.2 leaves 1.1 mm of wall between the Ø6.2 snap groove and the pillar's inner faces (JLC3DP: nylon >= 1.0 mm)
 # LEGO Technic hole in the lid, so a real Technic pin clicks in like on the CoreInk (LEGO standard values, VERIFY on a
 # test print): Ø4.8 bore (we keep the measured 4.85), Ø6.2 x 0.8 counterbore at the entry, and a Ø6.2 groove where
 # the pin's slotted end snaps in, 7.8 mm (one Technic module) below the entry
 TECH_CB_D, TECH_CB_T = 6.2, 0.8
 TECH_L = 7.8
+TECH_BORE = TECH_L + 0.5  # blind bore depth from the outer face: room for the pin's tip below the groove
+TECH_FLOOR = 1.0  # solid floor under the bore: the feet grow out of it (a through bore left them on a 0.18 mm ring)
 # snap fit: bumps on the lid's lip click into grooves in the long walls
 LIP_H, LIP_T = 2.4, 1.0  # lip height below the lid, thickness (thin enough to flex)
 SNAP_R, SNAP_P = 0.6, 0.35  # bump radius and how far it sticks out past the lip
@@ -130,7 +133,10 @@ def corner_box(x, y, z0, z1, grow=0.0):
 
 
 Z_LID = Z_TOP + LID_T  # outer face of the lid
-Z_CORNER = Z_LID - (TECH_L + 0.5)  # bottom of the lid's corner pillars
+Z_CORNER = Z_LID - (TECH_BORE + TECH_FLOOR)  # bottom of the lid's corner pillars
+# ring of pillar below the snap groove (JLC3DP flagged 0.5 mm when the pillar ended 0.5 mm below the groove)
+assert Z_LID - TECH_L - Z_CORNER >= 1.0 - 1e-6, "pillar ring below the Technic groove too thin"
+assert CORNER - 4.0 - TECH_CB_D / 2 >= 1.0 - 1e-6, "pillar wall beside the Technic groove too thin"
 FOOT_R, FOOT_GAP = 2.6, 0.1  # feet under three pillars: radius around the peg axis, gap above the PCB
 
 # Key against fitting the lid the wrong way round (turned 180 deg; flipped is impossible because of the lip): the
@@ -170,7 +176,7 @@ def key_box(x0, x1, y0, y1, z0, z1):
 
 # pry notch: middle of the bottom wall between the left corner pillar and the J3 opening (LED2's window is right of J3)
 PRY_X = (CORNER + JACKS[1][0] - JACK_W / 2) / 2
-PRY_W, PRY_D = 3.5, 0.8
+PRY_W, PRY_D = 3.2, 0.8
 assert CORNER + PILLAR_CLR + 0.5 < PRY_X - PRY_W / 2 and PRY_X + PRY_W / 2 < JACKS[1][0] - JACK_W / 2 - 0.5
 assert all(abs(x - PRY_X) > PRY_W / 2 + LED_HOLE_W / 2 + 0.5 for x, y in LEDS if y > CI_H / 2)
 
@@ -222,9 +228,9 @@ def kuip():
 
 
 def technic_hole(x, y):
-    """LEGO Technic hole from the lid's outer face down: counterbore, bore, snap groove (see TECH_*)."""
+    """Blind LEGO Technic hole from the lid's outer face down: counterbore, bore, snap groove (see TECH_*)."""
     c = P(x, y)
-    h = cq.Workplane("XY").workplane(offset=Z_CORNER - 0.1).center(*c).circle(LEGO_D / 2).extrude(Z_LID - Z_CORNER + 0.2)
+    h = cq.Workplane("XY").workplane(offset=Z_LID - TECH_BORE).center(*c).circle(LEGO_D / 2).extrude(TECH_BORE + 0.1)
     h = h.union(cq.Workplane("XY").workplane(offset=Z_LID - TECH_CB_T).center(*c).circle(TECH_CB_D / 2).extrude(1))
     return h.union(cq.Workplane("XY").workplane(offset=Z_LID - TECH_L).center(*c).circle(TECH_CB_D / 2).extrude(TECH_CB_T))
 
